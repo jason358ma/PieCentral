@@ -1,5 +1,5 @@
-package exlcm;
-struct message
+package types;
+struct GOAL_SCORE
 {
     string  timestamp;
     double   position[3];
