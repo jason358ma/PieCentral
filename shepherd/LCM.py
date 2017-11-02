@@ -23,6 +23,7 @@ class LCM:
         	lc.subscribe(channel, handler)
         	while True:
         		lc.handle()
+        		lc.handle()
 
         def send_message(channel, item):
         	lc.publish(channel, item.encode())   
