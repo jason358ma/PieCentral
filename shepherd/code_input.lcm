@@ -1,0 +1,6 @@
+package types;
+struct GOAL_SCORE
+{
+    int32_t  guess;
+    int32_t  alliance;
+}
