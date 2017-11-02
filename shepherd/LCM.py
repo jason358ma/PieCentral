@@ -3,15 +3,10 @@ import message.py
 import threading
 
 class LCM:
-
-
         def __init__(self, address):
-            self.lc = lcm.LCM()
+            self.lc = lcm.LCM(address)
             self.thread
             self.queue = [] 
-           	self.address = address;
-
-
 
         def add_to_queue(item):
 
@@ -34,4 +29,4 @@ class LCM:
 
 lc = LCM();
 
-
+#hello
