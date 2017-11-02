@@ -1,0 +1,6 @@
+package types;
+struct GOAL_BID
+{
+    string   goal;
+    int32_t  alliance;
+}
