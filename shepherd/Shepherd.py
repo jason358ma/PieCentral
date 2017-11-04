@@ -1,5 +1,6 @@
 import sys
 import Goal
+import random
 
 
 class Shepherd:
@@ -14,14 +15,9 @@ class Shepherd:
         self.schedule = Web()
         self.match_timer = Timer()
         self.match_number = 1
-        #teams = self.schedule.getTeams(matchNumber)
-        #self.alliances = {'blue': Alliance(teams[0], teams[1]), 'gold': Alliance(teams[2], teams[3])}
-        self.alliances = {}
-        self.current_stage = 0
 
         #The follwing are elements that are configured
         # specifically for the 2018 year game - Solar Scramble
-        self.goals = {'a': Goal(),'b': Goal(),'c': Goal(),'d': Goal(),'e': Goal()}
 
         self.blue_powerup_timers = {'a': PowerupTimer(),
                                     'b': PowerupTimer(),
@@ -50,10 +46,58 @@ class Shepherd:
             "end_match": end_match,
         }
 
-        self.scoreboard = Scoreboard(match_timer) # what even is a scoreboard
-        self.driverstation = Driverstation() # Make this into a wrapper class w/ the 4 diff driverstations?
-        # TODO: Create driverstation wrapper class
+        #self.scoreboard = Scoreboard(match_timer) # what even is a scoreboard
+        #self.driverstation = Driverstation() # Make this into a wrapper class w/ the 4 diff driverstations?
+        
+        # BEGIN API SPECIFIC VARIABLES
+
+        self.header_mapping = {} # Todo
+        self.current_stage = 0
+
+        self.alliances = {} # Todo
+        self.goals = {'a': Goal(),'b': Goal(),'c': Goal(),'d': Goal(),'e': Goal()}
+
+        self.event_queue = [] # Todo
+
+        self.RFID_pool = []
+        self.curr_RFID = {}
+
+    # START API METHODS
+
+    def generate_code():
+        # Should be handled by codegen
+
+    def check_code(code):
+        # Should be handled by codegen
+
+    def populate_RFID(file = 'RFIDs.txt'):
+        '''
+        Selects 6 random RFID codes from RFIDs.txt and populates curr_RFID
+        with one code in each slot. Also prints out curr_RFID for debugging.
+
+        Inputs: file: a string that points to a .txt file with one RFID code
+        per line.
+        '''
+        RFIDs = open(file, 'r')
+        all_codes = RFIDs.readlines()
+        random_indices = random.sample(range(len(all_codes)-1), 6)
+
+        self.curr_RFID = {
+            '0Blue': all_codes[random_indices[0]],
+            '2Blue': all_codes[random_indices[1]],
+            'stealBlue': all_codes[random_indices[2]],
+            '0Gold': all_codes[random_indices[3]],
+            '2Gold': all_codes[random_indices[4]],
+            'stealGold': all_codes[random_indices[5]]}
+
+        print self.curr_RFID
+
+    # END API METHODS
+
+
+
     # UI Commands
+    # (Ideally, this stuff should be depricated and rewritten)
 
     def setup_match(self, matchNumber):
         #Assuming the UI/ctrl station will provide us with a match number arg
@@ -133,7 +177,7 @@ class Shepherd:
 
 
 
-
+'''
     Things to receive:
         UI_Commands from field control:
             Setup_Match
@@ -156,7 +200,7 @@ class Shepherd:
             ChangeMultiplierState (for GoalMultipliers)
         FromDriverStation:
             Robot State (connected, disconnected, teleop, auto)
-
+'''
 class PowerupTimer:
     def __init__(self):
         self.steal = Timer()
