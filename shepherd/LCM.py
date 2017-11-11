@@ -2,31 +2,28 @@ import lcm
 import message.py
 import threading
 
-class LCM:
-        def __init__(self, address):
-            self.lc = lcm.LCM(address)
-            self.thread
-            self.queue = [] 
+class LCMClass:
+        def __init__(self, lc, queue, send_channel, receive_channel):
+            self.thread = threading.Thread()
+            self.thread.start()
+            self.receive_channel = receive_channel
+            self.send_channel = send_channel
+            self.main_queue = queue
+            self.queue = []
+                
+        def add_to_queue():
+            while True:
+                self.main_queue.append(self.queue.pop(0))
 
-        def add_to_queue(item):
-
-
-        def run_queue(item):
-
-
-        def receive_message(channel):
-        	lc.subscribe(channel, handler)
+        def receive_message():
+        	lc.subscribe(self.receive_channel, handler)
         	while True:
         		lc.handle()
 
-        def send_message(channel, item):
-        	lc.publish(channel, item.encode())   
+        def send_message(item):
+        	lc.publish(self.send_channel, item.encode())   
 
         def handler(channel, data):
             msg = message.decode(data)
-            print(" message = '%s'" % msg.name)
+            self.queue.append(msg)
 
-lc = LCM();
-
-#hello
-#hello
