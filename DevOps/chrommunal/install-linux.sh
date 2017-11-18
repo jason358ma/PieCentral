@@ -17,14 +17,12 @@ wget -O /tmp/dawn.zip $DAWN_URL
 
 # Unzip dawn.zip to Desktop, replace if same name exist
 cd /tmp
-unzip -o dawn.zip -d ~/Desktop
+unzip -o dawn.zip -d ~/D
 
 # Remove /tmp/dawn.zip
 rm -rf /tmp/dawn.zip
 
-# Install Dawn on Desktop
-
-# install vim & git 
+# install vim & git
 sudo apt install --yes vim git
 
 # clone the git(perminant) and run the setup.sh, then do the change
