@@ -26,7 +26,8 @@ rm -rf /tmp/dawn.zip
 sudo apt install --yes vim git
 
 # clone the git(perminant) and run the setup.sh, then do the change
-cd /Desktop
+cd
+cd Desktop
 git clone https://github.com/pioneers/PieCentral.git
 
 cd PieCentral/hibike
