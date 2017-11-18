@@ -3,22 +3,17 @@
 if ! command -v pipenv &> /dev/null; then
     pip3 install pipenv
 fi
-
-if ! command -v setuptools &> /dev/null; then
-    pip3 install setuptools
-fi
+pip3 install setuptools
 
 version=""
-while ["$1" != ""]; do
+if [ "$1" != "" ]; then
     case $1 in
-        --version)
+        --version )
             version="--python $2"
-            exit;
+            ;;
     esac
-done
+fi
 
-pipenv --dev $version install
-
+pipenv install $version --dev
 sudo ./sudo_setup.sh
-
 echo "All dependencies installed."

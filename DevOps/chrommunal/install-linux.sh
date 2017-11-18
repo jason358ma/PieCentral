@@ -6,31 +6,26 @@
 #flash firmware
 #cd; curl -LO https://mrchromebox.tech/firmware-util.sh && sudo bash firmware-#util.sh
 
-# Get Latest Dawn Version URL
-PYTHON_CMD="import json, sys"
-PYTHON_CMD="$PYTHON_CMD; assets = json.loads(sys.stdin.read())['assets']"
-PYTHON_CMD="$PYTHON_CMD; print([asset['browser_download_url'] for asset in assets if asset['name'].startswith('dawn-linux-x64')][0])"
-DAWN_URL=$(curl https://api.github.com/repos/pioneers/PieCentral/releases/latest | python -c "$PYTHON_CMD")
+# Download Dawn
+if [ ! -d ~/Desktop/dawn-linux-x64 ]; then
+  # Get URL of latest Dawn
+  PYTHON_CMD="import json, sys"
+  PYTHON_CMD="$PYTHON_CMD; assets = json.loads(sys.stdin.read())['assets']"
+  PYTHON_CMD="$PYTHON_CMD; print([asset['browser_download_url'] for asset in assets if asset['name'].startswith('dawn-linux-x64')][0])"
+  DAWN_URL=$(curl https://api.github.com/repos/pioneers/PieCentral/releases/latest | python -c "$PYTHON_CMD")
 
-# Download Dawn to /tmp
-wget -O /tmp/dawn.zip $DAWN_URL
+  wget -O /tmp/dawn.zip $DAWN_URL
+  unzip -o /tmp/dawn.zip -d ~/Desktop
 
-# Unzip dawn.zip to Desktop, replace if same name exist
-cd /tmp
-unzip -o dawn.zip -d ~/D
+  rm /tmp/dawn.zip
+fi
 
-# Remove /tmp/dawn.zip
-rm -rf /tmp/dawn.zip
+sudo apt install -y vim git
 
-# install vim & git
-sudo apt install --yes vim git
-
-# clone the git(perminant) and run the setup.sh, then do the change
-cd
-cd Desktop
-git clone https://github.com/pioneers/PieCentral.git
-
+# Install Hibike dependencies
+cd ~/Desktop
+if [ ! -d PieCentral ]; then
+  git clone https://github.com/pioneers/PieCentral.git
+fi
 cd PieCentral/hibike
-
-# Specify Python version to 3.5
 ./setup.sh --version 3.5
