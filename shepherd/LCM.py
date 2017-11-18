@@ -3,9 +3,9 @@ import threading
 import json
 
 class LCMClass:
-        def __init__(self, data_type, queue, receive_channel):
-            self.receive_channel = receive_channel
+        def __init__(self, queue, receive_channel):
             self.queue = queue
+            self.receive_channel = receive_channel
             self.lc = lcm.LCM()
 
         # def start_thread(self):
@@ -14,18 +14,36 @@ class LCMClass:
         #   self.thread.start() 
 
         # Receive messages
-        def receive_message(self):
-        	self.lc.subscribe(self.receive_channel, handler)
-        	while True:
-        		lc.handle()
+        def lcm_start_read(self):
+            def string_to_int(string):
+                try:
+                    return int(string)
+                except ValueError:
+                    return string
+
+            def handler(channel, item):
+                msg = item.decode()
+                msg_list = msg.split('|')
+                self.queue.put((msg_list[0], [string_to_int(x) for x in msg_list[1:]]))
+
+            self.lc.subscribe(self.receive_channel, handler)
+
+            def run():
+                while True:
+                    self.lc.handle()
+
+            rec_thread = threading.Thread()
+            rec_thread.run = run
+            rec_thread.start()
 
         # Send a list into a target
-        def send_message(self, target, item):
-            msg = ''.join(str(e) for e in item)
-        	self.lc.publish(target, msg.encode())   
-
+        def lcm_send(self, target_channel, header, *args):
+            msg = '|'.join(str(a) for a in args)
+            msg = '|'.join([header, msg])
+            self.lc.publish(target_channel, msg.encode())
+        """
         def handler(self, channel, item):
             msg = item.decode()
-            self.queue.put(item)
+            self.queue.put(msg)"""
 
        
