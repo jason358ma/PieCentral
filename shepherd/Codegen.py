@@ -1,22 +1,41 @@
 import random
 
-def generate_challenge_code(seed):
-    '''
-    Given a random seed, generate a code corresponding to a random sequence of 
-    concatenated functions for the students to decode and apply to RFID tags. 
-    See student_decode() below.
-    '''
-    rand = random.Random(seed)
+class Codegen:
     
-    code = 0
+    def __init__(rfids):
+    	self.solution_set = set();
+        while(len(solution_set) != 6):
+        	self.solution_array = []
+            self.solution_set = set()
+            self.code = generate_challenge_code()
+            for i in range(len(rfids)):
+                solution_set.add(student_decode(code, rfid))
+                
+
+
     
-    # TODO: Actually write a proper generator. This is just a sample.
-    for _ in range(5):
-        code *= 10
-        code += rand.randint(1, 8)
-    
-    return code
-    
+    def generate_challenge_code():
+        '''
+        Generates a code corresponding to a random sequence of
+        concatenated functions for the students to decode and apply to RFID tags.
+        See student_decode() below.
+        '''
+        # TODO: Actually write a proper generator. This is just a sample.
+        for _ in range(5):
+            code *= 10
+            code += rand.randint(1, 8)
+        return code
+
+    def check_code(solution):
+    	'''
+    	Returns which rfid index that the solution corresponds to
+    	return -1 if it doesn't match any.
+    	'''
+
+    	for i in self.solution_set:
+    		if()
+
+
 # Various ideas for functions for the students
 # Included are example student implementations
 # Of course, the example solutions are optimized
@@ -250,7 +269,18 @@ def simd_four_square(num):
         output += squared
     
     return output
+
+def double_caesar_cipher(key):
+    '''
+    Use the given input as a double-caesar-cipher encryption key for the first ten digits of pi. If the key is not long enough, reuse it to encrypt the unencrypted digits, starting from the least significant digit.
     
+    >>> double_caesar_cipher(0)
+    3141592653
+    >>> double_caesar_cipher(123)
+    6264615776
+    >>>
+    '''
+
     
 def student_decode(challenge_code, rfid_seed):
     '''
@@ -262,7 +292,7 @@ def student_decode(challenge_code, rfid_seed):
     func_map[1] = next_power
     func_map[2] = reverse_digits
     func_map[3] = smallest_prime_fact
-    func_map[4] = prime_factor
+    func_map[4] = double_caesar_cipher
     func_map[5] = silly_base_two
     func_map[6] = most_common_digit
     func_map[7] = valid_isbn_ten
