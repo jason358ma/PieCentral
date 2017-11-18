@@ -1,6 +1,0 @@
-package types;
-struct GOAL_SCORE
-{
-    string   goal;
-    string   alliance;
-}

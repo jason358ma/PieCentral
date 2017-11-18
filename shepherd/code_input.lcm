@@ -1,6 +1,0 @@
-package types;
-struct CODE_INPUT
-{
-    int32_t  guess;
-    string   alliance;
-}

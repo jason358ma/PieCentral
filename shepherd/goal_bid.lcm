@@ -1,6 +1,0 @@
-package types;
-struct GOAL_BID
-{
-    string   goal;
-    string   alliance;
-}
