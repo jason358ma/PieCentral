@@ -25,8 +25,14 @@ rm -rf /tmp/dawn.zip
 # Install Dawn on Desktop
 
 # clone the git(perminant) and run the setup.sh, then do the change
-cd
+cd /
 git clone https://github.com/pioneers/PieCentral.git
 
 cd PieCentral/hibike
+
+# Specify Python version to 3.5
+
 ./setup.sh
+
+# install vim
+sudo apt install vim
