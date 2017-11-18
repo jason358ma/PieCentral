@@ -3,14 +3,15 @@ import random
 class Codegen:
     
     def __init__(rfids):
-    	self.solution_set = set();
+    	solution_set = set();
         while(len(solution_set) != 6):
         	self.solution_array = []
-            self.solution_set = set()
+            solution_set = set()
             self.code = generate_challenge_code()
             for i in range(len(rfids)):
-                solution_set.add(student_decode(code, rfid))
-                
+            	solution = student_decode(code, rfids[i])
+                solution_set.add(solution)
+                self.solution_array += [solution]
 
 
     
@@ -31,9 +32,10 @@ class Codegen:
     	Returns which rfid index that the solution corresponds to
     	return -1 if it doesn't match any.
     	'''
-
-    	for i in self.solution_set:
-    		if()
+    	for i in range(len(self.solution_array)):
+    		if(solution == self.solution_array[i]):
+    			return i
+    	return -1
 
 
 # Various ideas for functions for the students
@@ -272,7 +274,9 @@ def simd_four_square(num):
 
 def double_caesar_cipher(key):
     '''
-    Use the given input as a double-caesar-cipher encryption key for the first ten digits of pi. If the key is not long enough, reuse it to encrypt the unencrypted digits, starting from the least significant digit.
+    Use the given input as a double-caesar-cipher encryption key for the first 
+    ten digits of pi. If the key is not long enough, reuse it to encrypt the 
+    unencrypted digits, starting from the least significant digit.
     
     >>> double_caesar_cipher(0)
     3141592653
@@ -280,6 +284,10 @@ def double_caesar_cipher(key):
     6264615776
     >>>
     '''
+    pi = 3141592653
+    temp = key
+    tens = 
+    while(temp > 0):
 
     
 def student_decode(challenge_code, rfid_seed):
