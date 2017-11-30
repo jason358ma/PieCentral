@@ -30,8 +30,10 @@ class LCMClass:
             rec_thread.run = run
             rec_thread.start()
 
-        # Send a list into a target
-        def lcm_send(self, target_channel, header, *args):
-            msg = '|||'.join(str(a) for a in args)
-            msg = '|||'.join([header, msg])
-            self.lc.publish(target_channel, msg.encode())       
+lc = lcm.LCM()
+
+# Send a list into a target
+def lcm_send(target_channel, header, *args):
+    msg = '|||'.join(str(a) for a in args)
+    msg = '|||'.join([header, msg])
+    lc.publish(target_channel, msg.encode())       
