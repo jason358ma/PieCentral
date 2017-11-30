@@ -1,17 +1,11 @@
 import lcm
 import threading
-import json
 
 class LCMClass:
         def __init__(self, queue, receive_channel):
             self.queue = queue
             self.receive_channel = receive_channel
             self.lc = lcm.LCM()
-
-        # def start_thread(self):
-        #   self.thread = threading.Thread()
-        #   self.thread.daemon = True
-        #   self.thread.start() 
 
         # Receive messages
         def lcm_start_read(self):
@@ -23,7 +17,7 @@ class LCMClass:
 
             def handler(channel, item):
                 msg = item.decode()
-                msg_list = msg.split('|')
+                msg_list = msg.split('|||')
                 self.queue.put((msg_list[0], [string_to_int(x) for x in msg_list[1:]]))
 
             self.lc.subscribe(self.receive_channel, handler)
@@ -38,12 +32,6 @@ class LCMClass:
 
         # Send a list into a target
         def lcm_send(self, target_channel, header, *args):
-            msg = '|'.join(str(a) for a in args)
-            msg = '|'.join([header, msg])
-            self.lc.publish(target_channel, msg.encode())
-        """
-        def handler(self, channel, item):
-            msg = item.decode()
-            self.queue.put(msg)"""
-
-       
+            msg = '|||'.join(str(a) for a in args)
+            msg = '|||'.join([header, msg])
+            self.lc.publish(target_channel, msg.encode())       
