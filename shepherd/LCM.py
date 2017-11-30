@@ -3,11 +3,11 @@ import threading
 
 class LCMClass:
     '''
-    Initialize with a queue (Python queue object), which should be processed separately within each process, and a receiving channel name (string).
+    Initialize with a receiving channel name (string, and a queue (Python queue object), which should be processed separately within each process.
     When lcm_start_read is run, a thread is created that receives any message to this receiving channel and adds it to the queue as a tuple (header, [*args]). 
     Header is a string and the list is variable length containing ints/strings.
     '''
-    def __init__(self, queue, receive_channel):
+    def __init__(self, receive_channel, queue):
         self.queue = queue
         self.receive_channel = receive_channel
         self.lc = lcm.LCM()
