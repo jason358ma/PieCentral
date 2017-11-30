@@ -4,8 +4,8 @@ import threading
 class LCMClass:
     '''
     Initialize with a queue (Python queue object), which should be processed separately within each process, and a receiving channel name (string).
-    When lcm_start_read is run, a thread is created that receives messages to this receiving channel and adds them to the queue.
-    Any message sent to this channel will be added to the queue as a tuple (header, [*args]). Header is a string and the list is variable length containing ints/strings.
+    When lcm_start_read is run, a thread is created that receives any message to this receiving channel and adds it to the queue as a tuple (header, [*args]). 
+    Header is a string and the list is variable length containing ints/strings.
     '''
     def __init__(self, queue, receive_channel):
         self.queue = queue
