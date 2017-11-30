@@ -46,3 +46,4 @@ def lcm_send(target_channel, header, *args):
     msg = '|||'.join(str(a) for a in args)
     msg = '|||'.join([header, msg])
     lc.publish(target_channel, msg.encode())       
+
