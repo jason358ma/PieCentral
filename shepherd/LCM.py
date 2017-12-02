@@ -9,7 +9,7 @@ def lcm_start_read(receive_channel, queue):
     header: string
     [*args]: variable length containing ints/strings. If no args, empty list.
     '''
-    comm = lcm.LCM()
+    comm = lcm.LCM('udpm://239.255.76.67:7667?ttl=1')
 
     def string_to_int(string):
         try:
@@ -41,4 +41,4 @@ def lcm_send(target_channel, header, *args):
         msg = '|||'.join([header, msg])
     else:
         msg = header
-    lcm.LCM().publish(target_channel, msg.encode())
+    lcm.LCM('udpm://239.255.76.67:7667?ttl=1').publish(target_channel, msg.encode())
