@@ -1,4 +1,4 @@
-# Field Control Networking Specificiation
+# Field Control Networking Specification
 
 ## Contents
 
@@ -22,7 +22,7 @@ Robots announce their presence upon joining the FC network.  FC sends out messag
 
 The FC network will have at least six clients, as follows:
 
-- One FC client.  This is the FC computer running the match.  An internet-enabled PiE computer+monitor. 
+- One FC client.  This is the FC computer running the match.  An internet-enabled PiE computer+monitor.
 - One Streaming client.  This is the computer recording/processing/displaying a livestream of the field.  An internet-enabled PiE computer+monitor.
 - Four driver station clients.  This acts as the student-robot interface (via Dawn), and as the robot-field control interface (see "Establishing Communication Links").  A wifi-enabled laptop or  computer+monitor.
 - Up to four robot clients.  A wifi-enabled Beagle Bone Black (BBB), via wifi dongle.  One per student robot.
@@ -31,20 +31,25 @@ Ideally there should be no additional clients; however, in the event that such s
 
 ### Assigning IP Addresses
 
-The Netmask is arbitrarily decided to be 245.245.245.0.  This implies that the subnet prefix, denoted by P, is "245.245.245".
+The subnet mask will be `255.255.255.0`, and the network prefix will be `192.168.128.0/24`.
 
-Every client will have a statically assigned IP address.  This is feasible due to the small number of total clients.  Assignment/reservations are as follows:
+Every client will have a statically assigned IP address.
+This is feasible due to the small number of total clients.
+Assignments are as follows (not all assignments are necessarily used):
 
-- P.255:  Broadcast
-- P.254:  FC center computer
-- P.253-250:  Driver station computers
-- P.249:  Streaming computer
-- P.248-246:  Spare FC clients
-- P.245:  Network gateway (i.e. router)
-- P.244-200:  Staff internal robots
-- P.199-51:  Unreserved
-- P.50-1: Student robots
-- P.0:  Netmask
+* `192.168.128.0`: Netmask
+* `192.168.128.1`: Gateway (MX65)
+* `192.168.128.2`: Switch (MS220-8P)
+* `192.168.128.3`: Router (MR32 for `pioneers`, unused during competitions)
+* `192.168.128.4`: Router (MR32 for `Mother Base`)
+* `192.168.128.[5-99]`: Reserved
+* `192.168.128.100`: Field control core
+* `192.168.128.101`: Streaming computer
+* `192.168.128.[102-105]`: Field control driver stations
+* `192.168.128.[106-113]`: Spare field control clients
+* `192.168.128.[114-199]`: Unreserved
+* `192.168.128.200-254`: Robots
+* `192.168.128.255`: Broadcast
 
 ### Software Configurations
 
@@ -64,7 +69,7 @@ A robot is also provided a script that takes the robot's unique identifier and t
 
 Qualities and Caveats:
 
-- This config management scheme is desirable due to the ease of updating robots en masse without breaking functionality.  Should any robots need to be reconfigured for any reason, one only need update the config file entries for the affected robot(s). 
+- This config management scheme is desirable due to the ease of updating robots en masse without breaking functionality.  Should any robots need to be reconfigured for any reason, one only need update the config file entries for the affected robot(s).
 - Note, however, that this scheme requires that prior to deployment, _every BBB, student and staff alike, must first be registered_ to some centralized system in order for the config file to be crafted and maintained.  ("Registering" constitutes pairing a MAC addres with a Team Number.)  Known dysfunctional BBBs should also be unregistered, so as to avoid potential config conflicts if accidentally redistributed.
 
 #### FC, Driver Station, and Streaming Clients
@@ -85,12 +90,12 @@ A robot can connect to at most one network at a time, which must be either the S
 
 In order to participate in a match, teams temporarily relinquish their routers.
 
-### Rationale 
+### Rationale
 
 This results in two desirable guarantees:
 
 1. When not in a match, students will always be able to connect with their robots over the Student network even if the robot is within range of the FC network.
-2. When in a match, robots will only have the option of connecting to the FC network (due to router confiscation). 
+2. When in a match, robots will only have the option of connecting to the FC network (due to router confiscation).
 
 Note that this may result in robots not in a match to still be connected to the FC network.  However, this is totally fine since the FC client will not be listening to robots not currently tied to a driver station (see "Sending Messages").  Additionally, students can easily restore connection to the Student network by restarting their robot in said network's presence.
 
