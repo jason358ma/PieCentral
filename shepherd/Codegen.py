@@ -1,18 +1,18 @@
 import random
 
 class Codegen:
-    
+
     def __init__(self, rfids, rand_seed=None):
         '''
         Manages the generated code and rfid-answer pairs.
         `rfids` must be an iterable of RFID ints.
         Duplicate RFIDs in the provided iterable are ignored.
         '''
-        
+
         # Seed our local RNG
         self._random = random.Random(rand_seed)
         rfids = set(rfids) # Ignore duplicates
-        
+
         # Keep generating random codes until we get one that gives a one-to-one
         # mapping between RFIDs and answers
         while True:
@@ -32,7 +32,7 @@ class Codegen:
                 self._rfid_to_ans[rfid] = solution
             if not duplicate_answers:
                 break
-        assert(len(self._rfid_to_ans) == len(self._ans_to_rfid))
+        assert len(self._rfid_to_ans) == len(self._ans_to_rfid)
 
     def check_solution(self, solution):
         '''
@@ -40,18 +40,18 @@ class Codegen:
         return None if it doesn't match any.
         '''
         return self._ans_to_rfid.get(solution, None)
-        
+
     def get_code(self):
         '''
         Get the challenge code to be sent to students
         '''
         return self._code
-    
+
     def get_solution(self, rfid):
         '''
         Returns which solution that the RFID corresponds to
         return None if it doesn't match any.
-        
+
         >>> c = Codegen([1, 2, 3], 0)
         >>> c.check_solution(c.get_solution(1))
         1
@@ -73,7 +73,7 @@ class Codegen:
 def next_power(num):
     '''
     The next biggest (whole) power of two
-    
+
     >>> next_power(2)
     2
     >>> next_power(3)
@@ -94,7 +94,7 @@ def next_power(num):
 def reverse_digits(num):
     '''
     The number with digits reversed
-    
+
     >>> reverse_digits(2)
     2
     >>> reverse_digits(3)
@@ -117,7 +117,7 @@ def reverse_digits(num):
 def smallest_prime_fact(num):
     '''
     Smallest prime factor
-    
+
     >>> smallest_prime_fact(2)
     2
     >>> smallest_prime_fact(3)
@@ -140,7 +140,7 @@ def smallest_prime_fact(num):
 def prime_factor(num):
     '''
     Output a concatenated sequence of prime factors
-    
+
     >>> prime_factor(2)
     2
     >>> prime_factor(3)
@@ -165,7 +165,7 @@ def prime_factor(num):
 def silly_base_two(num):
     '''
     Convert to base two (with digits interpreted as if in base ten)
-    
+
     >>> silly_base_two(2)
     10
     >>> silly_base_two(3)
@@ -193,9 +193,9 @@ def most_common_digit(num):
     Output the digit with the greatest N.
     (If there is a tie, use the largest digit)
     Return that (digit + 10) raised to the power of (N x 2)
-    
+
     Special case: zero should just output 100.
-    
+
     >>> most_common_digit(2)
     144
     >>> most_common_digit(3)
@@ -233,7 +233,7 @@ def valid_isbn_ten(num):
     Return the number if it is valid, or the next integer after which is valid.
     Use only the bottom 10 digits if the input is longer than 10 digits.
     Use zeros in place of missing digits if the input is shorter than 10 digits.
-    
+
     >>> valid_isbn_ten(2)
     19
     >>> valid_isbn_ten(3)
@@ -249,13 +249,13 @@ def valid_isbn_ten(num):
     '''
     valid = False
     while not valid:
-        sum = 0
+        total = 0
         digit_list = num
         for i in range(0, 10):
             digit = digit_list % 10
             digit_list = digit_list // 10
-            sum += digit * (10 - i)
-        valid = sum % 11 == 0
+            total += digit * (10 - i)
+        valid = total % 11 == 0
         if not valid:
             num += 1
     return num
@@ -267,7 +267,7 @@ def simd_four_square(num):
     each group is preserved. If the number of input digits is not evenly
     divisible by four, pad the left of the input with as few zeros necessary
     until the input digit count is evenly divisble by four.
-    
+
     >>> simd_four_square(3210)
     9410
     >>> simd_four_square(11121314)
@@ -280,27 +280,27 @@ def simd_four_square(num):
     num_digits = 1
     while num // (10 ** num_digits) > 0:
         num_digits += 1
-    
+
     if num_digits % 4 != 0:
         num_digits += 4 - (num_digits % 4)
-    
+
     group_len = num_digits // 4
-    
+
     output = 0
-    
+
     for group_idx in [3, 2, 1, 0]:
         group = (num // (10 ** (group_idx * group_len))) % (10 ** group_len)
         squared = (group * group) % (10 ** group_len)
         output *= 10 ** group_len
         output += squared
-    
+
     return output
 def double_caesar_cipher(key):
     '''
-    Use the given input as a double-caesar-cipher encryption key for the first 
-    ten digits of pi. If the key is not long enough, reuse it to encrypt the 
+    Use the given input as a double-caesar-cipher encryption key for the first
+    ten digits of pi. If the key is not long enough, reuse it to encrypt the
     unencrypted digits, starting from the least significant digit.
-    
+
     >>> double_caesar_cipher(0)
     3141592653
     >>> double_caesar_cipher(1)
@@ -318,8 +318,8 @@ def double_caesar_cipher(key):
     >>> double_caesar_cipher(123)
     6264615776
     '''
-    pi = 3141592653
-    pi_str = str(pi)
+    msg = 3141592653
+    pi_str = str(msg)
     key_str = str(key)
     # expand key_str to be at least as long as pi_str
     key_str *= (len(pi_str) // len(key_str)) + 1
@@ -335,7 +335,7 @@ def generate_challenge_code(rand):
     concatenated functions for the students to decode and apply to RFID tags.
     See student_decode() below.
     '''
-    # TODO: Actually write a proper generator. This is just a sample.
+    # Need to actually write a proper generator. This is just a sample.
     code = 0
     for _ in range(5):
         code *= 10
@@ -344,8 +344,8 @@ def generate_challenge_code(rand):
 
 def staff_decode(challenge_code, rfid_seed):
     '''
-    Staff solution for the student decoder. Takes as input a code and the data 
-    collected by an RFID scanner, and outputs the result of applying the 
+    Staff solution for the student decoder. Takes as input a code and the data
+    collected by an RFID scanner, and outputs the result of applying the
     encoded functions onto that RFID "seed".
     '''
     func_map = {}
@@ -357,12 +357,12 @@ def staff_decode(challenge_code, rfid_seed):
     func_map[6] = most_common_digit
     func_map[7] = valid_isbn_ten
     func_map[8] = simd_four_square
-    
+
     code = challenge_code
     output = rfid_seed
     while code > 0:
         digit = code % 10
         code //= 10
         output = func_map[digit](output)
-    
+
     return output
