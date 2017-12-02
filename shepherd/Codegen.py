@@ -3,42 +3,64 @@ import random
 class Codegen:
     
     def __init__(self, rfids, rand_seed=None):
+        '''
+        Manages the generated code and rfid-answer pairs.
+        `rfids` must be an iterable of RFID ints.
+        Duplicate RFIDs in the provided iterable are ignored.
+        '''
+        
+        # Seed our local RNG
         self._random = random.Random(rand_seed)
-        solution_set = set();
-        while(len(solution_set) != 6):
-            self.solution_array = []
-            solution_set = set()
-            self.code = self.generate_challenge_code()
-            for i in range(len(rfids)):
-                solution = student_decode(self.code, rfids[i])
-                solution_set.add(solution)
-                self.solution_array += [solution]
+        rfids = set(rfids) # Ignore duplicates
+        
+        # Keep generating random codes until we get one that gives a one-to-one
+        # mapping between RFIDs and answers
+        while True:
+            self._rfid_to_ans = {}
+            self._ans_to_rfid = {}
+            self._code = generate_challenge_code(self._random)
+            # We want there to be a one-to-one mapping between RFIDs and answers
+            # Therefore only break the loop if we randomly generate a code
+            # that produces unique answers for every RFID in the list
+            duplicate_answers = False
+            for rfid in rfids:
+                solution = staff_decode(self._code, rfid)
+                if solution in self._ans_to_rfid:
+                    duplicate_answers = True
+                    break
+                self._ans_to_rfid[solution] = rfid
+                self._rfid_to_ans[rfid] = solution
+            if not duplicate_answers:
+                break
+        assert(len(self._rfid_to_ans) == len(self._ans_to_rfid))
 
-
+    def check_solution(self, solution):
+        '''
+        Returns which RFID that the solution corresponds to
+        return None if it doesn't match any.
+        '''
+        return self._ans_to_rfid.get(solution, None)
+        
+    def get_code(self):
+        '''
+        Get the challenge code to be sent to students
+        '''
+        return self._code
     
-    def generate_challenge_code(self):
+    def get_solution(self, rfid):
         '''
-        Generates a code corresponding to a random sequence of
-        concatenated functions for the students to decode and apply to RFID tags.
-        See student_decode() below.
+        Returns which solution that the RFID corresponds to
+        return None if it doesn't match any.
+        
+        >>> c = Codegen([1, 2, 3], 0)
+        >>> c.check_code(c.get_solution(1))
+        1
+        >>> c.check_code(c.get_solution(2))
+        2
+        >>> c.check_code(c.get_solution(3))
+        3
         '''
-        # TODO: Actually write a proper generator. This is just a sample.
-        code = 0
-        for _ in range(5):
-            code *= 10
-            code += self._random.randint(1, 8)
-        return code
-
-    def check_code(self, solution):
-        '''
-        Returns which rfid index that the solution corresponds to
-        return -1 if it doesn't match any.
-        '''
-        for i in range(len(self.solution_array)):
-            if(solution == self.solution_array[i]):
-                return i
-        return -1
-
+        return self._rfid_to_ans.get(rfid, None)
 
 # Various ideas for functions for the students
 # Included are example student implementations
@@ -273,18 +295,18 @@ def simd_four_square(num):
         output += squared
     
     return output
-
 def double_caesar_cipher(key):
     '''
     Use the given input as a double-caesar-cipher encryption key for the first 
     ten digits of pi. If the key is not long enough, reuse it to encrypt the 
     unencrypted digits, starting from the least significant digit.
     
+    TODO: fix, appears that the second doctest (123) doesn't work!
+    
     >>> double_caesar_cipher(0)
     3141592653
     >>> double_caesar_cipher(123)
     6264615776
-    >>>
     '''
     pi = 3141592653
     pi_str = str(pi)
@@ -294,8 +316,20 @@ def double_caesar_cipher(key):
         result = result * 10 + (int(pi_str[i]) + int(key_str[i % len(key_str)])) % 10
     return result
 
-    
-def student_decode(challenge_code, rfid_seed):
+def generate_challenge_code(rand):
+    '''
+    Generates a code corresponding to a random sequence of
+    concatenated functions for the students to decode and apply to RFID tags.
+    See student_decode() below.
+    '''
+    # TODO: Actually write a proper generator. This is just a sample.
+    code = 0
+    for _ in range(5):
+        code *= 10
+        code += rand.randint(1, 8)
+    return code
+
+def staff_decode(challenge_code, rfid_seed):
     '''
     Staff solution for the student decoder. Takes as input a code and the data 
     collected by an RFID scanner, and outputs the result of applying the 
@@ -319,3 +353,4 @@ def student_decode(challenge_code, rfid_seed):
         output = func_map[digit](output)
     
     return output
+
