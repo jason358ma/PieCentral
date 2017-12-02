@@ -53,11 +53,11 @@ class Codegen:
         return None if it doesn't match any.
         
         >>> c = Codegen([1, 2, 3], 0)
-        >>> c.check_code(c.get_solution(1))
+        >>> c.check_solution(c.get_solution(1))
         1
-        >>> c.check_code(c.get_solution(2))
+        >>> c.check_solution(c.get_solution(2))
         2
-        >>> c.check_code(c.get_solution(3))
+        >>> c.check_solution(c.get_solution(3))
         3
         '''
         return self._rfid_to_ans.get(rfid, None)
@@ -301,20 +301,33 @@ def double_caesar_cipher(key):
     ten digits of pi. If the key is not long enough, reuse it to encrypt the 
     unencrypted digits, starting from the least significant digit.
     
-    TODO: fix, appears that the second doctest (123) doesn't work!
-    
     >>> double_caesar_cipher(0)
     3141592653
+    >>> double_caesar_cipher(1)
+    4252603764
+    >>> double_caesar_cipher(9677799275)
+    2718281828
+    >>> double_caesar_cipher(10000000000)
+    3141592653
+    >>> double_caesar_cipher(3141592653)
+    6282084206
+    >>> double_caesar_cipher(12136)
+    4354104789
+    >>> double_caesar_cipher(969518457)
+    0
     >>> double_caesar_cipher(123)
     6264615776
     '''
     pi = 3141592653
     pi_str = str(pi)
     key_str = str(key)
-    result = 0
+    # expand key_str to be at least as long as pi_str
+    key_str *= (len(pi_str) // len(key_str)) + 1
+    result = ''
     for i in range(len(pi_str)):
-        result = result * 10 + (int(pi_str[i]) + int(key_str[i % len(key_str)])) % 10
-    return result
+        ciph = (int(pi_str[-1 - i]) + int(key_str[-1 - i])) % 10
+        result = str(ciph) + result
+    return int(result)
 
 def generate_challenge_code(rand):
     '''
@@ -353,4 +366,3 @@ def staff_decode(challenge_code, rfid_seed):
         output = func_map[digit](output)
     
     return output
-
