@@ -3,13 +3,13 @@ import random
 class Codegen:
     
     def __init__(rfids):
-    	solution_set = set();
+        solution_set = set();
         while(len(solution_set) != 6):
-        	self.solution_array = []
+            self.solution_array = []
             solution_set = set()
             self.code = generate_challenge_code()
             for i in range(len(rfids)):
-            	solution = student_decode(code, rfids[i])
+                solution = student_decode(code, rfids[i])
                 solution_set.add(solution)
                 self.solution_array += [solution]
 
@@ -28,14 +28,14 @@ class Codegen:
         return code
 
     def check_code(solution):
-    	'''
-    	Returns which rfid index that the solution corresponds to
-    	return -1 if it doesn't match any.
-    	'''
-    	for i in range(len(self.solution_array)):
-    		if(solution == self.solution_array[i]):
-    			return i
-    	return -1
+        '''
+        Returns which rfid index that the solution corresponds to
+        return -1 if it doesn't match any.
+        '''
+        for i in range(len(self.solution_array)):
+            if(solution == self.solution_array[i]):
+                return i
+        return -1
 
 
 # Various ideas for functions for the students
