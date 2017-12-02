@@ -5,6 +5,7 @@ joiner = "|||"
 
 class LCMClass:
     '''
+    Creates LCM listener when initialized.
     __init__: receiving channel name (string), queue (Python queue object)
     lcm_start_read: creates thread that receives any message to receiving
     channel and adds it to queue
@@ -13,11 +14,11 @@ class LCMClass:
         self.receive_channel = receive_channel
         self.queue = queue
         self.comm = lcm.LCM()
+        self.lcm_start_read()
 
     def lcm_start_read(self):
         '''
-        Starts thread that receives messages sent to channel and adds them to queue
-        as a tuple (header, [*args]).
+        Adds received messages to queue as a tuple (header, [*args]).
         header: string
         [*args]: variable length containing ints/strings. If no args, empty list.
         '''
