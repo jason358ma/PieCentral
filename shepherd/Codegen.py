@@ -2,32 +2,34 @@ import random
 
 class Codegen:
     
-    def __init__(rfids):
+    def __init__(self, rfids, rand_seed=None):
+        self._random = random.Random(rand_seed)
         solution_set = set();
         while(len(solution_set) != 6):
             self.solution_array = []
             solution_set = set()
-            self.code = generate_challenge_code()
+            self.code = self.generate_challenge_code()
             for i in range(len(rfids)):
-                solution = student_decode(code, rfids[i])
+                solution = student_decode(self.code, rfids[i])
                 solution_set.add(solution)
                 self.solution_array += [solution]
 
 
     
-    def generate_challenge_code():
+    def generate_challenge_code(self):
         '''
         Generates a code corresponding to a random sequence of
         concatenated functions for the students to decode and apply to RFID tags.
         See student_decode() below.
         '''
         # TODO: Actually write a proper generator. This is just a sample.
+        code = 0
         for _ in range(5):
             code *= 10
-            code += rand.randint(1, 8)
+            code += self._random.randint(1, 8)
         return code
 
-    def check_code(solution):
+    def check_code(self, solution):
         '''
         Returns which rfid index that the solution corresponds to
         return -1 if it doesn't match any.
