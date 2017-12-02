@@ -285,9 +285,12 @@ def double_caesar_cipher(key):
     >>>
     '''
     pi = 3141592653
-    temp = key
-    tens = 
-    while(temp > 0):
+    pi_str = str(pi)
+    key_str = str(key)
+    result = 0
+    for i in range(len(pi_str)):
+        result = result * 10 + (int(pi_str[i]) + int(key_str[i % len(key_str)])) % 10
+    return result
 
     
 def student_decode(challenge_code, rfid_seed):
