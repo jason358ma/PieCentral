@@ -48,22 +48,22 @@ Assignments are as follows (not all assignments are necessarily used):
 * `192.168.128.[102-105]`: Field control driver stations
 * `192.168.128.[106-113]`: Spare field control clients
 * `192.168.128.[114-199]`: Unreserved
-* `192.168.128.200-254`: Robots
+* `192.168.128.[200-254]`: Robots
 * `192.168.128.255`: Broadcast
 
 ### Software Configurations
 
 #### Network
 
-- **Netmask.**  As mentioned above, this is arbitrarily decided to be P.0.
-- **Gateway IP.** This is arbitrarily decided to be P.245.
+- **Netmask.** As mentioned above, this is arbitrarily decided to be `192.168.128.0`.
+- **Gateway IP.** This is arbitrarily decided to be `192.168.128.1`.
 
 #### Robot Clients
 
 Each robot is provided a config file mapping a unique identifier (e.g. BBB's MAC address) to a collection of robot-specific settings:
 
 - **Team Number.**  If less than 50, a student robot; if greater than 50, a staff internal robot.
-- **IP Address.**  This is derived from team number, as P.TeamNumber.
+- **IP Address.** Takes the form `192.168.128.2XX`, where `XX` is the two-digit form of the team number.
 
 A robot is also provided a script that takes the robot's unique identifier and this config file, and generates a customized network config file containing the above team-specific settings, as well as static network configurations (netmask, gateway IP).
 
