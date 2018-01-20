@@ -2,23 +2,44 @@ import random
 
 class Codegen:
 
-    def __init__(self, rfids, rand_seed=None):
+    def __init__(self, rfids, rand_seed=None, func_distrib=None):
         '''
         Manages the generated code and rfid-answer pairs.
         `rfids` must be an iterable of RFID ints.
         Duplicate RFIDs in the provided iterable are ignored.
+
+        `rand_seed` is used to seed the random number generator, to
+        allow reproducable tests and bugs. If None, no specific seed
+        is used
+
+        `func_distrib` is a map where the keys are digits and the values
+        is the weight for that digit be picked whenever we need
+        to pick a digit to use randomly. There is no need for
+        the total weights to add up to one. If `func_distrib` is None,
+        then a uniform distribution is used by default.
         '''
 
         # Seed our local RNG
         self._random = random.Random(rand_seed)
         rfids = set(rfids) # Ignore duplicates
+        
+        func_map = generate_function_mapping()
+        
+        # Generate a uniform distribution if None is provided
+        if func_distrib == None:
+            func_distrib = {}
+            for i in func_map.keys():
+                if i == 0:
+                    func_distrib[i] = 0
+                    continue
+                func_distrib[i] = 1
 
         # Keep generating random codes until we get one that gives a one-to-one
         # mapping between RFIDs and answers
         while True:
             self._rfid_to_ans = {}
             self._ans_to_rfid = {}
-            self._code = generate_challenge_code(self._random)
+            self._code = _helper_generate_potentially_unsafe_code(self._random, rfids, func_distrib, func_map)
             # We want there to be a one-to-one mapping between RFIDs and answers
             # Therefore only break the loop if we randomly generate a code
             # that produces unique answers for every RFID in the list
@@ -32,6 +53,7 @@ class Codegen:
                 self._rfid_to_ans[rfid] = solution
             if not duplicate_answers:
                 break
+                
         # This is always true since we guaranteed above that
         # the (rfid --> solution) mapping is bijective
         assert len(self._rfid_to_ans) == len(self._ans_to_rfid)
@@ -63,6 +85,118 @@ class Codegen:
         3
         '''
         return self._rfid_to_ans.get(rfid, None)
+
+    def check_rfid_answer(self, student_answer, rfids):
+        '''
+        Returns one of the following:
+        -   the index, idx, of the rfid in the `rfids` list for which
+            staff_decode(self.get_code(), rfids[idx]) == student_answer
+            is True
+        -   the error code -1 iff the above is not possible 
+        '''
+
+        corresponding_rfid = self.check_solution(student_answer)
+        if corresponding_rfid == None:
+            return -1
+        idx = -1
+        for i in range(len(rfids)):
+            if rfids[i] == corresponding_rfid:
+                idx = i
+                break
+        if idx == -1:
+            return -1
+        assert(staff_decode(self.get_code(), rfids[idx]) == student_answer)
+        return idx
+
+
+def _helper_generate_potentially_unsafe_code(rand, rfids, func_distrib, func_map):
+    '''
+    Helper function for this module.
+
+    Clients should *not* use this function directly, as it makes no
+    guarantees on the quality of the generated code. That responsibility
+    belongs to the Codegen class above!
+    
+    Generates a code corresponding to a random sequence of
+    concatenated functions for the students to decode and apply to RFID tags.
+    See student_decode() below.
+    '''
+    # Generate function-related data
+    applied_map = {} #  Results of applying a given function to a given RFID
+    is_bijective = {} # True iff the given function is bijective over the given RFID domain
+
+    # Apply every function to every rfid
+    for i in func_map.keys():
+        applied_map[i] = {}
+        outputs = set()
+        bijective = True
+        for rfid in rfids:
+            output = func_map[i](rfid)
+            applied_map[i][rfid] = output
+            if output in outputs:
+                bijective = False
+            else:
+                outputs.add(output)
+        is_bijective[i] = bijective
+
+    # Randomly pick a bijective function to use first
+    bijective_funcs_distr = _helper_filter_map(func_distrib, is_bijective)
+    bijective_digit = 0 # Use the fallback by default
+    if len(bijective_funcs_distr) > 0:
+        bijective_digit = _helper_pick_random(rand.uniform(0, 1), bijective_funcs_distr)
+
+    # Randomly generate the remaining digits
+    code = 0
+    for _ in range(5):
+        code *= 10
+        code += _helper_pick_random(rand.uniform(0, 1), func_distrib)
+    code *= 10
+    code += bijective_digit
+
+    return code
+
+def _helper_filter_map(data_map, filter_map):
+    '''
+    Helper function for this module.
+
+    Makes a copy of data_map that only includes keys contained in
+    filter_map and only if filter_map[key] evaluates to True
+    '''
+
+    retval = {}
+
+    for key in filter_map.keys():
+        if filter_map[key]:
+            retval[key] = data_map[key]
+    
+    return retval
+
+def _helper_pick_random(rand_normalized, weighted_choice_dict):
+    '''
+    Helper function for this module.
+
+    Given a random number in the range [0.0, 1.0], pick a key from
+    the provided dictionary where the values are weighted probabilities
+    that that key will be picked. The total weight does not need to
+    add to one.
+    '''
+    
+    wcd = weighted_choice_dict
+
+    assert(len(wcd) > 0)
+    fallback = wcd[next(iter(wcd.keys()))]
+
+    total = 0
+    for key in wcd.keys():
+        total += wcd[key]
+    rand = rand_normalized * total
+
+    for key in wcd.keys():
+        if rand <= wcd[key]:
+            return key
+        rand -= wcd[key]
+    return fallback
+    
 
 # Various ideas for functions for the students
 # Included are example student implementations
@@ -331,29 +465,12 @@ def double_caesar_cipher(key):
         result = str(ciph) + result
     return int(result)
 
-def generate_challenge_code(rand):
+def generate_function_mapping():
     '''
-    Generates a code corresponding to a random sequence of
-    concatenated functions for the students to decode and apply to RFID tags.
-    See student_decode() below.
+    Returns a dictionary that maps code digits to the function to run
+    on the RFID values
     '''
-    # Need to actually write a proper generator. This is just a sample.
-    code = 0
-    for _ in range(5):
-        code *= 10
-        code += rand.randint(1, 8)
-    return code
-
-def staff_decode(challenge_code, rfid_seed):
-    '''
-    Staff solution for the student decoder. Takes as input a code and the data
-    collected by an RFID scanner, and outputs the result of applying the
-    encoded functions onto that RFID "seed".
-    '''
-
-    # No preprocessing
-    identity = lambda x: x
-
+    
     # Generate a function to limit size of inputs
     def limit_input_to(limit):
         def retval(input_val):
@@ -362,16 +479,37 @@ def staff_decode(challenge_code, rfid_seed):
             return input_val
         return retval
 
-    # Pairs of student-made functions and pre-processors run on input beforehand
+    # Composes two single-input functions together, A(B(x))
+    def compose_funcs(func_a, func_b):
+        def composed(input_x):
+            return func_a(func_b(input_x))
+        return composed
+
+    # Used only in the (hopefully) rare event that none of the other
+    # functions are bijections with a given domain of RFIDs
+    def identity(x):
+        return x
+
     func_map = {}
-    func_map[1] = (next_power, identity)
-    func_map[2] = (reverse_digits, identity)
-    func_map[3] = (smallest_prime_fact, limit_input_to(1000000))
-    func_map[4] = (double_caesar_cipher, identity)
-    func_map[5] = (silly_base_two, identity)
-    func_map[6] = (most_common_digit, identity)
-    func_map[7] = (valid_isbn_ten, identity)
-    func_map[8] = (simd_four_square, identity)
+    func_map[0] = identity
+    func_map[1] = next_power
+    func_map[2] = reverse_digits
+    func_map[3] = compose_funcs(smallest_prime_fact, limit_input_to(1000000))
+    func_map[4] = double_caesar_cipher
+    func_map[5] = silly_base_two
+    func_map[6] = most_common_digit
+    func_map[7] = valid_isbn_ten
+    func_map[8] = simd_four_square
+
+    return func_map
+
+def staff_decode(challenge_code, rfid_seed):
+    '''
+    Staff solution for the student decoder. Takes as input a code and the data
+    collected by an RFID scanner, and outputs the result of applying the
+    encoded functions onto that RFID "seed".
+    '''
+    func_map = generate_function_mapping()
 
     code = challenge_code
     output = ''
@@ -379,10 +517,9 @@ def staff_decode(challenge_code, rfid_seed):
         digit = code % 10
         code //= 10
 
-        func = func_map[digit][0]
-        preprocess = func_map[digit][1]
+        func = func_map[digit]
 
-        output += '555' + str(func(preprocess(rfid_seed)))
+        output += '555' + str(func(rfid_seed))
 
     return int(output)
 
@@ -390,17 +527,20 @@ def _debug_random_sample(sample_size):
     # Random sampling of codes, finds how frequent each digit is
     count = {}
     total = 0
-    for i in range(1, 9):
+    for i in range(0, 9):
         count[i] = 0
     rng = random.Random(0)
     rfids = [rng.randint(0, 999999999999999) for _ in range(0, 5)]
     for i in range(0, sample_size):
         code = Codegen(rfids, i).get_code()
+        if i % (sample_size // 10) == 0:
+            print()
         while code > 0:
             digit = code % 10
             code //= 10
             count[digit] += 1
             total += 1
-    for i in range(1, 9):
+    for i in range(0, 9):
         count[i] /= total
+    print(count)
     return count
