@@ -32,7 +32,7 @@ class Codegen:
                 self._rfid_to_ans[rfid] = solution
             if not duplicate_answers:
                 break
-        # This is always true since we guaranteed above that 
+        # This is always true since we guaranteed above that
         # the (rfid --> solution) mapping is bijective
         assert len(self._rfid_to_ans) == len(self._ans_to_rfid)
 
@@ -350,18 +350,18 @@ def staff_decode(challenge_code, rfid_seed):
     collected by an RFID scanner, and outputs the result of applying the
     encoded functions onto that RFID "seed".
     '''
-    
+
     # No preprocessing
     identity = lambda x: x
-    
+
     # Generate a function to limit size of inputs
     def limit_input_to(limit):
-        def retval(x):
-            while x > limit:
-                x = (x % limit) + (x // limit)
-            return x
+        def retval(input_val):
+            while input_val > limit:
+                input_val = (input_val % limit) + (input_val // limit)
+            return input_val
         return retval
-    
+
     # Pairs of student-made functions and pre-processors run on input beforehand
     func_map = {}
     func_map[1] = (next_power, identity)
@@ -378,32 +378,29 @@ def staff_decode(challenge_code, rfid_seed):
     while code > 0:
         digit = code % 10
         code //= 10
-        
+
         func = func_map[digit][0]
         preprocess = func_map[digit][1]
-        
+
         output += '555' + str(func(preprocess(rfid_seed)))
 
     return int(output)
 
-'''
-# Random sampling of codes, finds how frequent each digit is
-count = {}
-total = 0
-for i in range(1, 9):
-    count[i] = 0
-rng = random.Random(0)
-rfids = [rng.randint(0,999999999999999) for _ in range(0, 5)]
-for i in range(0, 100):
-    code = Codegen(rfids, i).get_code()
-    while code > 0:
-        digit = code % 10
-        code //= 10
-        count[digit] += 1
-        total += 1
-for i in range(1, 9):
-    count[i] /= total
-print(count)
-'''
-
-    
+def _debug_random_sample(sample_size):
+    # Random sampling of codes, finds how frequent each digit is
+    count = {}
+    total = 0
+    for i in range(1, 9):
+        count[i] = 0
+    rng = random.Random(0)
+    rfids = [rng.randint(0, 999999999999999) for _ in range(0, 5)]
+    for i in range(0, sample_size):
+        code = Codegen(rfids, i).get_code()
+        while code > 0:
+            digit = code % 10
+            code //= 10
+            count[digit] += 1
+            total += 1
+    for i in range(1, 9):
+        count[i] /= total
+    return count
