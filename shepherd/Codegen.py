@@ -22,9 +22,9 @@ class Codegen:
         # Seed our local RNG
         self._random = random.Random(rand_seed)
         rfids = set(rfids) # Ignore duplicates
-        
+
         func_map = generate_function_mapping()
-        
+
         # Generate a uniform distribution if None is provided
         if func_distrib == None:
             func_distrib = {}
@@ -53,7 +53,7 @@ class Codegen:
                 self._rfid_to_ans[rfid] = solution
             if not duplicate_answers:
                 break
-                
+
         # This is always true since we guaranteed above that
         # the (rfid --> solution) mapping is bijective
         assert len(self._rfid_to_ans) == len(self._ans_to_rfid)
@@ -126,7 +126,7 @@ def _helper_generate_potentially_unsafe_code(rand, rfids, func_distrib, func_map
     Clients should *not* use this function directly, as it makes no
     guarantees on the quality of the generated code. That responsibility
     belongs to the Codegen class above!
-    
+
     Generates a code corresponding to a random sequence of
     concatenated functions for the students to decode and apply to RFID tags.
     See student_decode() below.
@@ -178,7 +178,7 @@ def _helper_filter_map(data_map, filter_map):
     for key in filter_map.keys():
         if filter_map[key]:
             retval[key] = data_map[key]
-    
+
     return retval
 
 def _helper_pick_random(rand_normalized, weighted_choice_dict):
@@ -190,7 +190,7 @@ def _helper_pick_random(rand_normalized, weighted_choice_dict):
     that that key will be picked. The total weight does not need to
     add to one.
     '''
-    
+
     wcd = weighted_choice_dict
 
     assert(len(wcd) > 0)
@@ -206,7 +206,7 @@ def _helper_pick_random(rand_normalized, weighted_choice_dict):
             return key
         rand -= wcd[key]
     return fallback
-    
+
 
 # Various ideas for functions for the students
 # Included are example student implementations
@@ -480,7 +480,7 @@ def generate_function_mapping():
     Returns a dictionary that maps code digits to the function to run
     on the RFID values
     '''
-    
+
     # Generate a function to limit size of inputs
     def limit_input_to(limit):
         def retval(input_val):
