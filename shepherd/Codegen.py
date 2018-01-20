@@ -92,7 +92,17 @@ class Codegen:
         -   the index, idx, of the rfid in the `rfids` list for which
             staff_decode(self.get_code(), rfids[idx]) == student_answer
             is True
-        -   the error code -1 iff the above is not possible 
+        -   the error code -1 iff the above is not possible
+        >>> r = [0, 1, 2, 3]
+        >>> c = Codegen(r, 0)
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[0]), r)
+        0
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[1]), r)
+        1
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[2]), r)
+        2
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[3]), r)
+        3
         '''
 
         corresponding_rfid = self.check_solution(student_answer)
@@ -544,3 +554,7 @@ def _debug_random_sample(sample_size):
         count[i] /= total
     print(count)
     return count
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
