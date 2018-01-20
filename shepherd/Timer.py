@@ -1,22 +1,34 @@
 class Timer:
-	'''
-	This class should spawn another thread that will keep track of a target time
-	and compare it to the current system time in order to see how much time is left
-	'''
-	def __init__(self):
+    """
+    This class should spawn another thread that will keep track of a target time
+    and compare it to the current system time in order to see how much time is left
+    """
+    def __init__(self, timer_type, goal_name=None):
+        """
+        timer_type - a Enum representing the type of timer that this is:
+                        TIMER_TYPES.BID - represents a bid timer
+                        TIMER_TYPES.MATCH - represents the time of the current
+                                            stage in the match
+                        TIMER_TYPES.COOLDOWN - represents a cooldown timer for
+                                               the cooldown when a powerup
+                                               cannot be applied
+                        TIMER_TYPES.CODE_COOLDOWN - represents a cooldown timer
+                                                    for a code
+                        TIMER_TYPES.DURATION - represents a duration timer for
+                                               a powerup
+        """
+        self.active = False
+        self.timer_type = timer_type
+        self.goal_name = goal_name
 
-	def startTimer(self, duration):
-		'''
-		Starts a new timer with the duration which is given in seconds
-		'''
+    def start_timer(self, duration):
+        """Starts a new timer with the duration (seconds) and sets timer to active"""
+        pass
 
-	def extendDuration(self, duration):
-		'''
-		Adds time to the timer based on the duration which is given in seconds
-		'''
+    def reset(self):
+        """Stops the current timer (if any) and sets timer to inactive"""
+        pass
 
-	def getTimeLeft(self):
-		'''
-		Returns the amount of time left in seconds
-		Returns -1 if the most recent timer has expired/there is no timer being tracked
-		'''
+    def is_running(self):
+        """Returns true if the timer is currently running"""
+        return self.active
