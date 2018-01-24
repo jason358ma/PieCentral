@@ -93,7 +93,7 @@ class Codegen:
             staff_decode(self.get_code(), rfids[idx]) == student_answer
             is True
         -   the error code -1 iff the above is not possible
-        >>> r = [0, 1, 2, 3]
+        >>> r = [31415, 12345, 14916, 77777]
         >>> c = Codegen(r, 0)
         >>> c.check_rfid_answer(staff_decode(c.get_code(), r[0]), r)
         0
@@ -103,6 +103,10 @@ class Codegen:
         2
         >>> c.check_rfid_answer(staff_decode(c.get_code(), r[3]), r)
         3
+        >>> c.check_rfid_answer(0, r)
+        -1
+        >>> c.check_rfid_answer(12345, r)
+        -1
         '''
 
         corresponding_rfid = self.check_solution(student_answer)
@@ -134,7 +138,7 @@ def _helper_generate_potentially_unsafe_code(rand, rfids, func_distrib, func_map
     # Generate function-related data
     applied_map = {} #  Results of applying a given function to a given RFID
     is_bijective = {} # True iff the given function is bijective over the given RFID domain
-
+    
     # Apply every function to every rfid
     for i in func_map.keys():
         applied_map[i] = {}
@@ -544,7 +548,7 @@ def _debug_random_sample(sample_size):
     for i in range(0, sample_size):
         code = Codegen(rfids, i).get_code()
         if i % (sample_size // 10) == 0:
-            print()
+            print(code)
         while code > 0:
             digit = code % 10
             code //= 10
@@ -557,4 +561,5 @@ def _debug_random_sample(sample_size):
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+    print("Performing doctests...")
+    print(doctest.testmod())
