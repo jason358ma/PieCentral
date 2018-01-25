@@ -1,5 +1,35 @@
 import random
 
+# Codegen for the Shepherd module.
+#
+# See example:
+#
+# def example_usage():
+#   # RIFD, list and numbers can be any non-negative size
+#   rfids = [1234, 2345, 3456, 4567, 5678, 6789]
+#   codegen = Codegen(rfids)
+#   challenge = codegen.generate_challenge(6) # Generate 6-digit-long codes
+#
+#   code = challenge.get_code()
+#
+#   # Send this to the students somehow...
+#   send_code_to_student(code)
+#
+#   # We receive an answer from the students somehow...
+#   answer = get_answer_from_student()
+#
+#   # Check if the student decoded the rfid correctly, and which one
+#   report = challenge.check_rfid_answer(answer, rfids)
+#
+#   if report == -1:
+#       print("Student decoded nothing or decoded incorrectly")
+#   else:
+#       print("Student decoded RFID " + str(rfids[report]))
+#
+#   # We can continue to generate more challenge codes as needed:
+#   challenge2 = codegen.generate_challenge(20) # Generate 20-digit-long codes
+#
+
 class Codegen:
 
     def __init__(self, rfids, rand_seed=None):
@@ -54,12 +84,12 @@ class Codegen:
         return Challenge(self._random, self._rfids, func_distrib, bijective_funcs_distr, digit_len, self._decode_precompute)
 
 class Challenge:
-    '''
-    This class should not be instantiated directly! Use the factory Codegen
-    above!
-    '''
 
     def __init__(self, rand_gen, rfids, func_distrib, bijective_funcs_distr, digit_len, decode_precompute):
+        '''
+        This class should not be instantiated directly! Use the factory Codegen
+        above!
+        '''
 
         # Keep generating random codes until we get one that gives a one-to-one
         # mapping between RFIDs and answers
