@@ -61,10 +61,11 @@ class Codegen:
 
         # Generate function-related data
         self._decode_precompute = staff_decode_precompute(self._rfids)
-        self._is_bijective = {} # True iff the given function is bijective over the given RFID domain
+        # True iff the given function is bijective over the given RFID domain
+        self._is_bijective = {}
 
         # Apply every function to every rfid. This allows us to
-        for i in self._decode_precompute.keys():
+        for i in self._decode_precompute:
             outputs = set()
             bijective = True
             for rfid in self._rfids:
@@ -92,19 +93,22 @@ class Codegen:
         False
         '''
         # Generate a uniform distribution if None is provided
-        if func_distrib == None:
+        if func_distrib is None:
             func_distrib = {}
-            for i in self._decode_precompute.keys():
+            for i in self._decode_precompute:
                 if i == 0:
                     func_distrib[i] = 0
                     continue
                 func_distrib[i] = 1
         bijective_funcs_distr = _helper_filter_map(func_distrib, self._is_bijective)
-        return Challenge(self._random, self._rfids, func_distrib, bijective_funcs_distr, digit_len, self._decode_precompute)
+        return Challenge(self._random, self._rfids,
+                         func_distrib, bijective_funcs_distr,
+                         digit_len, self._decode_precompute)
 
 class Challenge:
 
-    def __init__(self, rand_gen, rfids, func_distrib, bijective_funcs_distr, digit_len, decode_precompute):
+    def __init__(self, rand_gen, rfids, func_distrib,
+                 bijective_funcs_distr, digit_len, decode_precompute):
         '''
         This class should not be instantiated directly! Use the factory Codegen
         above!
@@ -114,10 +118,11 @@ class Challenge:
 
         # Keep generating random codes until we get one that gives a one-to-one
         # mapping between RFIDs and answers
+        hgouc = _helper_generate_potentially_unsafe_code
         while True:
             self._rfid_to_ans = {}
             self._ans_to_rfid = {}
-            self._code = _helper_generate_potentially_unsafe_code(rand_gen, func_distrib, bijective_funcs_distr, digit_len)
+            self._code = hgouc(rand_gen, func_distrib, bijective_funcs_distr, digit_len)
             # We want there to be a one-to-one mapping between RFIDs and answers
             # Therefore only break the loop if we randomly generate a code
             # that produces unique answers for every RFID in the list
@@ -201,7 +206,7 @@ class Challenge:
         '''
 
         corresponding_rfid = self.check_solution(student_answer)
-        if corresponding_rfid == None:
+        if corresponding_rfid is None:
             return -1
         idx = -1
         for i in range(len(self._rfids)):
@@ -210,7 +215,7 @@ class Challenge:
                 break
         if idx == -1:
             return -1
-        assert(staff_decode(self.get_code(), self._rfids[idx]) == student_answer)
+        assert staff_decode(self.get_code(), self._rfids[idx]) == student_answer
         return idx
 
 def _helper_generate_potentially_unsafe_code(rand, func_distrib, bijective_funcs_distr, digit_len):
@@ -229,7 +234,7 @@ def _helper_generate_potentially_unsafe_code(rand, func_distrib, bijective_funcs
         return 0
 
     bijective_digit = 0 # Use the fallback by default
-    if len(bijective_funcs_distr) > 0:
+    if not bijective_funcs_distr.empty():
         bijective_digit = _helper_pick_random(rand.uniform(0, 1), bijective_funcs_distr)
 
     # Randomly generate the remaining digits
@@ -252,7 +257,7 @@ def _helper_filter_map(data_map, filter_map):
 
     retval = {}
 
-    for key in filter_map.keys():
+    for key in filter_map:
         if filter_map[key]:
             retval[key] = data_map[key]
 
@@ -270,15 +275,14 @@ def _helper_pick_random(rand_normalized, weighted_choice_dict):
 
     wcd = weighted_choice_dict
 
-    assert(len(wcd) > 0)
     fallback = wcd[next(iter(wcd.keys()))]
 
     total = 0
-    for key in wcd.keys():
+    for key in wcd:
         total += wcd[key]
     rand = rand_normalized * total
 
-    for key in wcd.keys():
+    for key in wcd:
         if rand <= wcd[key]:
             return key
         rand -= wcd[key]
@@ -626,7 +630,7 @@ def staff_decode_precompute(rfids):
     func_map = get_function_mapping()
 
     # Apply every function to every rfid. This allows us to
-    for i in func_map.keys():
+    for i in func_map:
         applied_map[i] = {}
         for rfid in rfids:
             applied_map[i][rfid] = func_map[i](rfid)
