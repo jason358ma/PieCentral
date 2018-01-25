@@ -2,7 +2,7 @@ import random
 
 class Codegen:
 
-    def __init__(self, rfids, rand_seed=None, func_distrib=None):
+    def __init__(self, rfids, rand_seed=None):
         '''
         Manages the generated code and rfid-answer pairs.
         `rfids` must be an iterable of RFID ints.
@@ -22,30 +22,57 @@ class Codegen:
         # Seed our local RNG
         self._random = random.Random(rand_seed)
         rfids = set(rfids) # Ignore duplicates
-
-        func_map = generate_function_mapping()
+        self._rfids = rfids
+        
+        # Generate function-related data
+        self._decode_precompute = staff_decode_precompute(self._rfids)
+        self._is_bijective = {} # True iff the given function is bijective over the given RFID domain
+        
+        # Apply every function to every rfid. This allows us to 
+        for i in self._decode_precompute.keys():
+            outputs = set()
+            bijective = True
+            for rfid in rfids:
+                output = self._decode_precompute[i][rfid]
+                if output in outputs:
+                    bijective = False
+                else:
+                    outputs.add(output)
+            self._is_bijective[i] = bijective
+        
+    def generate_challenge(self, digit_len=5, func_distrib=None):
 
         # Generate a uniform distribution if None is provided
         if func_distrib == None:
             func_distrib = {}
-            for i in func_map.keys():
+            for i in self._decode_precompute.keys():
                 if i == 0:
                     func_distrib[i] = 0
                     continue
                 func_distrib[i] = 1
+        bijective_funcs_distr = _helper_filter_map(func_distrib, self._is_bijective)
+        return Challenge(self._random, self._rfids, func_distrib, bijective_funcs_distr, digit_len, self._decode_precompute)
+
+class Challenge:
+    '''
+    This class should not be instantiated directly! Use the factory Codegen
+    above!
+    '''
+    
+    def __init__(self, rand_gen, rfids, func_distrib, bijective_funcs_distr, digit_len, decode_precompute):
 
         # Keep generating random codes until we get one that gives a one-to-one
         # mapping between RFIDs and answers
         while True:
             self._rfid_to_ans = {}
             self._ans_to_rfid = {}
-            self._code = _helper_generate_potentially_unsafe_code(self._random, rfids, func_distrib, func_map)
+            self._code = _helper_generate_potentially_unsafe_code(rand_gen, func_distrib, bijective_funcs_distr, digit_len)
             # We want there to be a one-to-one mapping between RFIDs and answers
             # Therefore only break the loop if we randomly generate a code
             # that produces unique answers for every RFID in the list
             duplicate_answers = False
             for rfid in rfids:
-                solution = staff_decode(self._code, rfid)
+                solution = staff_decode(self._code, rfid, decode_precompute)
                 if solution in self._ans_to_rfid:
                     duplicate_answers = True
                     break
@@ -57,7 +84,7 @@ class Codegen:
         # This is always true since we guaranteed above that
         # the (rfid --> solution) mapping is bijective
         assert len(self._rfid_to_ans) == len(self._ans_to_rfid)
-
+    
     def check_solution(self, solution):
         '''
         Returns which RFID that the solution corresponds to
@@ -76,7 +103,8 @@ class Codegen:
         Returns which solution that the RFID corresponds to
         return None if it doesn't match any.
 
-        >>> c = Codegen([1, 2, 3], 0)
+        >>> cg = Codegen([1, 2, 3], 0)
+        >>> c = cg.generate_challenge()
         >>> c.check_solution(c.get_solution(1))
         1
         >>> c.check_solution(c.get_solution(2))
@@ -94,7 +122,8 @@ class Codegen:
             is True
         -   the error code -1 iff the above is not possible
         >>> r = [31415, 12345, 14916, 77777]
-        >>> c = Codegen(r, 0)
+        >>> cg = Codegen(r, 0)
+        >>> c = cg.generate_challenge()
         >>> c.check_rfid_answer(staff_decode(c.get_code(), r[0]), r)
         0
         >>> c.check_rfid_answer(staff_decode(c.get_code(), r[1]), r)
@@ -122,8 +151,7 @@ class Codegen:
         assert(staff_decode(self.get_code(), rfids[idx]) == student_answer)
         return idx
 
-
-def _helper_generate_potentially_unsafe_code(rand, rfids, func_distrib, func_map):
+def _helper_generate_potentially_unsafe_code(rand, func_distrib, bijective_funcs_distr, digit_len):
     '''
     Helper function for this module.
 
@@ -135,33 +163,16 @@ def _helper_generate_potentially_unsafe_code(rand, rfids, func_distrib, func_map
     concatenated functions for the students to decode and apply to RFID tags.
     See student_decode() below.
     '''
-    # Generate function-related data
-    applied_map = {} #  Results of applying a given function to a given RFID
-    is_bijective = {} # True iff the given function is bijective over the given RFID domain
+    if digit_len < 1:
+        return 0
     
-    # Apply every function to every rfid
-    for i in func_map.keys():
-        applied_map[i] = {}
-        outputs = set()
-        bijective = True
-        for rfid in rfids:
-            output = func_map[i](rfid)
-            applied_map[i][rfid] = output
-            if output in outputs:
-                bijective = False
-            else:
-                outputs.add(output)
-        is_bijective[i] = bijective
-
-    # Randomly pick a bijective function to use first
-    bijective_funcs_distr = _helper_filter_map(func_distrib, is_bijective)
     bijective_digit = 0 # Use the fallback by default
     if len(bijective_funcs_distr) > 0:
         bijective_digit = _helper_pick_random(rand.uniform(0, 1), bijective_funcs_distr)
 
     # Randomly generate the remaining digits
     code = 0
-    for _ in range(5):
+    for _ in range(digit_len - 1):
         code *= 10
         code += _helper_pick_random(rand.uniform(0, 1), func_distrib)
     code *= 10
@@ -479,30 +490,52 @@ def double_caesar_cipher(key):
         result = str(ciph) + result
     return int(result)
 
-def generate_function_mapping():
+def memoize(func):
+    '''
+    Memoizes a function
+    '''
+    cache = {}
+    def memoized(*args):
+        nonlocal cache
+        if args not in cache:
+            cache[args] = func(*args)
+        return cache[args]
+    return memoized
+
+@memoize
+def limit_input_to(limit):
+    '''Generate a function to limit size of inputs'''
+    def retval(input_val):
+        while input_val > limit:
+            input_val = (input_val % limit) + (input_val // limit)
+        return input_val
+    return retval
+
+@memoize
+def compose_funcs(func_a, func_b):
+    '''
+    Composes two single-input functions together, A(B(x))
+    '''
+    def composed(input_x):
+        return func_a(func_b(input_x))
+    return composed
+
+
+def identity(x):
+    '''
+    Used only in the (hopefully) rare event that none of the other
+    functions are bijections with a given domain of RFIDs
+    '''
+    return x
+
+def get_function_mapping():
     '''
     Returns a dictionary that maps code digits to the function to run
-    on the RFID values
+    on the RFID values. Always returns values which are equal to each other
+    by value. It is safe to mutate the return value.
+    >>> get_function_mapping() == get_function_mapping()
+    True
     '''
-
-    # Generate a function to limit size of inputs
-    def limit_input_to(limit):
-        def retval(input_val):
-            while input_val > limit:
-                input_val = (input_val % limit) + (input_val // limit)
-            return input_val
-        return retval
-
-    # Composes two single-input functions together, A(B(x))
-    def compose_funcs(func_a, func_b):
-        def composed(input_x):
-            return func_a(func_b(input_x))
-        return composed
-
-    # Used only in the (hopefully) rare event that none of the other
-    # functions are bijections with a given domain of RFIDs
-    def identity(x):
-        return x
 
     func_map = {}
     func_map[0] = identity
@@ -517,23 +550,47 @@ def generate_function_mapping():
 
     return func_map
 
-def staff_decode(challenge_code, rfid_seed):
+def staff_decode_precompute(rfids):
+    '''
+    To speed up calls to staff_decode over the same domain of known RFIDs, we
+    can run this precomputation and pass the return value to the `staff_decode`
+    function as the `precompute` argument.
+    
+    Returns a dictionary of dictionaries, where the first-level key is the digit
+    corresponding with that student function, and the second-level key is the 
+    rfid we wish to evalute the student function on.
+    '''
+    applied_map = {} # Precomputation to use for speeding up staff_decode calls
+    func_map = get_function_mapping()
+    
+    # Apply every function to every rfid. This allows us to 
+    for i in func_map.keys():
+        applied_map[i] = {}
+        for rfid in rfids:
+            applied_map[i][rfid] = func_map[i](rfid)
+    return applied_map
+
+def staff_decode(challenge_code, rfid_seed, precompute=None):
     '''
     Staff solution for the student decoder. Takes as input a code and the data
     collected by an RFID scanner, and outputs the result of applying the
     encoded functions onto that RFID "seed".
     '''
-    func_map = generate_function_mapping()
-
+    if precompute is None:
+        func_map = get_function_mapping()
+    
     code = challenge_code
     output = ''
     while code > 0:
         digit = code % 10
         code //= 10
 
-        func = func_map[digit]
+        if precompute is None:
+            result = func_map[digit](rfid_seed)
+        else:
+            result = precompute[digit][rfid_seed]
 
-        output += '555' + str(func(rfid_seed))
+        output += '555' + str(result)
 
     return int(output)
 
@@ -545,8 +602,9 @@ def _debug_random_sample(sample_size):
         count[i] = 0
     rng = random.Random(0)
     rfids = [rng.randint(0, 999999999999999) for _ in range(0, 5)]
+    cg = Codegen(rfids, 0)
     for i in range(0, sample_size):
-        code = Codegen(rfids, i).get_code()
+        code = cg.generate_challenge().get_code()
         if i % (sample_size // 10) == 0:
             print(code)
         while code > 0:
@@ -556,7 +614,6 @@ def _debug_random_sample(sample_size):
             total += 1
     for i in range(0, 9):
         count[i] /= total
-    print(count)
     return count
 
 if __name__ == "__main__":
