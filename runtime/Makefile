@@ -3,13 +3,13 @@
 install:
 	cd build-deps && wget https://github.com/google/protobuf/releases/download/v3.2.0/protoc-3.2.0-linux-x86_64.zip
 	cd build-deps && unzip protoc-3.2.0-linux-x86_64.zip
-	pipenv install --dev
+	pip3 install -r requirements.txt
 
 artifacts-install:
 	$(nop)
 
 lint:
-	pylint Ansible.py runtime.py stateManager.py studentAPI.py
+	$(nop)
 
 test:
 	cd ../DevOps/frankfurter/scripts/update && ./create_update.sh

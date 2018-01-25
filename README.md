@@ -8,10 +8,9 @@
  
      - Hibike, our lightweight communications protocol designed for the passing of sensor data for the PiE Robotics Kit
      - Dawn, our cross-platform frontend for the PiE robotics control system
-     - Runtime, the code in our beaglebones that handles communication, state, and student code execution
-     - Ansible-protos, our protocol buffers used by Dawn and runtime
+     - Atalanta, the runtime code in our beaglebones
+     - Protos, our protocol buffers used by Dawn and runtime
      - DevOps, which oversees axiom, frankfurter, and chrommunal
-     - Shepherd, our full stack field control software used during the competition
 
 ### If you want to learn more about these repositories, check out their directories!
 
@@ -40,18 +39,19 @@ $ git push origin {project_name/feature_name}
 ```
 
 ### Adding new code to master
-Make sure any local changes to your code is pushed to your branch.
+All code is rebased onto master, meaning new commits are added directly onto master, creating a linear commit history.
+
+Merge conflicts may arise when rebasing, make sure to fix conflicts before continuing.
 
 ```
-$ git add {file_name}
-$ git commit -m "[PROJECT_NAME] {Short Description}"
+$ git fetch origin master
+$ git rebase origin/master
 $ git push origin {project_name/feature_name}
 ```
-
 Open a pull request to master.
 
 Code will be code reviewed by PMs.
 
-Code will be rebased onto master. (Choose "Squash and Merge" instead of "Create a merge commit"). Make sure when merging your pull request you include a useful commit header and commit message.
+Code will be rebased onto master. (Choose "Squash and Merge" instead of "Create a merge commit")
 
 [logo]: https://upload.wikimedia.org/wikipedia/en/e/e4/Pioneers_in_Engineering_Logo_1.png "Logo"

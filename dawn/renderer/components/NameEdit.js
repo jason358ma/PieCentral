@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { RIEInput } from 'riek';
 import _ from 'lodash';
 
@@ -38,10 +37,8 @@ class NameEdit extends React.Component {
     const re = new RegExp('^[A-Za-z][A-Za-z0-9]+$');
     const isValid = re.test(name);
     const allCurrentPeripherals = _.toArray(this.props.peripherals);
-    const isDuplicate = _.some(
-      allCurrentPeripherals,
-      peripheral => peripheral.name === name && peripheral.id !== this.props.id,
-    );
+    const isDuplicate = _.some(allCurrentPeripherals,
+      peripheral => peripheral.name === name && peripheral.id !== this.props.id);
     return isValid && !isDuplicate;
   }
 
@@ -64,10 +61,10 @@ class NameEdit extends React.Component {
 }
 
 NameEdit.propTypes = {
-  name: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  peripherals: PropTypes.object.isRequired,
-  onRename: PropTypes.func.isRequired,
+  name: React.PropTypes.string.isRequired,
+  id: React.PropTypes.string.isRequired,
+  peripherals: React.PropTypes.object.isRequired,
+  onRename: React.PropTypes.func,
 };
 
 export default NameEdit;

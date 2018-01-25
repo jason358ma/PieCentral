@@ -85,6 +85,7 @@ class Gamepad(StudentAPI):
 
 class Robot(StudentAPI):
     deviceName_to_writeParams = {
+        "TeamFlag": ["led1", "led2", "led3", "led4"],
         "ServoControl": ["servo0", "servo1"],
         "YogiBear": ["duty_cycle", "pid_pos_setpoint", "pid_pos_kp", "pid_pos_ki",
                      "pid_pos_kd", "current_thresh", "enc_pos"],
@@ -261,6 +262,3 @@ class Robot(StudentAPI):
 
     def hibike_write_value(self, uid, params):
         self.to_manager.put([HIBIKE_COMMANDS.WRITE, [uid, params]])
-
-    def get_gamecode(self):
-        return self._get_sm_value("gamecode")

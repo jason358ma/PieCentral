@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Button,
   Glyphicon,
@@ -19,6 +18,7 @@ const TooltipButton = (props) => {
         bsSize="small"
         onClick={props.onClick}
         disabled={props.disabled}
+        active={props.active}
         id={props.id}
       >
         <Glyphicon glyph={props.glyph} />
@@ -28,13 +28,14 @@ const TooltipButton = (props) => {
 };
 
 TooltipButton.propTypes = {
-  id: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  glyph: PropTypes.string.isRequired,
-  disabled: PropTypes.bool.isRequired,
-  bsStyle: PropTypes.string,
-  placement: PropTypes.string,
+  id: React.PropTypes.string.isRequired,
+  text: React.PropTypes.string.isRequired,
+  onClick: React.PropTypes.func.isRequired,
+  glyph: React.PropTypes.string.isRequired,
+  disabled: React.PropTypes.bool,
+  bsStyle: React.PropTypes.string,
+  active: React.PropTypes.bool,
+  placement: React.PropTypes.string,
 };
 
 export default TooltipButton;

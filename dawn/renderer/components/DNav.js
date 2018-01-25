@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import {
   Navbar,
   ButtonToolbar,
   ButtonGroup,
   Label } from 'react-bootstrap';
-import ConfigBox from './ConfigBox';
+import IPBox from './IPBox';
 import UpdateBox from './UpdateBox';
 import StatusLabel from './StatusLabel';
 import TooltipButton from './TooltipButton';
@@ -44,15 +43,16 @@ class DNavComponent extends React.Component {
       <Navbar fixedTop fluid>
         <UpdateBox
           isRunningCode={this.props.isRunningCode}
-          connectionStatus={this.props.connectionStatus}
+          connectionStatus={this.props.connection}
           runtimeStatus={this.props.runtimeStatus}
           shouldShow={this.state.showUpdateModal}
           ipAddress={this.props.ipAddress}
           hide={this.toggleUpdateModal}
         />
-        <ConfigBox
+        <IPBox
           shouldShow={this.state.showConfigModal}
           ipAddress={this.props.ipAddress}
+          onIPChange={this.props.onIPChange}
           hide={this.toggleConfigModal}
         />
         <Navbar.Header>
@@ -72,8 +72,10 @@ class DNavComponent extends React.Component {
           }
           <Navbar.Text id="battery-indicator">
             <StatusLabel
-              connectionStatus={this.props.connectionStatus}
+              connectionStatus={this.props.connection}
               runtimeStatus={this.props.runtimeStatus}
+              battery={this.props.battery}
+              batterySafety={this.props.batterySafety}
             />
           </Navbar.Text>
           <Navbar.Form
@@ -88,7 +90,6 @@ class DNavComponent extends React.Component {
                   onClick={this.props.startTour}
                   id="tour-button"
                   glyph="info-sign"
-                  disabled={false}
                 />
                 <TooltipButton
                   placement="bottom"
@@ -97,7 +98,6 @@ class DNavComponent extends React.Component {
                   onClick={this.toggleConfigModal}
                   id="update-address-button"
                   glyph="transfer"
-                  disabled={false}
                 />
                 <TooltipButton
                   placement="bottom"
@@ -118,23 +118,24 @@ class DNavComponent extends React.Component {
 }
 
 DNavComponent.propTypes = {
-  connectionStatus: PropTypes.bool.isRequired,
-  runtimeStatus: PropTypes.bool.isRequired,
-  isRunningCode: PropTypes.bool.isRequired,
-  ipAddress: PropTypes.string.isRequired,
-  startTour: PropTypes.func.isRequired,
-  runtimeVersion: PropTypes.string.isRequired,
-  robotState: PropTypes.number.isRequired,
-  heart: PropTypes.bool.isRequired,
-  fieldControlStatus: PropTypes.bool.isRequired,
+  connection: React.PropTypes.bool,
+  runtimeStatus: React.PropTypes.bool,
+  battery: React.PropTypes.number,
+  batterySafety: React.PropTypes.bool,
+  isRunningCode: React.PropTypes.bool,
+  ipAddress: React.PropTypes.string,
+  startTour: React.PropTypes.func,
+  onIPChange: React.PropTypes.func,
+  runtimeVersion: React.PropTypes.string,
+  robotState: React.PropTypes.number,
+  heart: React.PropTypes.bool,
+  fieldControlStatus: React.PropTypes.bool,
 };
 
 const mapStateToProps = state => ({
   robotState: state.info.robotState,
   heart: state.fieldStore.heart,
-  ipAddress: state.info.ipAddress,
   fieldControlStatus: state.fieldStore.fieldControl,
-  runtimeVersion: state.peripherals.runtimeVersion,
 });
 
 

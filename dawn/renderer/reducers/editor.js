@@ -3,7 +3,7 @@
  */
 
 const defaultEditorState = {
-  filepath: '',
+  filepath: null,
   latestSaveCode: '',
   editorCode: '',
 };

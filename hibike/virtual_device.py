@@ -26,22 +26,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--device', required=True, help='device type')
     parser.add_argument('-p', '--port', required=True, help='serial port')
-    parser.add_argument('-v', '--verbose',
-                        help='print messages when sending and receiving packets',
-                        action="store_true")
     args = parser.parse_args()
-
-    def verbose_log(fmt_string, *fmt_args):
-        """
-        Log a message using a formatting string if verbosity
-        is enabled.
-        """
-        if args.verbose:
-            print(fmt_string.format(*fmt_args))
 
     device = args.device
     port = args.port
-    verbose_log("Device {} on port {}", device, port)
+    print(device, port)
     conn = serial.Serial(port, 115200)
 
     for device_num in hm.DEVICES:
@@ -77,19 +66,7 @@ def main():
                              ("pid_pos_setpoint", 2.0), ("pid_pos_kp", 3.0), ("pid_pos_ki", 4.0),
                              ("pid_pos_kd", 5.0), ("pid_vel_setpoint", 6.0), ("pid_vel_kp", 7.0),
                              ("pid_vel_ki", 8.0), ("pid_vel_kd", 9.0), ("current_thresh", 10.0),
-                             ("enc_pos", 11.0), ("enc_vel", 12.0), ("motor_current", 13.0),
-                             ("deadband", 0.5), ("error_state", False)]
-    if device == "RFID":
-        subscribed_params = []
-        params_and_values = [("id", 0), ("tag_detect", 0)]
-    if device == "BatteryBuzzer":
-        subscribed_params = []
-        params_and_values = [("is_unsafe", False), ("calibrated", True), ("v_cell1", 11.0),
-                             ("v_cell2", 11.0), ("v_cell3", 11.0), ("v_batt", 11.0),
-                             ("dv_cell2", 11.0), ("dv_cell3", 11.0)]
-    if device == "LineFollower":
-        subscribed_params = []
-        params_and_values = [("left", 1.0), ("center", 1.0), ("right", 1.0)]
+                             ("enc_pos", 11.0), ("enc_vel", 12.0), ("motor_current", 13.0)]
 
     while True:
         if update_time != 0 and delay != 0:
@@ -103,7 +80,7 @@ def main():
                         data.append(data_tuple)
                 hm.send(conn, hm.make_device_data(device_id, data))
                 update_time = time.time()
-                verbose_log("Regular data update sent from {}", device)
+                print("Regular data update sent from %s" % device)
 
         msg = hm.read(conn)
         if not msg:
@@ -112,7 +89,7 @@ def main():
         if msg.get_message_id() in [hm.MESSAGE_TYPES["SubscriptionRequest"]]:
             # Update the delay, subscription time,
             # and params, then send a subscription response
-            verbose_log("Subscription request received")
+            print("Subscription request recieved")
             params, delay = struct.unpack("<HH", msg.get_payload())
 
             subscribed_params = hm.decode_params(device_id, params)
@@ -120,11 +97,11 @@ def main():
             update_time = time.time()
         if msg.get_message_id() in [hm.MESSAGE_TYPES["Ping"]]:
             # Send a subscription response
-            verbose_log("Ping received")
+            print("Ping recieved")
             hm.send(conn, hm.make_subscription_response(device_id, subscribed_params, delay, uid))
         if msg.get_message_id() in [hm.MESSAGE_TYPES["DeviceRead"]]:
             # Send a device data with the requested param and value tuples
-            verbose_log("Device read received")
+            print("Device read recieved")
             params = struct.unpack("<H", msg.get_payload())
             read_params = hm.decode_params(device_id, params)
             read_data = []
@@ -140,7 +117,7 @@ def main():
         if msg.get_message_id() in [hm.MESSAGE_TYPES["DeviceWrite"]]:
             # Write to requested parameters
             # and return the values of the parameters written to using a device data
-            verbose_log("Device write received")
+            print("Device write recieved")
             write_params_and_values = hm.decode_device_write(msg, device_id)
             write_params = [param_val[0] for param_val in write_params_and_values]
             value_types = [hm.PARAM_MAP[device_id][name][1] for name in write_params]

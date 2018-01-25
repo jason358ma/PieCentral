@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
-import { connect } from 'react-redux';
 import { Panel, Accordion, ListGroup } from 'react-bootstrap';
 import { PeripheralTypes } from '../constants/Constants';
 import Peripheral from './Peripheral';
@@ -14,6 +12,7 @@ cleanerNames[PeripheralTypes.LimitSwitch] = 'Limit Switches';
 cleanerNames[PeripheralTypes.LineFollower] = 'Line Followers';
 cleanerNames[PeripheralTypes.Potentiometer] = 'Potentiometers';
 cleanerNames[PeripheralTypes.Encoder] = 'Encoders';
+// cleanerNames[PeripheralTypes.ColorSensor] = 'Color Sensors';
 cleanerNames[PeripheralTypes.MetalDetector] = 'Metal Detectors';
 cleanerNames[PeripheralTypes.ServoControl] = 'Servo Controllers';
 cleanerNames[PeripheralTypes.RFID] = 'RFID';
@@ -52,7 +51,7 @@ const handleAccordion = (array) => {
 };
 
 
-const PeripheralListComponent = (props) => {
+const PeripheralList = (props) => {
   let errorMsg = null;
   if (!props.connectionStatus) {
     errorMsg = 'You are currently disconnected from the robot.';
@@ -65,7 +64,8 @@ const PeripheralListComponent = (props) => {
   if (errorMsg) {
     panelBody = <p className="panelText">{errorMsg}</p>;
   } else {
-    panelBody = handleAccordion(_.sortBy(_.toArray(props.peripherals.peripheralList), ['device_type', 'device_name']));
+    panelBody = handleAccordion(
+      _.sortBy(_.toArray(props.peripherals.peripheralList), ['device_type', 'device_name']));
   }
 
   return (
@@ -81,16 +81,10 @@ const PeripheralListComponent = (props) => {
   );
 };
 
-PeripheralListComponent.propTypes = {
-  connectionStatus: PropTypes.bool.isRequired,
-  runtimeStatus: PropTypes.bool.isRequired,
-  peripherals: PropTypes.object.isRequired,
+PeripheralList.propTypes = {
+  connectionStatus: React.PropTypes.bool,
+  runtimeStatus: React.PropTypes.bool,
+  peripherals: React.PropTypes.object,
 };
-
-const mapStateToProps = state => ({
-  peripherals: state.peripherals,
-});
-
-const PeripheralList = connect(mapStateToProps)(PeripheralListComponent);
 
 export default PeripheralList;

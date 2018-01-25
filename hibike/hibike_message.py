@@ -6,7 +6,6 @@ from __future__ import print_function
 import struct
 import os
 import json
-import threading
 
 CONFIG_FILE = open(os.path.join(
     os.path.dirname(__file__), 'hibikeDevices.json'), 'r')
@@ -406,21 +405,19 @@ def parse_bytes(msg_bytes):
     return HibikeMessage(message_id, payload)
 
 
-def blocking_read_generator(serial_conn, stop_event=threading.Event()):
+def blocking_read_generator(serial_conn, stop_event=None):
     """
-    Yield packets from SERIAL_CONN, stopping if STOP_EVENT is set.
+    Yield packets from SERIAL_CONN, stopping if STOP_EVENT exists
+    and is set.
     """
     zero_byte = bytes([0])
     packets_buffer = bytearray()
-    # Switch to nonblocking mode so that we don't get stuck reading
-    old_timeout = serial_conn.timeout
-    serial_conn.timeout = 0
-    while not stop_event.is_set():
+    while stop_event is None or not stop_event.is_set():
+
         # Wait for a 0 byte to appear
-        if packets_buffer.find(zero_byte) == -1:
+        while packets_buffer.find(zero_byte) == -1:
             new_bytes = serial_conn.read(max(1, serial_conn.inWaiting()))
             packets_buffer.extend(new_bytes)
-            continue
 
         # Truncate incomplete packets at start of buffer
         packets_buffer = packets_buffer[packets_buffer.find(zero_byte):]
@@ -439,13 +436,10 @@ def blocking_read_generator(serial_conn, stop_event=threading.Event()):
                 new_packet = packets_buffer[1:].find(zero_byte) + 1
                 packets_buffer = packets_buffer[new_packet:]
             # Otherwise, there might be more incoming bytes for the current packet,
-            # so we do a read and try again
+            # so we do a blocking read and try again
             else:
                 new_bytes = serial_conn.read(max(1, serial_conn.inWaiting()))
                 packets_buffer.extend(new_bytes)
-
-    serial_conn.timeout = old_timeout
-
 
 
 def blocking_read(serial_conn):

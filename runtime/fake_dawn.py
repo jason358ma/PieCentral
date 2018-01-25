@@ -43,26 +43,21 @@ def receiver(port, receive_queue):
         runtime_message = runtime_pb2.RuntimeData()
         runtime_message.ParseFromString(msg)
         receive_queue[0] = msg
+        print(runtime_message)
 
-def add_timestamps(msgqueue):
-    for i in range(10):
-        msg = notification_pb2.Notification()
-        msg.header = notification_pb2.Notification.TIMESTAMP_DOWN
-        msg.timestamps.append(time.perf_counter())
-        msg = msg.SerializeToString()
-        msgqueue.put(msg)
-    return msgqueue
 
-def tcp_relay(port, msgqueue=queue.Queue()):
+def tcp_relay(port):
     host = '127.0.0.1'
+    msg = notification_pb2.Notification()
+    msg.header = notification_pb2.Notification.STUDENT_SENT
+    msg = msg.SerializeToString()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((host, port))
     s.listen(1)
     conn, addr = s.accept()
+    conn.send(msg)
     while True:
-        if not msgqueue.empty():
-            conn.send(msgqueue.get())
         next_call = time.time()
         next_call += 1.0 / dawn_hz
         receive_msg, addr = conn.recvfrom(2048)
@@ -71,8 +66,9 @@ def tcp_relay(port, msgqueue=queue.Queue()):
         else:
             parser = notification_pb2.Notification()
             parser.ParseFromString(receive_msg)
-            if parser.timestamps:
-                print(parser.timestamps)
+            if parser.sensor_mapping:
+                for msg in parser.sensor_mapping:
+                    print(msg)
         time.sleep(max(next_call - time.time(), 0))
 
 
@@ -84,13 +80,11 @@ sender_thread.daemon = True
 recv_thread.daemon = True
 recv_thread.start()
 sender_thread.start()
-msgqueue = queue.Queue()
 tcp_thread = threading.Thread(
-    target=tcp_relay, name="fake dawn tcp", args=([tcp_port, msgqueue]))
+    target=tcp_relay, name="fake dawn tcp", args=([tcp_port]))
 tcp_thread.daemon = True
 tcp_thread.start()
 print("started threads")
-add_timestamps(msgqueue)
 
 # Just Here for testing, should not be run regularly
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Modal,
   Button,
@@ -18,7 +17,7 @@ import { ipChange } from '../actions/InfoActions';
 
 const storage = remote.require('electron-json-storage');
 
-class ConfigBoxComponent extends React.Component {
+class IPBoxComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -104,11 +103,7 @@ class ConfigBoxComponent extends React.Component {
   }
 
   handleClose() {
-    this.setState({
-      ipAddress: this.state.originalIP,
-      stationNumber: this.state.originalSN,
-      fcAddress: this.state.originalFC,
-    });
+    this.setState({ ipAddress: this.state.originalIP });
     this.props.hide();
   }
 
@@ -123,7 +118,7 @@ class ConfigBoxComponent extends React.Component {
       <Modal show={this.props.shouldShow} onHide={this.handleClose}>
         <Form action="" onSubmit={this.saveChanges}>
           <Modal.Header closeButton>
-            <Modal.Title>Dawn Configuration</Modal.Title>
+            <Modal.Title>Robot IP Address</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <p>
@@ -190,14 +185,14 @@ class ConfigBoxComponent extends React.Component {
   }
 }
 
-ConfigBoxComponent.propTypes = {
-  shouldShow: PropTypes.bool.isRequired,
-  hide: PropTypes.func.isRequired,
-  ipAddress: PropTypes.string.isRequired,
-  stationNumber: PropTypes.number.isRequired,
-  onIPChange: PropTypes.func.isRequired,
-  fcAddress: PropTypes.string.isRequired,
-  onFCUpdate: PropTypes.func.isRequired,
+IPBoxComponent.propTypes = {
+  shouldShow: React.PropTypes.bool.isRequired,
+  hide: React.PropTypes.func.isRequired,
+  ipAddress: React.PropTypes.string.isRequired,
+  stationNumber: React.PropTypes.number,
+  onIPChange: React.PropTypes.func,
+  fcAddress: React.PropTypes.string,
+  onFCUpdate: React.PropTypes.func,
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -214,6 +209,6 @@ const mapStateToProps = state => ({
   fcAddress: state.fieldStore.bridgeAddress,
 });
 
-const ConfigBox = connect(mapStateToProps, mapDispatchToProps)(ConfigBoxComponent);
+const IPBox = connect(mapStateToProps, mapDispatchToProps)(IPBoxComponent);
 
-export default ConfigBox;
+export default IPBox;

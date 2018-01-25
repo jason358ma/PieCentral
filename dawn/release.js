@@ -1,50 +1,73 @@
-const fs = require('fs-extra');
-const JSZip = require('jszip');
 const minimist = require('minimist');
 const packager = require('electron-packager');
 const path = require('path');
 const { execSync } = require('child_process');
 
-async function pack(platform, arch) {
-  const packageOptions = {
-    dir: __dirname, // source dir
-    name: 'dawn',
-    icon: './icons/pieicon',
-    asar: true,
-    out: path.resolve('..'), // build in the parent dir
-  };
+function build() {
+  console.log('Packaging with webpack, using the production config');
+  execSync('yarn run build', (err, stdout, stderr) => {
+    console.log('stderr: ', stderr);
+    if (err !== null) {
+      console.log('error: ', err);
+    }
+  });
+}
+
+function pack(platform, arch, noprune) {
+  const opts = {}; // packaging options
 
   if (!platform || !arch) {
     console.log('Packaging for all platforms');
-    packageOptions.all = true; // build for all platforms and arch
+    opts.all = true; // build for all platforms and arch
   } else {
     console.log('Packaging for: ', platform, arch);
-    packageOptions.platform = platform;
-    packageOptions.arch = arch;
+    opts.platform = platform;
+    opts.arch = arch;
   }
 
-  const appPaths = await packager(packageOptions);
-  for (const folderPath of appPaths) {
-    console.log('Zipping: ', folderPath);
-    const zip = new JSZip().folder(folderPath);
-    const zipContents = await zip.generateAsync({
-      type: 'nodebuffer',
-    });
+  opts.dir = __dirname; // source dir
+  opts.name = 'dawn';
+  opts.prune = !noprune; // remove dev dependencies unless noprune is set
+  opts.icon = './icons/pieicon';
+  opts.asar = true;
+  opts.out = path.resolve('..'); // build in the parent dir
 
-    await fs.writeFile(`${folderPath}.zip`, zipContents);
-  }
+  packager(opts, (err, appPath) => {
+    if (err) {
+      console.log('Packaging error: ', err);
+      return;
+    }
+    if (typeof appPath === 'string') {
+      console.log('Zipping: ', appPath);
+      execSync(`7z a -tzip ${appPath}.zip ${appPath}`, (err, stdout, stderr) => {
+        if (err !== null) {
+          console.log('error: ', err);
+        }
+      });
+    } else {
+      appPath.forEach((folderPath) => {
+        console.log('Zipping: ', folderPath);
+        execSync(`7z a -tzip ${folderPath}.zip ${folderPath}`, (err, stdout, stderr) => {
+          if (err !== null) {
+            console.log('error: ', err);
+          }
+        });
+      });
+    }
+  });
 }
 
 // General release command: 'node release.js --prod'.
+// If you already ran build: 'node release.js --prod --prebuilt'
 // For a specific target: 'node release.js --platform=... --arch=...'
-async function main() {
+function main() {
   const argv = minimist(process.argv.slice(2));
-  try {
-    await pack(argv.platform, argv.arch);
-    console.log('Packaging successful');
-  } catch (err) {
-    console.log('Packaging error: ', err);
+
+  if (!argv.prebuilt) {
+    build();
   }
+
+  pack(argv.platform, argv.arch, argv.noprune);
 }
 
 main();

@@ -1,10 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Label } from 'react-bootstrap';
-import { connect } from 'react-redux';
 import numeral from 'numeral';
 
-const StatusLabelComponent = (props) => {
+const StatusLabel = (props) => {
   let labelStyle = 'default';
   let labelText = 'Disconnected';
   if (props.connectionStatus) {
@@ -16,7 +14,7 @@ const StatusLabelComponent = (props) => {
       labelText = 'Unsafe Battery';
     } else {
       labelStyle = 'success';
-      labelText = `Battery: ${numeral(props.batteryLevel).format('0.00')} V`;
+      labelText = `Battery: ${numeral(props.battery).format('0.00')} V`;
     }
   }
   return (
@@ -24,19 +22,11 @@ const StatusLabelComponent = (props) => {
   );
 };
 
-StatusLabelComponent.propTypes = {
-  connectionStatus: PropTypes.bool.isRequired,
-  runtimeStatus: PropTypes.bool.isRequired,
-  batteryLevel: PropTypes.number.isRequired,
-  batterySafety: PropTypes.bool.isRequired,
+StatusLabel.propTypes = {
+  connectionStatus: React.PropTypes.bool.isRequired,
+  runtimeStatus: React.PropTypes.bool.isRequired,
+  battery: React.PropTypes.number.isRequired,
+  batterySafety: React.PropTypes.bool.isRequired,
 };
-
-
-const mapStateToProps = state => ({
-  batteryLevel: state.peripherals.batteryLevel,
-  batterySafety: state.peripherals.batterySafety,
-});
-
-const StatusLabel = connect(mapStateToProps)(StatusLabelComponent);
 
 export default StatusLabel;

@@ -14,7 +14,9 @@ describe('alerts action creator', () => {
       heading: 'example alert',
       message: 'example message',
     };
-    expect(addAsyncAlert('example alert', 'example message')).to.deep.equal(expectedAction);
+    expect(addAsyncAlert(
+      'example alert', 'example message',
+    )).to.deep.equal(expectedAction);
   });
 
   it('should create an action remove an alert', () => {
