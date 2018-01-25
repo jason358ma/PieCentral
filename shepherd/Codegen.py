@@ -23,12 +23,12 @@ class Codegen:
         self._random = random.Random(rand_seed)
         rfids = set(rfids) # Ignore duplicates
         self._rfids = rfids
-        
+
         # Generate function-related data
         self._decode_precompute = staff_decode_precompute(self._rfids)
         self._is_bijective = {} # True iff the given function is bijective over the given RFID domain
-        
-        # Apply every function to every rfid. This allows us to 
+
+        # Apply every function to every rfid. This allows us to
         for i in self._decode_precompute.keys():
             outputs = set()
             bijective = True
@@ -39,7 +39,7 @@ class Codegen:
                 else:
                     outputs.add(output)
             self._is_bijective[i] = bijective
-        
+
     def generate_challenge(self, digit_len=5, func_distrib=None):
 
         # Generate a uniform distribution if None is provided
@@ -58,7 +58,7 @@ class Challenge:
     This class should not be instantiated directly! Use the factory Codegen
     above!
     '''
-    
+
     def __init__(self, rand_gen, rfids, func_distrib, bijective_funcs_distr, digit_len, decode_precompute):
 
         # Keep generating random codes until we get one that gives a one-to-one
@@ -84,7 +84,7 @@ class Challenge:
         # This is always true since we guaranteed above that
         # the (rfid --> solution) mapping is bijective
         assert len(self._rfid_to_ans) == len(self._ans_to_rfid)
-    
+
     def check_solution(self, solution):
         '''
         Returns which RFID that the solution corresponds to
@@ -165,7 +165,7 @@ def _helper_generate_potentially_unsafe_code(rand, func_distrib, bijective_funcs
     '''
     if digit_len < 1:
         return 0
-    
+
     bijective_digit = 0 # Use the fallback by default
     if len(bijective_funcs_distr) > 0:
         bijective_digit = _helper_pick_random(rand.uniform(0, 1), bijective_funcs_distr)
@@ -555,15 +555,15 @@ def staff_decode_precompute(rfids):
     To speed up calls to staff_decode over the same domain of known RFIDs, we
     can run this precomputation and pass the return value to the `staff_decode`
     function as the `precompute` argument.
-    
+
     Returns a dictionary of dictionaries, where the first-level key is the digit
-    corresponding with that student function, and the second-level key is the 
+    corresponding with that student function, and the second-level key is the
     rfid we wish to evalute the student function on.
     '''
     applied_map = {} # Precomputation to use for speeding up staff_decode calls
     func_map = get_function_mapping()
-    
-    # Apply every function to every rfid. This allows us to 
+
+    # Apply every function to every rfid. This allows us to
     for i in func_map.keys():
         applied_map[i] = {}
         for rfid in rfids:
@@ -578,7 +578,7 @@ def staff_decode(challenge_code, rfid_seed, precompute=None):
     '''
     if precompute is None:
         func_map = get_function_mapping()
-    
+
     code = challenge_code
     output = ''
     while code > 0:
