@@ -55,7 +55,7 @@ class Codegen:
         # Seed our local RNG
         self._random = random.Random(rand_seed)
         self._rfids = rfids
-        
+
         if len(set(self._rfids)) != len(rfids):
             raise RuntimeError('The RFID list cannot contain duplicates!')
 
@@ -77,7 +77,7 @@ class Codegen:
 
     def generate_challenge(self, digit_len=5, func_distrib=None):
         '''
-        Generate a Challenge instance to use during the competition for a 
+        Generate a Challenge instance to use during the competition for a
         single code.
         >>> cg = Codegen([1234, 2345, 3456], 0)
         >>> c0 = cg.generate_challenge(20) # 20 digit code
@@ -109,7 +109,7 @@ class Challenge:
         This class should not be instantiated directly! Use the factory Codegen
         above!
         '''
-        
+
         self._rfids = rfids
 
         # Keep generating random codes until we get one that gives a one-to-one
@@ -148,7 +148,7 @@ class Challenge:
         Get the challenge code to be sent to students
         '''
         return self._code
-        
+
     def get_rfids(self):
         '''
         Get a copy of the internal list of RFIDs.
