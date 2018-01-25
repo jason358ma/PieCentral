@@ -19,7 +19,7 @@ import random
 #   answer = get_answer_from_student()
 #
 #   # Check if the student decoded the rfid correctly, and which one
-#   report = challenge.check_rfid_answer(answer, rfids)
+#   report = challenge.check_rfid_answer(answer)
 #
 #   if report == -1:
 #       print("Student decoded nothing or decoded incorrectly")
@@ -31,6 +31,9 @@ import random
 #
 
 class Codegen:
+    '''
+    A factory for `Challenge` instances, which are then used to check rfid
+    '''
 
     def __init__(self, rfids, rand_seed=None):
         '''
@@ -51,8 +54,10 @@ class Codegen:
 
         # Seed our local RNG
         self._random = random.Random(rand_seed)
-        rfids = set(rfids) # Ignore duplicates
         self._rfids = rfids
+        
+        if len(set(self._rfids)) != len(rfids):
+            raise RuntimeError('The RFID list cannot contain duplicates!')
 
         # Generate function-related data
         self._decode_precompute = staff_decode_precompute(self._rfids)
@@ -62,7 +67,7 @@ class Codegen:
         for i in self._decode_precompute.keys():
             outputs = set()
             bijective = True
-            for rfid in rfids:
+            for rfid in self._rfids:
                 output = self._decode_precompute[i][rfid]
                 if output in outputs:
                     bijective = False
@@ -71,7 +76,21 @@ class Codegen:
             self._is_bijective[i] = bijective
 
     def generate_challenge(self, digit_len=5, func_distrib=None):
-
+        '''
+        Generate a Challenge instance to use during the competition for a 
+        single code.
+        >>> cg = Codegen([1234, 2345, 3456], 0)
+        >>> c0 = cg.generate_challenge(20) # 20 digit code
+        >>> c0.check_solution(c0.get_solution(1234))
+        1234
+        >>> c1 = cg.generate_challenge(5) # 5 digit code
+        >>> c1.check_solution(c1.get_solution(2345))
+        2345
+        >>> c0 is c1
+        False
+        >>> c0.get_code() == c1.get_code()
+        False
+        '''
         # Generate a uniform distribution if None is provided
         if func_distrib == None:
             func_distrib = {}
@@ -90,6 +109,8 @@ class Challenge:
         This class should not be instantiated directly! Use the factory Codegen
         above!
         '''
+        
+        self._rfids = rfids
 
         # Keep generating random codes until we get one that gives a one-to-one
         # mapping between RFIDs and answers
@@ -101,7 +122,7 @@ class Challenge:
             # Therefore only break the loop if we randomly generate a code
             # that produces unique answers for every RFID in the list
             duplicate_answers = False
-            for rfid in rfids:
+            for rfid in self._rfids:
                 solution = staff_decode(self._code, rfid, decode_precompute)
                 if solution in self._ans_to_rfid:
                     duplicate_answers = True
@@ -127,6 +148,17 @@ class Challenge:
         Get the challenge code to be sent to students
         '''
         return self._code
+        
+    def get_rfids(self):
+        '''
+        Get a copy of the internal list of RFIDs.
+        >>> cg = Codegen([12345, 23456, 34567], 0)
+        >>> c = cg.generate_challenge()
+        >>> idx = c.check_rfid_answer(staff_decode(c.get_code(), 12345))
+        >>> c.get_rfids()[idx]
+        12345
+        '''
+        return list(self._rfids)
 
     def get_solution(self, rfid):
         '''
@@ -144,7 +176,7 @@ class Challenge:
         '''
         return self._rfid_to_ans.get(rfid, None)
 
-    def check_rfid_answer(self, student_answer, rfids):
+    def check_rfid_answer(self, student_answer):
         '''
         Returns one of the following:
         -   the index, idx, of the rfid in the `rfids` list for which
@@ -154,17 +186,17 @@ class Challenge:
         >>> r = [31415, 12345, 14916, 77777]
         >>> cg = Codegen(r, 0)
         >>> c = cg.generate_challenge()
-        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[0]), r)
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[0]))
         0
-        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[1]), r)
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[1]))
         1
-        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[2]), r)
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[2]))
         2
-        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[3]), r)
+        >>> c.check_rfid_answer(staff_decode(c.get_code(), r[3]))
         3
-        >>> c.check_rfid_answer(0, r)
+        >>> c.check_rfid_answer(0)
         -1
-        >>> c.check_rfid_answer(12345, r)
+        >>> c.check_rfid_answer(12345)
         -1
         '''
 
@@ -172,13 +204,13 @@ class Challenge:
         if corresponding_rfid == None:
             return -1
         idx = -1
-        for i in range(len(rfids)):
-            if rfids[i] == corresponding_rfid:
+        for i in range(len(self._rfids)):
+            if self._rfids[i] == corresponding_rfid:
                 idx = i
                 break
         if idx == -1:
             return -1
-        assert(staff_decode(self.get_code(), rfids[idx]) == student_answer)
+        assert(staff_decode(self.get_code(), self._rfids[idx]) == student_answer)
         return idx
 
 def _helper_generate_potentially_unsafe_code(rand, func_distrib, bijective_funcs_distr, digit_len):
