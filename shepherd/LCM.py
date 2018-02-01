@@ -2,15 +2,15 @@ import threading
 import lcm
 
 LCM_address = 'udpm://239.255.76.68:7667?ttl=2'
-joiner = '|||'
+LCM_joiner = '|||'
 
 def lcm_start_read(receive_channel, queue):
     '''
     Takes in receiving channel name (string), queue (Python queue object).
     Creates thread that receives any message to receiving channel and adds
-    it to queue as tuple (header, [*args]).
+    it to queue as tuple (header, dict).
     header: string
-    [*args]: variable length containing ints/strings. If no args, empty list.
+    dict: Python dictionary
     '''
     comm = lcm.LCM(LCM_address)
 
@@ -22,8 +22,13 @@ def lcm_start_read(receive_channel, queue):
 
     def handler(_, item):
         msg = item.decode()
-        msg_list = msg.split(joiner)
-        queue.put((msg_list[0], [string_to_int(x) for x in msg_list[1:]]))
+        msg_list = msg.split(LCM_joiner)
+        dic = {}
+        index = 1
+        while index < len(msg_list) - 1:
+            dic[string_to_int(msg_list[index])] = string_to_int(msg_list[index + 1])
+            index += 2
+        queue.put((msg_list[0], dic))
 
     comm.subscribe(receive_channel, handler)
 
@@ -35,13 +40,11 @@ def lcm_start_read(receive_channel, queue):
     rec_thread.run = run
     rec_thread.start()
 
-def lcm_send(target_channel, header, *args):
+def lcm_send(target_channel, header, dic):
     '''
-    Send header (string) and variable number of arguments (string or int) to target channel (string)
+    Send header (string) and dictionary to target channel (string)
     '''
-    msg = joiner.join(str(a) for a in args)
-    if msg:
-        msg = joiner.join([header, msg])
-    else:
-        msg = header
+    msg = str(header)
+    for key, value in dic.items():
+        msg = LCM_joiner.join([msg, str(key), str(value)])
     lcm.LCM(LCM_address).publish(target_channel, msg.encode())
