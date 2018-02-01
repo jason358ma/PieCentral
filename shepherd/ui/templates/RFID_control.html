@@ -87,25 +87,6 @@
         RFID_list = msg.RFID_list
         showRFID()
       }
-
-      /*function makeLCM(url) {
-          console.log('attempting to connect to ' + url)
-          if (url == undefined) {
-              url = '127.0.0.1'
-          }
-          lcm = new LCM('ws://' + url + ':8000/');
-          function subscribeAll() {
-              console.log('Connected to LCM Bridge')
-              lcm.subscribe("LCM_TARGET_GUI", "RFID_RECEIVE", handleGenerator)
-          }
-          function reconnect() {
-              return;
-              makeLCM(url)
-          }
-          lcm.on_ready(subscribeAll)
-          lcm.on_close(reconnect)
-      }
-      makeLCM()*/
     });
   </script>
 </head>
@@ -115,7 +96,7 @@
     <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
-        <img alt="Brand" src="favicon.ico" width="40" height="40" class="d-inline-block align-bottom" alt="">
+        <img alt="Brand" src={{url_for( 'static', filename='favicon.ico' )}} width="40" height="40" class="d-inline-block align-bottom" alt="">
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->

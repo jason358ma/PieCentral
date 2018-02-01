@@ -34,13 +34,12 @@ def handle_message(message):
     print('received message: ' + message)
     if message == 'generate-rfid':
         print('sending-rfid')
-        #lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
-        socketio.sleep(1)
+        lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
+        socketio.sleep(2)
         socketio.emit('send-rfid', RFID_list)
 
 @socketio.on('join')
 def handle_join(client):
-
     print('confirmed join: ' + client)
 
 @socketio.on('send')
@@ -49,24 +48,23 @@ def send_message(string):
     print('Should have sent')
 
 def receiver():
-    #events = queue.Queue()
-    #lcm_start_read(str.encode(LCM_TARGETS.UI), events)
-    #while True:
-        #event = events.get()
-        #print("RECEIVED:", event)x
+    global RFID_list
+
+    events = queue.Queue()
+    lcm_start_read(str.encode(LCM_TARGETS.UI), events)
+
+
+    counter = 0
     while True:
-        print("help")
+        print("help", counter)
+        counter = (counter + 1) % 10;
+        RFID_list = str(counter) + RFID_list[1:]
+
+        event = events.get(True)
+        print("RECEIVED:", event)
+        if (event[0] == 'help'):
+            RFID_list = event[1][0]
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)
 socketio.run(app)
-
-'''
-exit = True
-while exit:
-    inputted = input('Enter 6 nums pipe separated')
-    if inputted == 'exit':
-        exit = False
-    else:
-        RFID_list = inputted
-    gevent.sleep()'''
