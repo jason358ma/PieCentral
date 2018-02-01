@@ -3,10 +3,10 @@
 <head>
   <title>Scoreboard</title>
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-  <script type="text/javascript" src={{url_for('static', filename='jquery-1.12.3.min.js')}}></script>
-  <script type="text/javascript" src={{url_for('static', filename='tabletop.js')}}></script>
-  <script type="text/javascript" src={{url_for('static', filename='lcm_ws_bridge.js')}}></script>
-  <script type="text/javascript" src={{url_for('static', filename='socket.io.js')}}></script>
+  <script type="text/javascript" src={{url_for( 'static', filename='jquery-1.12.3.min.js' )}}></script>
+  <script type="text/javascript" src={{url_for( 'static', filename='tabletop.js' )}}></script>
+  <script type="text/javascript" src={{url_for( 'static', filename='lcm_ws_bridge.js' )}}></script>
+  <script type="text/javascript" src={{url_for( 'static', filename='socket.io.js' )}}></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 
   <!-- Latest compiled and minified CSS -->
@@ -38,42 +38,39 @@
 
   <!-- Javascript -->
   <script type="text/javascript" charset="utf-8">
-
-  var RFID_list = [0,0,0,2,2,2];
-  var lcm = null;
-  var socket = io('http://127.0.0.1:5000');
-
+    var RFID_list = ['x', 'x', 'x', 'x', 'x', 'x'];
+    var lcm = null;
+    var socket = io('http://127.0.0.1:5000');
 
     $(document).ready(function() {
-    
-    socket.on('connect', function(data) {
+      socket.on('connect', function(data) {
         socket.emit('join', 'RFID_control');
-    });
-    
-    socket.on('message', (data) => {
+      });
+
+      socket.on('message', (data) => {
         socket.emit('message', 'help')
         console.log(data);
-    });
-    
-    socket.on('send-rfid', function (data) {
-       console.log(data)
-       RFID_list = data.split('|')  
-    });
-    
+      });
+
+      socket.on('send-rfid', function(data) {
+        console.log(data)
+        RFID_list = data.split('|')
+      });
+
       $("#show-rfid").click(
-      function() {
-        console.log('showing rfid');
-        showRFID();
+        function() {
+          console.log('showing rfid');
+          showRFID();
         }
       );
 
       $("#generate-rfid").click(
-      function() {
-        console.log('generating rfid');
-        socket.emit('message', 'generate-rfid');
-        setTimeout(function(){
-           showRFID(); 
-        }, 2000);
+        function() {
+          console.log('generating rfid');
+          socket.emit('message', 'generate-rfid');
+          setTimeout(function() {
+            showRFID();
+          }, 2000);
         }
       );
 
@@ -124,9 +121,9 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li class="activex"><a href="staff_gui.html">Staff Gui</a></li>
-          <li class="activex"><a href="score_adjustment.html">Score Adjustment</a></li>
-          <li class="active"><a href="RFID_control.html">RFID Control</a></li>
+          <li class="activex"><a href="../staff_gui.html">Staff Gui</a></li>
+          <li class="activex"><a href="../score_adjustment.html">Score Adjustment</a></li>
+          <li class="active"><a href="../RFID_control.html">RFID Control</a></li>
         </ul>
       </div>
       <!-- /.navbar-collapse -->
@@ -142,33 +139,30 @@
 
     <div class="col-xs-6 blue-field bottom-padding">
       <div class="text-center left-margin">
-        <h1 id="rfid-blue-1">0</h1>
+        <h1 id="rfid-blue-1">~</h1>
       </div>
       <div class="left-margin">
-        <h1 id="rfid-blue-2">0</h1>
+        <h1 id="rfid-blue-2">~</h1>
       </div>
       <div class="text-center left-margin">
-        <h1 id="rfid-blue-3">0</h1>
+        <h1 id="rfid-blue-3">~</h1>
       </div>
     </div>
     <div class="col-xs-6 gold-field bottom-padding">
       <div class="text-center right-margin">
-        <h1 id="rfid-gold-1">0</h1>
+        <h1 id="rfid-gold-1">~</h1>
       </div>
       <div class="text-right right-margin">
-        <h1 id="rfid-gold-2">0</h1>
+        <h1 id="rfid-gold-2">~</h1>
       </div>
       <div class="text-center right-margin">
-        <h1 id="rfid-gold-3">0</h1>
+        <h1 id="rfid-gold-3">~</h1>
       </div>
     </div>
 
     <div class="text-center">
       <button class="btn btn-info btn-lg" role="button" id="generate-rfid">Generate RFIDs</button>
       <button class="btn btn-info btn-lg" type="button" id="show-rfid">Show RFIDs</button>
-      <input type='text' size='10' id='echoText' name='echoText'>
-      <strong><div id='echoResult'></div></strong>
-
     </div>
 
   </div>

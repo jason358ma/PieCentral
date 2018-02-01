@@ -18,40 +18,48 @@ def hello_world():
     return 'Hello, World!'
 
 @app.route('/RFID_control.html/')
-def hello():
+def RFID_control():
     return render_template('RFID_control.html')
+
+@app.route('/score_adjustment.html/')
+def score_adjustment():
+    return render_template('score_adjustment.html')
+
+@app.route('/staff_gui.html/')
+def staff_gui():
+    return render_template('staff_gui.html')
 
 @socketio.on('message')
 def handle_message(message):
     print('received message: ' + message)
     if message == 'generate-rfid':
         print('sending-rfid')
-        lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
-        gevent.sleep()
+        #lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
+        socketio.sleep(1)
         socketio.emit('send-rfid', RFID_list)
 
 @socketio.on('join')
-def handle_message(client):
+def handle_join(client):
+
     print('confirmed join: ' + client)
 
-def send_message(str):
-    socketio.emit('message', str)
+@socketio.on('send')
+def send_message(string):
+    socketio.emit('send-rfid', string)
     print('Should have sent')
 
 def receiver():
-
-    events = queue.Queue()
-    lcm_start_read(str.encode(LCM_TARGETS.UI), events)
-    while True:
-        event = events.get()
-        print("RECEIVED:", event)
-
+    #events = queue.Queue()
+    #lcm_start_read(str.encode(LCM_TARGETS.UI), events)
     #while True:
-        #gevent.sleep()
-        #send_message(input("Type something: "))
+        #event = events.get()
+        #print("RECEIVED:", event)x
+    while True:
+        print("help")
+        socketio.sleep(1)
 
-t = threading.Thread(target=receiver)
-t.start()
+socketio.start_background_task(receiver)
+socketio.run(app)
 
 '''
 exit = True
