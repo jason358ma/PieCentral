@@ -2,7 +2,7 @@ import flask
 import threading
 import time
 import queue
-import Utils
+from Utils import *
 from LCM import *
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
@@ -38,7 +38,7 @@ def handle_message(message):
     if message == 'generate-rfid':
         print('sending-rfid')
         lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
-        socketio.sleep(2)
+        socketio.sleep(0.1)
         socketio.emit('send-rfid', RFID_list)
 
 @socketio.on('join')
@@ -53,7 +53,7 @@ def send_message(string):
 def receiver():
     global RFID_list
 
-    events = queue.Queue()
+    events = gevent.queue.Queue()
     lcm_start_read(str.encode(LCM_TARGETS.UI), events)
 
 
@@ -61,12 +61,13 @@ def receiver():
     while True:
         print("help", counter)
         counter = (counter + 1) % 10;
-        RFID_list = str(counter) + RFID_list[1:]
+        #RFID_list = str(counter) + RFID_list[1:]
 
-        event = events.get(True)
-        print("RECEIVED:", event)
-        if (event[0] == 'help'):
-            RFID_list = event[1][0]
+        if (not events.empty()):
+            event = events.get_nowait()
+            print("RECEIVED:", event)
+            if (event[0] == 'help'):
+                RFID_list = event[1][0]
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)
