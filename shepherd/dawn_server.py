@@ -9,10 +9,11 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, send
 import gevent
 import json
 
-LCM_URL = "192.0.0.1"
+HOST_URL = "192.0.0.1"
+PORT = 5000
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = 'omegalul!'
 socketio = SocketIO(app)
 
 RFID_list = '1|2|3|4|5|0'
@@ -57,4 +58,4 @@ def receiver():
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)
-socketio.run(app)
+socketio.run(app, host=HOST_URL, port=PORT)
