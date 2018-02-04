@@ -1,4 +1,4 @@
-int pins[] = {2, 3, 4, 5, 6, 7};
+int pins[] = {2, 3, 4, 5, 6, 10};
 char goals[] = {'A', 'B', 'C', 'D', 'E', 'G'};
 int states[] = {LOW, LOW, LOW, LOW, LOW, LOW};
 //map out which pins correspond to which goal ids
@@ -15,6 +15,7 @@ void setup() {
 void loop() {
   for (int i = 0; i < 6; i++) {
     int pinState = digitalRead(pins[i]);
+    // to distinguish scoring from a sensor disconnect
     if (pinState == LOW && states[i] == HIGH) {
       Serial.print("gold");
       Serial.println(goals[i]);
@@ -22,7 +23,7 @@ void loop() {
     } else if (pinState == HIGH) {
       states[i] = HIGH;
     }
-    Serial.println("hb");
   }
-  delay(2);
+  //Serial.println("hb");
+  delay(200);
 }
