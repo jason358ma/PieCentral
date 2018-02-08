@@ -234,7 +234,7 @@ def _helper_generate_potentially_unsafe_code(rand, func_distrib, bijective_funcs
         return 0
 
     bijective_digit = 0 # Use the fallback by default
-    if not bijective_funcs_distr.empty():
+    if not bijective_funcs_distr:
         bijective_digit = _helper_pick_random(rand.uniform(0, 1), bijective_funcs_distr)
 
     # Randomly generate the remaining digits
@@ -656,9 +656,16 @@ def staff_decode(challenge_code, rfid_seed, precompute=None):
         else:
             result = precompute[digit][rfid_seed]
 
-        output += '555' + str(result)
-
-    return int(output)
+        output += str(result)
+    output = int(output % 10000)
+    random.seed()
+    ##############
+    final_output = 0
+    for i in output:
+        final_output = final_output * 10 + (int(i) % 5) + 1
+    if final_output < 1000:
+        final_output += 1000
+    return final_output
 
 def _debug_random_sample(sample_size):
     # Random sampling of codes, finds how frequent each digit is
@@ -681,6 +688,24 @@ def _debug_random_sample(sample_size):
     for i in range(0, 9):
         count[i] /= total
     return count
+
+def get_new_code(rfids, codes, index):
+    '''
+    Generates a new code for that index such that there are no collisions in the codes or solutions.
+    '''
+    solutions = []
+    for i in range(6):
+        solutions += [staff_decode(codes[i], rfids[i])]
+    print(solutions)
+    while True:
+        gen = Codegen(rfids)
+        challenge = gen.generate_challenge()
+        new_code = challenge.get_code()
+        new_solution = challenge.get_solution(rfids[index])
+        if (not new_solution in solutions) and (not new_code in codes):
+            codes[index], solutions[index] = new_code, new_solution
+            break
+    return rfids, codes, solutions
 
 if __name__ == "__main__":
     import doctest
