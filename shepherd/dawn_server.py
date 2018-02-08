@@ -10,35 +10,13 @@ import gevent
 import json
 
 HOST_URL = "127.0.0.1"
-PORT = 5000
+PORT = 7000
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'omegalul!'
 socketio = SocketIO(app)
 
-RFID_list = '1|2|3|4|5|0'
-
-@socketio.on('message')
-def handle_message(message):
-    print('received message: ' + message)
-    if message == 'generate-rfid':
-        print('sending-rfid')
-        lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
-        socketio.sleep(0.1)
-        socketio.emit('send-rfid', RFID_list)
-
-@socketio.on('join')
-def handle_join(client):
-    print('confirmed join: ' + client)
-
-@socketio.on('send')
-def send_message(string):
-    socketio.emit('send-rfid', string)
-    print('Should have sent')
-
 def receiver():
-    global RFID_list
-
     events = gevent.queue.Queue()
     lcm_start_read(str.encode(LCM_TARGETS.UI), events)
     counter = 0

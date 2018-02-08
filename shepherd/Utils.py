@@ -5,10 +5,16 @@ class SHEPHERD_HEADER():
     CODE_INPUT = "code_input"
 
     START_MATCH = "start_match"
-    SETUP_MATCH = "setup_match"
     START_NEXT_STAGE = "start_next_stage"
     RESET_CURRENT_STAGE = "reset_current_stage"
     RESET_MATCH = "reset_match"
+
+    GET_MATCH_INFO = "get_match_info"
+    SETUP_MATCH = "setup_match"
+
+    STOP_ROBOT = "stop_robot"
+
+    GET_SCORES = "get_scores"
     SCORE_ADJUST = "score_adjust"
 
     GENERATE_RFID = "generate_rfid"

@@ -67,7 +67,7 @@
       $("#generate-rfid").click(
         function() {
           console.log('generating rfid');
-          socket.emit('message', 'generate-rfid');
+          socket.emit('message', 'generate_rfid');
           setTimeout(function() {
             showRFID();
           }, 150);

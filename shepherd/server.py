@@ -35,7 +35,7 @@ def staff_gui():
 @socketio.on('message')
 def handle_message(message):
     print('received message: ' + message)
-    if message == 'generate-rfid':
+    if message == SHEPHERD_HEADER.GENERATE_RFID:
         print('sending-rfid')
         lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
         socketio.sleep(0.1)
