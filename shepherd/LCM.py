@@ -8,9 +8,9 @@ def lcm_start_read(receive_channel, queue):
     '''
     Takes in receiving channel name (string), queue (Python queue object).
     Creates thread that receives any message to receiving channel and adds
-    it to queue as tuple (header, dict).
+    it to queue as tuple (header, dic).
     header: string
-    dict: Python dictionary
+    dic: Python dictionary
     '''
     comm = lcm.LCM(LCM_address)
 
