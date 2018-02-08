@@ -62,11 +62,11 @@ def receiver():
         if (not events.empty()):
             event = events.get_nowait()
             print("RECEIVED:", event)
-            if (event[0] == UIHEADER.RFID_LIST):
+            if (event[0] == UI_HEADER.RFID_LIST):
                 socketio.emit('send-rfid', json.dumps(event[1][0], ensure_ascii=False))
-            elif (event[0] == UIHEADER.TEAMS_INFO):
+            elif (event[0] == UI_HEADER.TEAMS_INFO):
                 socketio.emit('teams-info', json.dumps(event[1][0], ensure_ascii=False))
-            elif (event[0] == UIHEADER.SCORES):
+            elif (event[0] == UI_HEADER.SCORES):
                 socketio.emit('scores', json.dumps(event[1][0], ensure_ascii=False))
         socketio.sleep(1)
 
