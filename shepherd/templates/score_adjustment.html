@@ -44,10 +44,22 @@
   <!-- Javascript -->
   <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
-      //need to pull scores automatically
+
       var blueScore = 0;
       var goldScore = 0;
-      var lcm = null;
+
+      socket.on('connect', function(data) {
+        socket.emit('join', 'score_adjustment');
+        socket.emit('message', 'send_scores')
+      });
+
+      socket.on('send-scores', function(data) {
+        console.log('received')
+        //TODO: JSON decode scores
+        updateScores()
+      });
+
+      //need to pull scores automatically
 
       function updateScores() {
         $("#blue-score").html(blueScore);
@@ -80,37 +92,15 @@
 
       $("#reset-scores").click(
       function() {
-        blueScore = 0
-        goldScore = 0
-        updateScores();
+        socket.emit('message', 'send-scores')
       });
 
       $("#send-scores").click(
       function() {
-        msg = {__type__: "SCORE_ADJUSTMENT_SEND", blueScore: blueScore, goldScore: goldScore}
-        lcm.publish("LCM_TARGET_SHEPHERD", msg)
-        window.location.href = '/match_control.html'
-        return false
+        //TODO: JSON encode SCORES
+        data = 1
+        socket.emit('receive_scores', data)
       });
-
-      function makeLCM(url) {
-          console.log('attempting to connect to ' + url)
-          if (url == undefined) {
-              url = '127.0.0.1'
-          }
-          lcm = new LCM('ws://' + url + ':8000/');
-          function subscribeAll() {
-              console.log('Connected to LCM Bridge')
-              //lcm.subscribe("LCM_TARGET_GUI", "RFID_RECEIVE", handleGenerator)
-          }
-          function reconnect() {
-              return;
-              makeLCM(url)
-          }
-          lcm.on_ready(subscribeAll)
-          lcm.on_close(reconnect)
-      }
-      makeLCM()
 
     });
   </script>
