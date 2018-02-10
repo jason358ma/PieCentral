@@ -657,14 +657,13 @@ def staff_decode(challenge_code, rfid_seed, precompute=None):
             result = precompute[digit][rfid_seed]
 
         output += str(result)
-    output = int(output % 10000)
-    random.seed()
+    output = int(output) % 10000
+    random.seed(output)
+    output = str(random.randint(1000, 9999))
     ##############
     final_output = 0
     for i in output:
         final_output = final_output * 10 + (int(i) % 5) + 1
-    if final_output < 1000:
-        final_output += 1000
     return final_output
 
 def _debug_random_sample(sample_size):
