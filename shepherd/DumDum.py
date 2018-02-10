@@ -17,7 +17,7 @@ def receiver():
         if(event[0] == SHEPHERD_HEADER.GENERATE_RFID):
             val = rand.sample([1, 2, 3, 4, 5, 6], 6)
             send = str(val[0]) + "|" +str(val[1]) + "|" +str(val[2]) + "|" +str(val[3]) + "|" +str(val[4]) + "|" +str(val[5])
-            lcm_send(LCM_TARGETS.UI, UI_HEADER.RFID_LIST, send);
+            lcm_send(LCM_TARGETS.DAWN, DAWN__LIST, send);
             print("help")
 
 if __name__ == "__main__":

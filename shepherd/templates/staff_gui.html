@@ -48,6 +48,12 @@
   </style>
   <script>
     $(document).ready(function() {
+
+      socket.on('connect', function(data) {
+        socket.emit('join', 'score_adjustment');
+        socket.emit('message', 'send_team_info')
+      });
+
       $("#toggle-all").click(
       function() {
         toggleLed($(".heartbeat-light"));

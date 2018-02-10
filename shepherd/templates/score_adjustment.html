@@ -50,16 +50,15 @@
 
       socket.on('connect', function(data) {
         socket.emit('join', 'score_adjustment');
-        socket.emit('message', 'send_scores')
+        socket.emit('ui-to-server-score-request');
       });
 
-      socket.on('send-scores', function(data) {
+      socket.on('server-to-ui-scores', function(scores) {
         console.log('received')
-        //TODO: JSON decode scores
+        blueScore = scores.blueScore
+        goldScore = scores.goldScore
         updateScores()
       });
-
-      //need to pull scores automatically
 
       function updateScores() {
         $("#blue-score").html(blueScore);
@@ -92,14 +91,13 @@
 
       $("#reset-scores").click(
       function() {
-        socket.emit('message', 'send-scores')
+        socket.emit('ui-to-server-score-request');
       });
 
       $("#send-scores").click(
       function() {
-        //TODO: JSON encode SCORES
-        data = 1
-        socket.emit('receive_scores', data)
+        data = {"blueScore" : blueScore, "goldScore" : goldScore}
+        socket.emit('ui-to-server-scores', data)
       });
 
     });

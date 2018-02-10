@@ -36,17 +36,30 @@ def staff_gui():
 def handle_join(client_name):
     print('confirmed join: ' + client_name)
 
-@socketio.on('message')
+'''@socketio.on('message')
 def handle_message(message):
     print('received message: ' + message)
-    if message == SHEPHERD_HEADER.GENERATE_RFID:
+    if message == 'generate-rfid':
         print('sending-rfid')
         lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
-        socketio.sleep(0.1)
+        socketio.sleep(0.1)'''
 
-@socketio.on('receive_scores')
-def send_message(scores):
+#@socketio.on('scores_to_server')
+#def scores_to_shepherd(scores):
+#    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SCORE_ADJUST, scores)
+
+@socketio.on('ui-to-server-scores')
+def ui-to-server-scores(scores):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SCORE_ADJUST, scores)
+
+@socketio.on('ui-to-server-score-request')
+def ui-to-server-score-request():
+    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_SCORES)
+
+@socketio.on('ui-to-server-rfid-request')
+def ui-to-server-rfid-request():
+    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
+
 
 def receiver():
     events = gevent.queue.Queue()
@@ -56,17 +69,16 @@ def receiver():
     while True:
         print("help", counter)
         counter = (counter + 1) % 10;
-        #RFID_list = str(counter) + RFID_list[1:]
 
         if (not events.empty()):
             event = events.get_nowait()
             print("RECEIVED:", event)
             if (event[0] == UI_HEADER.RFID_LIST):
-                socketio.emit(UI_HEADER.RFID_LIST, json.dumps(event[1][0], ensure_ascii=False))
+                socketio.emit('server-to-ui-rfidlist', json.dumps(event[1][0], ensure_ascii=False))
             elif (event[0] == UI_HEADER.TEAMS_INFO):
-                socketio.emit(UI_HEADER.TEAMS_INFO, json.dumps(event[1][0], ensure_ascii=False))
+                socketio.emit('server-to-ui-teamsinfo', json.dumps(event[1][0], ensure_ascii=False))
             elif (event[0] == UI_HEADER.SCORES):
-                socketio.emit(UI_HEADER.SCORES, json.dumps(event[1][0], ensure_ascii=False))
+                socketio.emit('server-to-ui-scores', json.dumps(event[1][0], ensure_ascii=False))
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)

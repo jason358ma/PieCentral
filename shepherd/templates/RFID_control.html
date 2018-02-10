@@ -47,14 +47,9 @@
         socket.emit('join', 'RFID_control');
       });
 
-      socket.on('message', (data) => {
-        socket.emit('message', 'help')
-        console.log(data);
-      });
-
-      socket.on('send-rfid', function(data) {
-        console.log(data)
-        RFID_list = data.split('|')
+      socket.on('server-to-ui-rfidlist', function(data) {
+        RFID_list = data.RFID_list
+        showRFID();
       });
 
       $("#show-rfid").click(
@@ -67,10 +62,7 @@
       $("#generate-rfid").click(
         function() {
           console.log('generating rfid');
-          socket.emit('message', 'generate_rfid');
-          setTimeout(function() {
-            showRFID();
-          }, 150);
+          socket.emit('ui-to-server-rfid-request');
         }
       );
 
@@ -81,11 +73,6 @@
         $("#rfid-gold-1").html(RFID_list[3]);
         $("#rfid-gold-2").html(RFID_list[4]);
         $("#rfid-gold-3").html(RFID_list[5]);
-      }
-
-      function handleGenerator(msg) {
-        RFID_list = msg.RFID_list
-        showRFID()
       }
     });
   </script>
