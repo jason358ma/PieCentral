@@ -12,7 +12,7 @@ import { pathToName, defaults, logging } from '../utils/utils';
 const { dialog } = remote;
 const { Client } = require('ssh2');
 
-class UpdateBox extends React.Component {
+class UpdateBox extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

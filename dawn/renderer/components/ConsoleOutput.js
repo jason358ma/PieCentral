@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Panel } from 'react-bootstrap';
 
-class ConsoleOutput extends React.Component {
+class ConsoleOutput extends React.PureComponent {
   constructor(props) {
     super(props);
     this.scrollToBottom = this.scrollToBottom.bind(this);

@@ -18,7 +18,7 @@ import { ipChange } from '../actions/InfoActions';
 
 const storage = remote.require('electron-json-storage');
 
-class ConfigBoxComponent extends React.Component {
+class ConfigBoxComponent extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

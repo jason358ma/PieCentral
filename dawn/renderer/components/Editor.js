@@ -36,7 +36,7 @@ import { pathToName, robotState, defaults, timings, logging, windowInfo } from '
 const { dialog } = remote;
 const currentWindow = remote.getCurrentWindow();
 
-class Editor extends React.Component {
+class Editor extends React.PureComponent {
   /*
    * ASCII Enforcement
    */

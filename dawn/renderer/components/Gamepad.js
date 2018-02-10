@@ -9,7 +9,7 @@ import {
 import _ from 'lodash';
 import numeral from 'numeral';
 
-class Gamepad extends React.Component {
+class Gamepad extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = { showModal: false };

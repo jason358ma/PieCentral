@@ -13,7 +13,7 @@ import { logging, startLog } from '../utils/utils';
 
 const storage = remote.require('electron-json-storage');
 
-class AppComponent extends React.Component {
+class AppComponent extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -66,10 +66,6 @@ class AppComponent extends React.Component {
         this.updateAlert(latestAlert);
       }
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return nextProps !== this.props || nextState !== this.state;
   }
 
   addSteps(steps) {
