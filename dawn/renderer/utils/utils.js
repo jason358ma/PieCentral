@@ -100,7 +100,9 @@ export class Logger {
   }
 
   log(output) {
-    console.log(output);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(output);
+    }
     this._write(output, `\n[${(new Date()).toString()}]`);
   }
   debug(output) {
