@@ -81,6 +81,7 @@ class LCM_TARGETS():
     SCOREBOARD = "lcm_target_scoreboard"
     SENSORS = "lcm_target_sensors"
     UI = "lcm_target_ui"
+    DAWN = "lcm_target_dawn"
 
 # pylint: disable=invalid-name
 class TIMER_TYPES():
