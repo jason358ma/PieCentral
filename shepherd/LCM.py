@@ -1,23 +1,27 @@
 import threading
 import json
-import lcm
+import lcm # pylint: disable=import-error
 
 LCM_address = 'udpm://239.255.76.68:7667?ttl=2'
 
-def lcm_start_read(receive_channel, queue):
+def lcm_start_read(receive_channel, queue, put_json=False):
     '''
     Takes in receiving channel name (string), queue (Python queue object).
+    Takes whether to add received items to queue as JSON or Python dict. 
     Creates thread that receives any message to receiving channel and adds
     it to queue as tuple (header, dict).
     header: string
-    dict: JSON dictionary
+    dict: Python dictionary
     '''
     comm = lcm.LCM(LCM_address)
 
     def handler(_, item):
-        dic = json.loads(item.decode())
-        header = dic.pop('header')
-        queue.put((header, dic))
+        if put_json:
+            queue.put(item.decode())
+        else:
+            dic = json.loads(item.decode())
+            header = dic.pop('header')
+            queue.put((header, dic)) 
 
     comm.subscribe(receive_channel, handler)
 
@@ -29,7 +33,7 @@ def lcm_start_read(receive_channel, queue):
     rec_thread.run = run
     rec_thread.start()
 
-def lcm_send(target_channel, header, dic):
+def lcm_send(target_channel, header, dic={}):
     '''
     Send header and dictionary to target channel (string)
     '''
