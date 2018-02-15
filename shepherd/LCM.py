@@ -38,4 +38,5 @@ def lcm_send(target_channel, header, dic={}):
     Send header and dictionary to target channel (string)
     '''
     dic['header'] = header
-    lcm.LCM(LCM_address).publish(target_channel, json.dumps(dic).encode())
+    json_str = json.dumps(dic)
+    lcm.LCM(LCM_address).publish(target_channel, json_str.encode())
