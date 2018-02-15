@@ -15,7 +15,6 @@ void setup() {
 void loop() {
   for (int i = 0; i < 6; i++) {
     int pinState = digitalRead(pins[i]);
-    // to distinguish scoring from a sensor disconnect
     if (pinState == LOW && states[i] == HIGH) {
       Serial.print("blue");
       Serial.println(goals[i]);
@@ -24,6 +23,5 @@ void loop() {
       states[i] = HIGH;
     }
   }
-  //Serial.println("hb");
   delay(200);
 }
