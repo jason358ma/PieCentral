@@ -16,13 +16,14 @@ void setup() {
 void loop() {
   for (int i = 0; i < 6; i++) {
     int pinState = digitalRead(pins[i]);
-
-    // to distinguish scoring from a sensor disconnect    if (pinState == LOW && states[i] == HIGH) {
+    // to distinguish scoring from a sensor disconnect    
+    if (pinState == LOW && states[i] == HIGH) {
       Serial.print("gold");
       Serial.println(goals[i]);
       states[i] = LOW;
     } else if (pinState == HIGH) {
       states[i] = HIGH;
     }
-  }  delay(200);
+  }  
+  delay(200);
 }
