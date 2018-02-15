@@ -1,4 +1,4 @@
-int pins[] = {2, 3, 4, 5, 6, 10};
+int pins[] = {4, 5, 6, 7, 8, 9};
 char goals[] = {'A', 'B', 'C', 'D', 'E', 'G'};
 int states[] = {LOW, LOW, LOW, LOW, LOW, LOW};
 //map out which pins correspond to which goal ids
