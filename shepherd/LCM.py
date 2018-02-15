@@ -21,7 +21,7 @@ def lcm_start_read(receive_channel, queue, put_json=False):
         else:
             dic = json.loads(item.decode())
             header = dic.pop('header')
-            queue.put((header, dic)) 
+            queue.put((header, dic))
 
     comm.subscribe(receive_channel, handler)
 
