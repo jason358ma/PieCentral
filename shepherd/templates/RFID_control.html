@@ -39,7 +39,6 @@
   <!-- Javascript -->
   <script type="text/javascript" charset="utf-8">
     var RFID_list = ['x', 'x', 'x', 'x', 'x', 'x'];
-    var lcm = null;
     var socket = io('http://127.0.0.1:5000');
 
     $(document).ready(function() {
@@ -48,7 +47,7 @@
       });
 
       socket.on('server-to-ui-rfidlist', function(data) {
-        RFID_list = data.RFID_list
+        RFID_list = JSON.parse(data).RFID_list
         showRFID();
       });
 

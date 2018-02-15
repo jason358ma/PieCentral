@@ -18,7 +18,7 @@ socketio = SocketIO(app)
 
 def receiver():
     events = gevent.queue.Queue()
-    lcm_start_read(str.encode(LCM_TARGETS.DAWN), events)
+    lcm_start_read(str.encode(LCM_TARGETS.DAWN), events, json=true)
     counter = 0
 
     while True:
@@ -29,10 +29,7 @@ def receiver():
         if (not events.empty()):
             event = events.get_nowait()
             print("RECEIVED:", event)
-            if (event[0] == DAWN_HEADER.CALL_STATUS):
-                socketio.emit(DAWN_HEADER.CALL_STATUS, event[1][0])
-            elif (event[0] == DAWN_HEADER.CODE_LISTS):
-                socketio.emit(DAWN_HEADER.CODE_LISTS, event[1][0])
+            socketio.emit(DAWN_HEADER.CALL_STATUS, event)
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)

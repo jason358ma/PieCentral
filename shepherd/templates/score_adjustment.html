@@ -55,8 +55,8 @@
 
       socket.on('server-to-ui-scores', function(scores) {
         console.log('received')
-        blueScore = scores.blueScore
-        goldScore = scores.goldScore
+        blueScore = JSON.parse(scores).blueScore
+        goldScore = JSON.parse(scores).goldScore
         updateScores()
       });
 
@@ -97,7 +97,7 @@
       $("#send-scores").click(
       function() {
         data = {"blueScore" : blueScore, "goldScore" : goldScore}
-        socket.emit('ui-to-server-scores', data)
+        socket.emit('ui-to-server-scores', JSON.stringify(data))
       });
 
     });
