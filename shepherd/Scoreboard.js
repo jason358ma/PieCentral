@@ -29,9 +29,9 @@ function start(time){
 
 function draw(pct){
     var endRadians=-Math.PI/2+Math.PI*2*pct/100;
-    // ctx.fillStyle='white';
-    // ctx.fillRect(0,0,cw,ch);
-    // ctx.beginPath();
+    ctx.fillStyle='white';
+    ctx.fillRect(0,0,cw,ch);
+    ctx.beginPath();
     ctx.arc(150,125,100,-Math.PI/2,endRadians);
     ctx.lineTo(150,125);
     ctx.fillStyle='blue';
@@ -47,6 +47,8 @@ function draw(pct){
     // ctx.font='18px arial';
 }
 
-function addTime(time){
-
+function addTime(){
+    grow += parseFloat(document.getElementById("addTime").elements[0].value)*10;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.beginPath();
 }

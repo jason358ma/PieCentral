@@ -10,8 +10,11 @@
     </body> 
     <br>
     <form id="seconds">
-	  Time: <input type="text" name="time"><br>
+	  Initial Time: <br><input type="text" name="time"><br>
 	  <input type="button" onclick="start()" value="Start">
 	</form>
-    <button class="button" value = 'add_time' id = '0' onclick="addTime(5);" style= "visibility: visible">Add Time</button>
+    <form id="addTime">
+      <input type="text" name="addtime"><br>
+      <input type="button" onclick="addTime()" value="Add Time">
+    </form>
 </html>
