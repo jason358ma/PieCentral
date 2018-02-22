@@ -33,7 +33,7 @@ def lcm_start_read(receive_channel, queue, put_json=False):
     rec_thread.run = run
     rec_thread.start()
 
-def lcm_send(target_channel, header, dic={}):
+def lcm_send(target_channel, header, dic={}): # pylint: disable=dangerous-default-value
     '''
     Send header and dictionary to target channel (string)
     '''
