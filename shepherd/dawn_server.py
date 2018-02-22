@@ -22,14 +22,10 @@ def receiver():
     counter = 0
 
     while True:
-        print("help", counter)
-        counter = (counter + 1) % 10;
-        #RFID_list = str(counter) + RFID_list[1:]
-
         if (not events.empty()):
             event = events.get_nowait()
             print("RECEIVED:", event)
-            socketio.emit(DAWN_HEADER.CALL_STATUS, event)
+            socketio.emit(DAWN_HEADER.CALL_STATUS, json.dumps(event[1], ensure_ascii=False))
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)

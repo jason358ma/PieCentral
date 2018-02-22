@@ -89,7 +89,7 @@ def receiver():
 
     while True:
         print("help", counter)
-        counter = (counter + 1) % 10;
+        counter = (counter + 1) % 10
 
         if (not events.empty()):
             event = events.get_nowait()
