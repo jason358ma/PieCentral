@@ -4,17 +4,20 @@ var cw=canvas.width;
 var ch=canvas.height;
 
 var nextTime=0;
-var duration=1000;
 var endingPct=100;
 var pct=0;
 var grow = 0;
 // var increment=duration/pct;
-requestAnimationFrame(animate);
+function start() {
+    var form = document.getElementById("seconds")
+    var duration = parseFloat(form.elements[0].value);
+    requestAnimationFrame(animate);
+}
 
 function animate(time) {
     draw(pct);
-    pct += 0.5
-    if(pct<endingPct) {
+    pct = 100 * (time/(duration * 1000))
+    if(pct<=endingPct) {
         requestAnimationFrame(animate);
     }
 }
@@ -26,9 +29,9 @@ function draw(pct){
     ctx.fillRect(0,0,cw,ch);
     ctx.beginPath();
     
-    ctx.arc(150,125,110,-Math.PI/2, endRadians, true);
+    ctx.arc(150,125,105,-Math.PI/2, endRadians, true);
     ctx.moveTo(150,125);
-    ctx.lineWidth = 40;
+    ctx.lineWidth = 30;
     ctx.strokeStyle = 'green';
     ctx.stroke();
     // ctx.fillStyle='green';
