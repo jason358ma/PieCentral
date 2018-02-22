@@ -46,41 +46,41 @@ def handle_message(message):
 
 #Score Adjustment
 @socketio.on('ui-to-server-scores')
-def ui-to-server-scores(scores):
+def ui_to_server_scores(scores):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SCORE_ADJUST, json.loads(scores))
 
 @socketio.on('ui-to-server-score-request')
-def ui-to-server-score-request():
+def ui_to_server_score_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_SCORES)
 
 #RFID_control
 @socketio.on('ui-to-server-rfid-request')
-def ui-to-server-rfid-request():
+def ui_to_server_rfid_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
 
 #Main GUI
 @socketio.on('ui-to-server-teams-info-request')
-def ui-to-server-ui-request():
+def ui_to_server_ui_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_MATCH_INFO)
 
 @socketio.on('ui-to-server-setup-match')
-def ui-to-server-ui-request(teams_info):
+def ui_to_server_ui_request(teams_info):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_MATCH_INFO, json.loads(teams_info))
 
 @socketio.on('ui-to-server-start-match')
-def ui-to-server-ui-request():
+def ui_to_server_ui_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_MATCH)
 
 @socketio.on('ui-to-server-start-next-stage')
-def ui-to-server-ui-request():
+def ui_to_server_ui_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_NEXT_STAGE)
 
 @socketio.on('ui-to-server-reset-stage')
-def ui-to-server-ui-request():
+def ui_to_server_ui_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_CURRENT_STAGE)
 
 @socketio.on('ui-to-server-reset-match')
-def ui-to-server-ui-request():
+def ui_to_server_ui_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_MATCH)
 
 '''
