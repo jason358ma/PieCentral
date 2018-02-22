@@ -36,14 +36,6 @@ def staff_gui():
 def handle_join(client_name):
     print('confirmed join: ' + client_name)
 
-'''@socketio.on('message')
-def handle_message(message):
-    print('received message: ' + message)
-    if message == 'generate-rfid':
-        print('sending-rfid')
-        lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
-        socketio.sleep(0.1)'''
-
 #Score Adjustment
 @socketio.on('ui-to-server-scores')
 def ui_to_server_scores(scores):
@@ -60,27 +52,27 @@ def ui_to_server_rfid_request():
 
 #Main GUI
 @socketio.on('ui-to-server-teams-info-request')
-def ui_to_server_ui_request():
+def ui_to_server_match_info_request():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_MATCH_INFO)
 
 @socketio.on('ui-to-server-setup-match')
-def ui_to_server_ui_request(teams_info):
+def ui_to_server_setup_match(teams_info):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_MATCH_INFO, json.loads(teams_info))
 
 @socketio.on('ui-to-server-start-match')
-def ui_to_server_ui_request():
+def ui_to_server_start_match():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_MATCH)
 
 @socketio.on('ui-to-server-start-next-stage')
-def ui_to_server_ui_request():
+def ui_to_server_start_next_stage():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_NEXT_STAGE)
 
 @socketio.on('ui-to-server-reset-stage')
-def ui_to_server_ui_request():
+def ui_to_server_reset_stage():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_CURRENT_STAGE)
 
 @socketio.on('ui-to-server-reset-match')
-def ui_to_server_ui_request():
+def ui_to_server_reset_match():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_MATCH)
 
 '''

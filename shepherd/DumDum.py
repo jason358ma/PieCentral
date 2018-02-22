@@ -25,6 +25,8 @@ def receiver():
             x = {"blue_score": rand.randrange(100), "gold_score": rand.randrange(100)}
             lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES, x);
             print("Sent scores")
+        if (event[0] == SHEPHERD_HEADER.SCORE_ADJUST):
+            print(event[1])
 
 if __name__ == "__main__":
     sender_thread = threading.Thread(target=sender, name="DummySensorSender")
