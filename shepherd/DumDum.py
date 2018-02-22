@@ -15,7 +15,7 @@ def receiver():
         event = events.get(True)
         print("got event")
         if(event[0] == SHEPHERD_HEADER.GENERATE_RFID):
-            x = {RFID: [4,5,6,7,8,9]}
+            x = {"RFID_list": [4,5,6,7,8,9]}
             lcm_send(LCM_TARGETS.UI_HEADER, RFID_LIST, x);
             print("help")
 
