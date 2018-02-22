@@ -29,9 +29,9 @@ def receiver():
             print(event[1])
         if (event[0] == SHEPHERD_HEADER.GET_MATCH_INFO):
             x = {"match_num": rand.randrange(100), "b1name": "- a string1",
-            "b1num": (rand.randrange(10), "b2name": "- a string2",
-            "b2num": (rand.randrange(10), "g1name": "- a string3",
-            "g1num": (rand.randrange(10), "g2name": "- a string4", "g2num": (rand.randrange(10)}
+            "b1num": rand.randrange(10), "b2name": "- a string2",
+            "b2num": rand.randrange(10), "g1name": "- a string3",
+            "g1num": rand.randrange(10), "g2name": "- a string4", "g2num": rand.randrange(10)}
             lcm_send(LCM_TARGETS.UI, UI_HEADER.TEAMS_INFO, x);
             print("Sent Team Info")
 
