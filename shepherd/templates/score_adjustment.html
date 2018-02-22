@@ -56,7 +56,7 @@
       });
 
       socket.on('server-to-ui-scores', function(scores) {
-        console.log('received')
+        console.log('scores')
         blueScore = JSON.parse(scores).blueScore
         goldScore = JSON.parse(scores).goldScore
         updateScores()
