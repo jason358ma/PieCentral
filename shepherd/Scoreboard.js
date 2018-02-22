@@ -3,21 +3,28 @@ var ctx=canvas.getContext("2d");
 var cw=canvas.width;
 var ch=canvas.height;
 
-var nextTime=0;
+var time=0;
 var duration=1000;
 var endingPct=100;
-var pct=0;
-var grow = 0;
+var pct = 0;
+var grow = 1;
 // var increment=duration/pct;
-requestAnimationFrame(animate);
+// requestAnimationFrame(animate);
 
-function animate(time){
-    draw(pct);
-    grow++;
-    if (grow % 2 == 0) {
-        pct++;
+function start(time){
+    form = document.getElementById("seconds");
+    grow = parseFloat(form.elements[0].value)*10;
+    beginning = new Date();
+    function animate(){
+        date = new Date();
+        // pct += grow;
+        pct = (date - beginning)/grow;
+        draw(pct);
+        if(pct<=endingPct){
+            requestAnimationFrame(animate);
+        }
     }
-    if(pct<=endingPct){requestAnimationFrame(animate);}
+    requestAnimationFrame(animate);
 }
 
 function draw(pct){
@@ -38,4 +45,8 @@ function draw(pct){
     // ctx.textAlign='center';
     // ctx.textBaseline='middle'
     // ctx.font='18px arial';
+}
+
+function addTime(time){
+
 }
