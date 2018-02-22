@@ -59,8 +59,9 @@
         console.log(scores)
         blueScore = JSON.parse(scores).blueScore
         goldScore = JSON.parse(scores).goldScore
-        console.log('b' + blueScore)
-        console.log('g' + goldScore)
+        console.log(JSON.parse(scores))
+        console.log('b' + JSON.parse(scores).blueScore)
+        console.log('g' + JSON.parse(scores).goldScore)
         updateScores()
       });
 
