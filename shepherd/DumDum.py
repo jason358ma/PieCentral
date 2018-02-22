@@ -15,7 +15,10 @@ def receiver():
         event = events.get(True)
         print("got event")
         if(event[0] == SHEPHERD_HEADER.GENERATE_RFID):
-            x = {"RFID_list": [4,5,6,7,8,9]}
+            s = []
+            for i in range(6):
+                s.append(randrange(10))
+            x = {"RFID_list": s}
             lcm_send(LCM_TARGETS.UI, UI_HEADER.RFID_LIST, x);
             print("help")
 
