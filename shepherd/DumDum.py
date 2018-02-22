@@ -14,13 +14,17 @@ def receiver():
     while True:
         event = events.get(True)
         print("got event")
-        if(event[0] == SHEPHERD_HEADER.GENERATE_RFID):
+        if (event[0] == SHEPHERD_HEADER.GENERATE_RFID):
             s = []
             for i in range(6):
-                s.append(rand.randrange(10))
+                s.append(randself.randrange(10))
             x = {"RFID_list": s}
             lcm_send(LCM_TARGETS.UI, UI_HEADER.RFID_LIST, x);
-            print("help")
+            print("Sent RFIDs")
+        if (event[0] == SHEPHERD_HEADER.GET_SCORES):
+            x = {"blue_score": randself.randrange(100), "gold_score": randself.randrange(100)}
+            lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES, x);
+            print("Sent scores")
 
 if __name__ == "__main__":
     sender_thread = threading.Thread(target=sender, name="DummySensorSender")
