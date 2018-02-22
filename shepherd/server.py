@@ -103,11 +103,11 @@ def receiver():
             event = events.get_nowait()
             print("RECEIVED:", event)
             if (event[0] == UI_HEADER.RFID_LIST):
-                socketio.emit('server-to-ui-rfidlist', json.dumps(event[1], ensure_ascii=False))
+                socketio.emit('server-to-ui-rfidlist', json.dump(event[1], ensure_ascii=False))
             elif (event[0] == UI_HEADER.TEAMS_INFO):
-                socketio.emit('server-to-ui-teamsinfo', json.dumps(event[1], ensure_ascii=False))
+                socketio.emit('server-to-ui-teamsinfo', json.dump(event[1], ensure_ascii=False))
             elif (event[0] == UI_HEADER.SCORES):
-                socketio.emit('server-to-ui-scores', json.dumps(event[1], ensure_ascii=False))
+                socketio.emit('server-to-ui-scores', json.dump(event[1], ensure_ascii=False))
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)
