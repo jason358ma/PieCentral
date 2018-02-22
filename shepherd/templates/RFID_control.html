@@ -47,7 +47,7 @@
       });
 
       socket.on('server-to-ui-rfidlist', function(data) {
-        RFID_list = JSON.parse(data).RFID_list
+        RFID_list = JSON.parse(data)."RFID_list"
         showRFID();
       });
 
