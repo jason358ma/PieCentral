@@ -57,11 +57,8 @@
 
       socket.on('server-to-ui-scores', function(scores) {
         console.log(scores)
-        blueScore = JSON.parse(scores).blueScore
-        goldScore = JSON.parse(scores).goldScore
-        console.log(JSON.parse(scores))
-        console.log('b' + JSON.parse(scores).blueScore)
-        console.log('g' + JSON.parse(scores).goldScore)
+        blueScore = JSON.parse(scores).blue_score
+        goldScore = JSON.parse(scores).gold_score
         updateScores()
       });
 
