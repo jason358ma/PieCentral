@@ -8,7 +8,7 @@ var endingPct=100;
 var pct=0;
 var grow = 0;
 // var increment=duration/pct;
-function start() {
+function start() { 
     var form = document.getElementById("seconds")
     var duration = parseFloat(form.elements[0].value);
     requestAnimationFrame(animate);
