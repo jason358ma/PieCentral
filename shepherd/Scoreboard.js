@@ -3,23 +3,45 @@ var ctx=canvas.getContext("2d");
 var cw=canvas.width;
 var ch=canvas.height;
 
-var nextTime=0;
+var time=0;
+var duration=1;
 var endingPct=100;
-var pct=0;
-var grow = 0;
+var pct = 0;
+var grow = 1;
+var beginning;
 // var increment=duration/pct;
 function start() { 
     var form = document.getElementById("seconds")
-    var duration = parseFloat(form.elements[0].value);
+    duration = parseFloat(form.elements[0].value);
+    pct = 0;
+    beginning = new Date();
     requestAnimationFrame(animate);
 }
 
 function animate(time) {
     draw(pct);
-    pct = 100 * (time/(duration * 1000))
+    pct = 100 * (((new Date()) - beginning)/(duration * 1000))
     if(pct<=endingPct) {
         requestAnimationFrame(animate);
     }
+// =======
+// // requestAnimationFrame(animate);
+
+// function start(time){
+//     form = document.getElementById("seconds");
+//     grow = parseFloat(form.elements[0].value)*10;
+//     beginning = new Date();
+//     function animate(){
+//         date = new Date();
+//         // pct += grow;
+//         pct = (date - beginning)/grow;
+//         draw(pct);
+//         if(pct<=endingPct){
+//             requestAnimationFrame(animate);
+//         }
+//     }
+//     requestAnimationFrame(animate);
+// >>>>>>> 94a457e2b8458baa2b71e78cafb9bb5f31fe88f2
 }
 
 function draw(pct){
@@ -58,4 +80,10 @@ function draw(pct){
     // ctx.textAlign='center';
     // ctx.textBaseline='middle'
     // ctx.font='18px arial';
+}
+
+function addTime(){
+    grow += parseFloat(document.getElementById("addTime").elements[0].value)*10;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.beginPath();
 }

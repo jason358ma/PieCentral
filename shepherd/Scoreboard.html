@@ -7,10 +7,14 @@
     <body>
         <canvas id="canvas" width=300 height=300></canvas>
         <script type='text/javascript' src='Scoreboard.js'></script>
-        <br>
-        <form id=“seconds”>
-            Time: <input type=“text” name=“time”><br>
-            <button type=“button” onclick=“start()”>Start</button>
-        </form>
-    </body>
+    </body> 
+    <br>
+    <form id="seconds">
+	  Initial Time: <br><input type="text" name="time"><br>
+	  <input type="button" onclick="start()" value="Start">
+	</form>
+    <form id="addTime">
+      <input type="text" name="addtime"><br>
+      <input type="button" onclick="addTime()" value="Add Time">
+    </form>
 </html>
