@@ -7,21 +7,21 @@ var duration=1000;
 var endingPct=100;
 var pct = 0;
 var pct2 = 0;
-var time = 1;
-var time2 = 1;
+var grow = 1;
+var grow2 = 1;
 // var increment=duration/pct;
 // requestAnimationFrame(animate);
 
 function start(time){
     form = document.getElementById("seconds");
-    time = parseFloat(form.elements[0].value)*10;
-    time2 = parseFloat(form.elements[1].value)*10;
+    grow = parseFloat(form.elements[0].value)*10;
+    grow2 = parseFloat(form.elements[1].value)*10;
     beginning = new Date();
     function animate(){
         date = new Date();
-        // pct += time;
-        pct = (date - beginning)/time;
-        pct2 = (date - beginning)/time2
+        // pct += grow;
+        pct = (date - beginning)/grow;
+        pct2 = (date - beginning)/grow2;
         draw(pct, pct2);
         if(pct<=endingPct || pct2 <= endingPct){
             requestAnimationFrame(animate);
@@ -43,7 +43,7 @@ function draw(pct, pct2){
     ctx.beginPath();
     ctx.arc(150,125,70,-Math.PI/2,endRadians2);
     ctx.lineTo(150,125);
-    ctx.fillStyle='red';
+    ctx.fillStyle='gold';
     ctx.fill();
     // ctx.beginPath();
     // ctx.strokeStyle='#13a8a4';
@@ -57,8 +57,8 @@ function draw(pct, pct2){
 }
 
 function addTime(){
-    time += parseFloat(document.getElementById("addTime").elements[0].value)*10;
-    time2 += parseFloat(document.getElementById("addTime").elements[1].value)*10;
+    grow += parseFloat(document.forms["addTime"].elements[0].value)*10;
+    grow2 += parseFloat(document.forms["addTime"].elements[1].value)*10;
     ctx.clearRect(0, 0, cw, ch);
     ctx.beginPath();
 }
