@@ -5,8 +5,6 @@ import serial
 from LCM import *
 from Utils import *
 
-port_one = "/dev/ttyACM0" # change to correct port
-port_two = "/dev/ttyACM1" # change to correct port
 
 alliance_mapping = {
     "gold": ALLIANCE_COLOR.GOLD,
