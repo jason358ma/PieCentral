@@ -8,6 +8,7 @@ const int numGoals = 5;
 
 //for Uno, use 6, 5, 4, 3
 int digitPins[numOfDigits] = {6, 5, 4, 3};
+char bidGoals[numGoals] = {'a', 'b', 'c', 'd', 'e'};
 
 int switchIn = 2;
 int prevSwitchVal = 0;
@@ -42,7 +43,7 @@ int currentPrice = 0;
 
 //int biddingPrice[numGoals] = {3000, 4, 30, 1, 20};
 //int goalOwner[numGoals] = {'g', 'b', ' ', 'g', ' '};
-int goalOwner[numGoals] = {' ', ' ', ' ', ' ', ' '};
+int goalOwner[numGoals] = {'n', 'n', 'n', 'n', 'n'};
 int biddingPrice[numGoals] = {0, 0, 0, 0, 0};
 // ' ' = no owner, 'b' = blue, 'g' = goal
 int myScore = 100; //are these equivalent to the money a group has?
@@ -345,7 +346,7 @@ void processCode() {
       Serial.print(currentCode);
 //      Serial.print(", selected goal: ");
       Serial.print(";");
-      Serial.println(codeGoal);
+      Serial.println(bidGoals[codeGoal-1]);
 
       submitStage++;
     }
@@ -384,7 +385,7 @@ void processBidding() {
       changeLED(goal + 1, 'r');
     }
   }
-  if (goalOwner[currentGoal-1] == ' '){
+  if (goalOwner[currentGoal-1] == 'n'){
     changeLED(currentGoal, 'b');
     currentPrice = biddingPrice[currentGoal-1];
   }
@@ -393,7 +394,7 @@ void processBidding() {
   // when button pressed
   if (!digitalRead(submitButton) && submitPressed) {
     Serial.write("bg;");
-    Serial.println(currentGoal);
+    Serial.println(bidGoals[currentGoal-1]);
     currentGoal = 0;
     submitPressed = false;
     for (int ii = 1; ii <= numOfButtons; ii++) {
