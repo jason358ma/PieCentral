@@ -4,6 +4,7 @@ import lcm # pylint: disable=import-error
 
 LCM_address = 'udpm://239.255.76.68:7667?ttl=2'
 
+
 def lcm_start_read(receive_channel, queue, put_json=False):
     '''
     Takes in receiving channel name (string), queue (Python queue object).
@@ -23,6 +24,7 @@ def lcm_start_read(receive_channel, queue, put_json=False):
             header = dic.pop('header')
             queue.put((header, dic))
 
+
     comm.subscribe(receive_channel, handler)
 
     def run():
@@ -34,9 +36,11 @@ def lcm_start_read(receive_channel, queue, put_json=False):
     rec_thread.start()
 
 def lcm_send(target_channel, header, dic={}):
+
     '''
     Send header and dictionary to target channel (string)
     '''
     dic['header'] = header
     json_str = json.dumps(dic)
     lcm.LCM(LCM_address).publish(target_channel, json_str.encode())
+
