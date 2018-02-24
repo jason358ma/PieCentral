@@ -109,19 +109,11 @@ def transfer_linebreak_data(ser):
         time.sleep(0.01)
 
 def main():
-    goal_serial_one = serial.Serial(port_one)
-    goal_serial_two = serial.Serial(port_two)
-
-    goal_thread_one = threading.Thread(
-        target=transfer_linebreak_data, name="transfer thread one", args=([goal_serial_one]))
-    goal_thread_two = threading.Thread(
-        target=transfer_linebreak_data, name="transfer thread two", args=([goal_serial_two]))
-    goal_thread_one.daemon = True
-    goal_thread_two.daemon = True
-
-    goal_thread_one.start()
-    goal_thread_two.start()
-
+    working_ports = get_working_serial_ports(set())
+    linebreak_ports = identify_linebreak_sensors(working_ports)
+    for port in linebreak_ports:
+        sensor_thread = threading.Thread(target=transfer_linebreak_data, args=(port, ), daemon=True)
+        sensor_thread.start()
     while True:
         time.sleep(100)
 
