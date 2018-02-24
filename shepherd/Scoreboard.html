@@ -8,13 +8,20 @@
         <canvas id="canvas" width=300 height=300></canvas>
         <script type='text/javascript' src='Scoreboard.js'></script>
     </body> 
+    <body>
+        <canvas id="canvas2" width=300 height=300></canvas>
+        <script type='text/javascript' src='Scoreboard.js'></script>
+    </body> 
     <br>
     <form id="seconds">
-	  Initial Time: <br><input type="text" name="time"><br>
+	  Initial Time: <br> Outer Circle:<input type="text" name="time">
+                    <br> Inner Circle:<input type="text" name="powerup"><br>
 	  <input type="button" onclick="start()" value="Start">
 	</form>
     <form id="addTime">
-      <input type="text" name="addtime"><br>
+    Adding Time:<br>
+      Outer Circle:<input type="text" name="addtime"><br>
+      Inner Circle:<input type="text" name="addtime2"><br>
       <input type="button" onclick="addTime()" value="Add Time">
     </form>
 </html>
