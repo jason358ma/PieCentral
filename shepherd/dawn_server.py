@@ -18,7 +18,7 @@ socketio = SocketIO(app)
 
 def receiver():
     events = gevent.queue.Queue()
-    lcm_start_read(str.encode(LCM_TARGETS.DAWN), events, json=true)
+    lcm_start_read(str.encode(LCM_TARGETS.DAWN), events, json=True)
     counter = 0
 
     while True:
