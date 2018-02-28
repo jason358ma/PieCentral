@@ -31,6 +31,7 @@ class SENSOR_HEADER():
     TEAM_SCORE = "team_score"
     BID_PRICE = "bid_price"
 
+# pylint: disable=invalid-name
 class DAWN_HEADER():
     ROBOT_STATE = "robot_state"
     CODES = "codes"
@@ -40,11 +41,6 @@ class UI_HEADER():
     RFID_LIST = "rfid_list"
     TEAMS_INFO = "teams_info"
     SCORES = "scores"
-
-# pylint: disable=invalid-name
-class DAWN_HEADER():
-    CALL_STATUS = "call_status"
-    CODE_LISTS = "code_lists"
 
 # pylint: disable=invalid-name
 class SCOREBOARD_HEADER():

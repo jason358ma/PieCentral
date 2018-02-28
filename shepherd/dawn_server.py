@@ -9,7 +9,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, send
 import gevent
 import json
 
-HOST_URL = "127.0.0.1"
+HOST_URL = "0.0.0.0"
 PORT = 7000
 
 app = Flask(__name__)
@@ -24,8 +24,12 @@ def receiver():
     while True:
         if (not events.empty()):
             event = events.get_nowait()
+            eventDict = json.loads(event)
             print("RECEIVED:", event)
-            socketio.emit(DAWN_HEADER.CALL_STATUS, json.dumps(event[1], ensure_ascii=False))
+            if eventDict["header"] == DAWN_HEADER.ROBOT_STATE:
+                socketio.emit(DAWN_HEADER.ROBOT_STATE, event)
+            else: 
+                socketio.emit(DAWN_HEADER.CODES, event)
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)
