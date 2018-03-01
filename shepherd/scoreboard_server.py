@@ -26,7 +26,7 @@ def receiver():
         if (not events.empty()):
             event = events.get_nowait()
             print("RECEIVED:", event)
-            '''if (event[0] == SCOREBOARD_HEADER.SCORE):
+            if (event[0] == SCOREBOARD_HEADER.SCORE):
                 socketio.emit(SCOREBOARD_HEADER.SCORE, json.dumps(event[1], ensure_ascii=False))
             elif (event[0] == SCOREBOARD_HEADER.TEAMS):
                 socketio.emit(SCOREBOARD_HEADER.TEAMS, json.dumps(event[1], ensure_ascii=False))
@@ -43,9 +43,9 @@ def receiver():
             elif (event[0] == SCOREBOARD_HEADER.POWERUPS):
                 socketio.emit(SCOREBOARD_HEADER.POWERUPS, json.dumps(event[1], ensure_ascii=False))
             elif (event[0] == SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER):
-                socketio.emit(SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER, json.dumps(event[1], ensure_ascii=False))'''
-            if (event[0] == SCOREBOARD_HEADER.ALL_INFO):
-                socketio.emit('server-to-gui-all-info', json.dumps(event[1], ensure_ascii=False))
+                socketio.emit(SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER, json.dumps(event[1], ensure_ascii=False))
+            #if (event[0] == SCOREBOARD_HEADER.ALL_INFO):
+            #    socketio.emit('server-to-gui-all-info', json.dumps(event[1], ensure_ascii=False))
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)
