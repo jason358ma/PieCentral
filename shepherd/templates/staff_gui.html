@@ -73,8 +73,8 @@
         data = {"match_num" : match_num,
                 "b1num" : blue_1_num, "b1name" : blue_1_name,
                 "b2num" : blue_2_num, "b2name" : blue_2_name,
-                "b1num" : gold_1_num, "b1name" : gold_1_name,
-                "b2num" : gold_2_num, "b2name" : gold_2_name}
+                "g1num" : gold_1_num, "g1name" : gold_1_name,
+                "g2num" : gold_2_num, "g2name" : gold_2_name}
         socket.emit('ui-to-server-setup-match', JSON.stringify(data))
       });
 
