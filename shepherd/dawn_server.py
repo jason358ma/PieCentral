@@ -30,6 +30,7 @@ def receiver():
                 socketio.emit(DAWN_HEADER.ROBOT_STATE, event)
             else: 
                 socketio.emit(DAWN_HEADER.CODES, event)
+        socketio.emit(DAWN_HEADER.HEARTBEAT, json.dumps({"heartbeat" : 1}))
         socketio.sleep(1)
 
 socketio.start_background_task(receiver)

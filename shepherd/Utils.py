@@ -35,6 +35,7 @@ class SENSOR_HEADER():
 class DAWN_HEADER():
     ROBOT_STATE = "robot_state"
     CODES = "codes"
+    HEARTBEAT = "heartbeat"
 
 # pylint: disable=invalid-name
 class UI_HEADER():
