@@ -57,7 +57,7 @@ def ui_to_server_match_info_request():
 
 @socketio.on('ui-to-server-setup-match')
 def ui_to_server_setup_match(teams_info):
-    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_MATCH_INFO, json.loads(teams_info))
+    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SETUP_MATCH, json.loads(teams_info))
 
 @socketio.on('ui-to-server-start-match')
 def ui_to_server_start_match():

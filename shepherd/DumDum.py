@@ -34,6 +34,19 @@ def receiver():
             "g1num": rand.randrange(10), "g2name": "- a string4", "g2num": rand.randrange(10)}
             lcm_send(LCM_TARGETS.UI, UI_HEADER.TEAMS_INFO, x);
             print("Sent Team Info")
+        if (event[0] == SHEPHERD_HEADER.SETUP_MATCH):
+            print(event[1])
+        if (event[0] == SHEPHERD_HEADER.START_MATCH):
+            print("starting match")
+        if (event[0] == SHEPHERD_HEADER.START_NEXT_STAGE):
+            print("starting stage")
+        if (event[0] == SHEPHERD_HEADER.RESET_CURRENT_STAGE):
+            print("reset stage")
+        if (event[0] == SHEPHERD_HEADER.RESET_MATCH):
+            print("reset match")
+
+
+
 
 
 if __name__ == "__main__":
