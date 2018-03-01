@@ -18,7 +18,65 @@ var pct2 = 0;
 var grow = 1;
 var grow2 = 1;
 // var increment=duration/pct;
-// requestAnimationFrame(animate);
+var match_time = 300;
+var match_num = 0;
+var blue_1_num = 0;
+var blue_1_name = "blue 1";
+var blue_2_num = 0;
+var blue_2_name = "blue 2";
+var gold_1_num = 0;
+var gold_1_name = "gold 1";
+var gold_2_num = 0;
+var gold_2_name = "gold 2";
+
+var bottom = document.getElementById("bottom_bar");
+var ctx_bottom = bottom.getContext("2d");
+
+setTeamsInfo();
+setTime();
+
+requestAnimationFrame(animate);
+
+var socket = io('http://127.0.0.1:5000');
+
+socket.on('server-to-gui-teamsinfo', function(data) {
+    parsed_data = JSON.parse(data);
+    match_num = parsed_data.match_num;
+    blue_1_num = parsed_data.b1num;
+    blue_1_name = parsed_data.b1name;
+    blue_2_num = parsed_data.b2num;
+    blue_2_name = parsed_data.b2name;
+    gold_1_num =  parsed_data.g1num;
+    gold_1_name = parsed_data.g1name;
+    gold_2_num = parsed_data.g2num;
+    gold_2_name = parsed_data.g2name;
+    setTeamsInfo()
+});
+
+function setTeamsInfo() {
+    ctx_bottom.font = "30px Helvetica";
+    ctx_bottom.fillText(blue_1_num.toString(),10,30);
+    ctx_bottom.fillText(blue_1_name,10,60);
+    ctx_bottom.fillText(blue_2_num.toString(),10, 120);
+    ctx_bottom.fillText(blue_2_name,10,150);
+    ctx_bottom.textAlign = "right";
+    ctx_bottom.fillText(gold_1_num.toString(),bottom.width,30);
+    ctx_bottom.fillText(gold_1_name,bottom.width,60);
+    ctx_bottom.fillText(gold_2_num.toString(),bottom.width,120);
+    ctx_bottom.fillText(gold_2_name,bottom.width,150);
+}
+
+function setTime() {
+    ctx_bottom.textAlign = "center";
+    var time_string = (match_time / 60).toString() + " : "
+    if (match_time % 60 < 10) {
+        time_string += "0";
+    }
+    time_string += (match_time % 60).toString();
+    ctx_bottom.font = "40px Helvetica"
+    ctx_bottom.fillText(time_string,bottom.width/2, 65)
+    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 115)
+}
 
 function start(time){
     form = document.getElementById("seconds");
@@ -41,6 +99,7 @@ function start(time){
     }
     requestAnimationFrame(animate);
 }
+
 
 function draw(ctx, pct, pct2) {
     var endRadians = -Math.PI/2 + Math.PI*2*pct/100;
