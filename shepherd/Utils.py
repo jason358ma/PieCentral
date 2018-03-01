@@ -55,6 +55,7 @@ class SCOREBOARD_HEADER():
     POWERUPS = "powerups"
     ALLIANCE_MULTIPLIER = "alliance_multiplier"
     RESET_TIMERS = "reset_timers"
+    ALL_INFO = "all_info"
 
 # pylint: disable=invalid-name
 class GUI_HEADER():
