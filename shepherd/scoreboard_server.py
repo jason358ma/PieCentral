@@ -22,7 +22,7 @@ def receiver():
     counter = 0
 
     while True:
-        if (not events.empty()):
+        if not events.empty():
             event = events.get_nowait()
             print("RECEIVED:", event)
             if event[0] == SCOREBOARD_HEADER.SCORE:
@@ -31,17 +31,18 @@ def receiver():
                 socketio.emit(SCOREBOARD_HEADER.TEAMS, json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.BID_TIMER_START:
                 socketio.emit(SCOREBOARD_HEADER.BID_TIMER_START,
-                     json.dumps(event[1], ensure_ascii=False))
+                    json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.BID_AMOUNT:
                 socketio.emit(SCOREBOARD_HEADER.BID_AMOUNT,
-                     json.dumps(event[1], ensure_ascii=False))
+                    json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.GOAL_OWNED:
-                socketio.emit(SCOREBOARD_HEADER.GOAL_OWNED, json.dumps(event[1], ensure_ascii=False))
+                socketio.emit(SCOREBOARD_HEADER.GOAL_OWNED,
+                    json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.STAGE:
                 socketio.emit(SCOREBOARD_HEADER.STAGE, json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.STAGE_TIMER_START:
                 socketio.emit(SCOREBOARD_HEADER.STAGE_TIMER_START,
-                     json.dumps(event[1], ensure_ascii=False))
+                    json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.POWERUPS:
                 socketio.emit(SCOREBOARD_HEADER.POWERUPS, json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER:
