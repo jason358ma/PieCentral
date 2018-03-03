@@ -1,4 +1,4 @@
-int pins[] = {2, 3, 4, 5, 6, 10};
+int pins[] = {2, 3, 4, 5, 6, 7};
 char goals[] = {'A', 'B', 'C', 'D', 'E', 'G'};
 int states[] = {LOW, LOW, LOW, LOW, LOW, LOW};
 
@@ -24,6 +24,7 @@ void loop() {
     } else if (pinState == HIGH) {
       states[i] = HIGH;
     }
-  }  
+  }
+  Serial.println("g");  
   delay(200);
 }

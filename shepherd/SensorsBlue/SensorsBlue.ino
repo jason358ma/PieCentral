@@ -23,5 +23,6 @@ void loop() {
       states[i] = HIGH;
     }
   }
+  Serial.println("b");
   delay(200);
 }
