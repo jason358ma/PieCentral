@@ -1,4 +1,4 @@
-import flask
+import json
 import threading
 import time
 import queue
@@ -7,7 +7,6 @@ from LCM import *
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
 import gevent
-import json
 
 HOST_URL = "127.0.0.1"
 PORT = 5000
@@ -91,14 +90,14 @@ def receiver():
         print("help", counter)
         counter = (counter + 1) % 10
 
-        if (not events.empty()):
+        if not events.empty():
             event = events.get_nowait()
             print("RECEIVED:", event)
-            if (event[0] == UI_HEADER.RFID_LIST):
+            if event[0] == UI_HEADER.RFID_LIST:
                 socketio.emit('server-to-ui-rfidlist', json.dumps(event[1], ensure_ascii=False))
-            elif (event[0] == UI_HEADER.TEAMS_INFO):
+            elif event[0] == UI_HEADER.TEAMS_INFO:
                 socketio.emit('server-to-ui-teamsinfo', json.dumps(event[1], ensure_ascii=False))
-            elif (event[0] == UI_HEADER.SCORES):
+            elif event[0] == UI_HEADER.SCORES:
                 socketio.emit('server-to-ui-scores', json.dumps(event[1], ensure_ascii=False))
         socketio.sleep(1)
 
