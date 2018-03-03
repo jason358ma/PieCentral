@@ -47,6 +47,7 @@ export default function showAPI() {
     width: 1400,
     height: 900,
     show: false,
+    icon: `file://${__dirname}/../icons/pieicon.png`,
   });
   api.on('closed', () => {
     api = null;
@@ -63,7 +64,7 @@ app.on('ready', () => {
   ipcMain.on('FC_INITIALIZE', initializeFC);
   ipcMain.on('FC_TEARDOWN', teardownFC);
 
-  const mainWindow = new BrowserWindow();
+  const mainWindow = new BrowserWindow({ icon: `file://${__dirname}/../icons/pieicon.png` });
 
   // Binding for the main process to inject into Redux workflow
   RendererBridge.registerWindow(mainWindow);
