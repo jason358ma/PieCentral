@@ -36,6 +36,7 @@ export const ActionTypes = keyMirror({
   UPDATE_CONSOLE: null,
   UPDATE_TIMER: null,
   UPDATE_HEART: null,
+  UPDATE_HEART_2: null,
   UPDATE_ROBOT: null,
   UPDATE_MATCH: null,
   ADD_ALERT: null,

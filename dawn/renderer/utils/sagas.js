@@ -11,10 +11,12 @@ import { all, call, cps, fork, put, race, select, take, takeEvery } from 'redux-
 import { ipcRenderer, remote } from 'electron';
 import { addAsyncAlert } from '../actions/AlertActions';
 import { openFileSucceeded, saveFileSucceeded } from '../actions/EditorActions';
-import { toggleFieldControl } from '../actions/FieldActions';
+// import { toggleFieldControl } from '../actions/FieldActions';
+import { toggleFieldControl, updateRobot, updateHeart2 } from '../actions/FieldActions';
 import { updateGamepads } from '../actions/GamepadsActions';
 import { runtimeConnect, runtimeDisconnect } from '../actions/InfoActions';
 import { TIMEOUT, defaults, logging } from '../utils/utils';
+import { ActionTypes } from '../constants/Constants';
 
 
 const { Client } = require('ssh2');
@@ -203,7 +205,6 @@ function* runtimeHeartbeat() {
       update: take('PER_MESSAGE'),
       timeout: call(delay, TIMEOUT),
     });
-
     // If update wins, we assume we are connected, otherwise disconnected.
     if (result.update) {
       yield put(runtimeConnect());
@@ -547,6 +548,31 @@ function* handleFieldControl() {
   }
 }
 
+function* fieldControlHeartbeat() {
+  while (true) {
+    const stateSlice = yield select(state => ({
+      fieldControlStatus: state.fieldStore.fieldControl,
+    }));
+    console.log('OUTER');
+    if (stateSlice.fieldControlStatus) {
+      const result = yield race({
+        update: take(ActionTypes.UPDATE_HEART),
+        timeout: call(delay, TIMEOUT),
+      });
+      console.log('Inner');
+      // If update wins, we assume we are connected, otherwise disconnected.
+      if (result.update) {
+        yield put(updateHeart2());
+      } else {
+        yield put(updateRobot({
+          autonomous: false,
+          enabled: false,
+        }));
+      }
+    }
+  }
+}
+
 function timestampBounceback() {
   ipcRenderer.send('TIMESTAMP_SEND');
 }
@@ -568,6 +594,7 @@ export default function* rootSaga() {
     takeEvery('TOGGLE_FIELD_CONTROL', handleFieldControl),
     takeEvery('TIMESTAMP_CHECK', timestampBounceback),
     fork(runtimeHeartbeat),
+    fork(fieldControlHeartbeat),
     fork(ansibleGamepads),
     fork(ansibleSaga),
   ]);

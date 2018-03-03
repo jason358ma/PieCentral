@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import { updateRobot } from '../../renderer/actions/FieldActions';
+import { updateRobot, updateHeart } from '../../renderer/actions/FieldActions';
 import RendererBridge from '../RendererBridge';
 import { Logger } from '../../renderer/utils/utils';
 import Ansible from './Ansible';
@@ -28,6 +28,9 @@ class FCInternals {
         } else {
           this.logger.log('Trying to send FC Info to Disconnected Robot');
         }
+      });
+      this.socket.on('heartbeat', () => {
+        RendererBridge.reduxDispatch(updateHeart());
       });
     });
   }

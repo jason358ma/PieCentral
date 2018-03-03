@@ -25,10 +25,10 @@ const fieldStore = (state = initialFieldState, action) => {
         ...state,
         fieldControl: action.fieldControl,
       };
-    case ActionTypes.UPDATE_HEART:
+    case ActionTypes.UPDATE_HEART2:
       return {
         ...state,
-        heart: action.state,
+        heart: !state.heart,
       };
     case ActionTypes.UPDATE_MATCH:
       return {

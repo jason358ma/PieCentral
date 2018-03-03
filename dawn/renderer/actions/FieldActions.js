@@ -7,9 +7,12 @@ export const updateTimer = msg => ({
   totalTime: msg.total_stage_time,
 });
 
-export const updateHeart = msg => ({
+export const updateHeart = () => ({
   type: ActionTypes.UPDATE_HEART,
-  state: msg.state,
+});
+
+export const updateHeart2 = () => ({
+  type: ActionTypes.UPDATE_HEART_2,
 });
 
 export const updateMatch = msg => ({
