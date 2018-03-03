@@ -55,6 +55,7 @@ class SCOREBOARD_HEADER():
     POWERUPS = "powerups"
     ALLIANCE_MULTIPLIER = "alliance_multiplier"
     RESET_TIMERS = "reset_timers"
+    BID_TIMER_START = "bid_timer_start"
     ALL_INFO = "all_info"
 
 # pylint: disable=invalid-name
