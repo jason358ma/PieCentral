@@ -172,14 +172,15 @@ void loop() {
 
 void serialEvent() {
   while (Serial.available()) {
-    char inChar = (char) Serial.read();
-    pyInpStr[inpStrIndex] = inChar;
-    if (inChar == '\n'){
+    char inChar[1];
+    Serial.readBytes(inChar, 1);
+    if (inChar[0] == '\n'){
       pyInpStr[inpStrIndex] = '\0';
       pyInpComplete = true;
       inpStrIndex = 0;
       
     } else {
+      pyInpStr[inpStrIndex] = inChar[0];
       inpStrIndex++;
     }
     
@@ -342,11 +343,12 @@ void processCode() {
     } else if (submitStage == 1) {
 //      Serial.println("Submit stage 1 to stage 0");
 //      Serial.print("currCode: ");
+//      String code = String(currentCode);
       Serial.print("csub;");
       Serial.print(currentCode);
-//      Serial.print(", selected goal: ");
       Serial.print(";");
       Serial.println(bidGoals[codeGoal-1]);
+//      Serial.write("\n");
 
       submitStage++;
     }
@@ -393,8 +395,9 @@ void processBidding() {
   
   // when button pressed
   if (!digitalRead(submitButton) && submitPressed) {
-    Serial.write("bg;");
+    Serial.print("bg;");
     Serial.println(bidGoals[currentGoal-1]);
+//    Serial.write("\n");
     currentGoal = 0;
     submitPressed = false;
     for (int ii = 1; ii <= numOfButtons; ii++) {
@@ -434,6 +437,8 @@ int buttonPressed(int button) {
   }
   return -1;
 }
+
+
 
 
 
