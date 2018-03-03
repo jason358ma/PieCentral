@@ -2,11 +2,11 @@ import json
 import threading
 import time
 import queue
-from Utils import *
-from LCM import *
+import gevent
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
-import gevent
+from Utils import *
+from LCM import *
 
 HOST_URL = "127.0.0.1"
 PORT = 6000
@@ -31,23 +31,23 @@ def receiver():
                 socketio.emit(SCOREBOARD_HEADER.TEAMS, json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.BID_TIMER_START:
                 socketio.emit(SCOREBOARD_HEADER.BID_TIMER_START,
-                    json.dumps(event[1], ensure_ascii=False))
+                              json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.BID_AMOUNT:
                 socketio.emit(SCOREBOARD_HEADER.BID_AMOUNT,
-                    json.dumps(event[1], ensure_ascii=False))
+                              json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.GOAL_OWNED:
                 socketio.emit(SCOREBOARD_HEADER.GOAL_OWNED,
-                    json.dumps(event[1], ensure_ascii=False))
+                              json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.STAGE:
                 socketio.emit(SCOREBOARD_HEADER.STAGE, json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.STAGE_TIMER_START:
                 socketio.emit(SCOREBOARD_HEADER.STAGE_TIMER_START,
-                    json.dumps(event[1], ensure_ascii=False))
+                              json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.POWERUPS:
                 socketio.emit(SCOREBOARD_HEADER.POWERUPS, json.dumps(event[1], ensure_ascii=False))
             elif event[0] == SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER:
                 socketio.emit(SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER,
-                     json.dumps(event[1], ensure_ascii=False))
+                              json.dumps(event[1], ensure_ascii=False))
             #if event[0] == SCOREBOARD_HEADER.ALL_INFO):
             #    socketio.emit('server-to-gui-all-info', json.dumps(event[1], ensure_ascii=False))
         socketio.sleep(1)

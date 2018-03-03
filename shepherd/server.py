@@ -2,11 +2,11 @@ import json
 import threading
 import time
 import queue
-from Utils import *
-from LCM import *
+import gevent
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
-import gevent
+from Utils import *
+from LCM import *
 
 HOST_URL = "127.0.0.1"
 PORT = 5000
