@@ -19,7 +19,6 @@ def receiver():
 
     events = gevent.queue.Queue()
     lcm_start_read(str.encode(LCM_TARGETS.UI), events)
-    counter = 0
 
     while True:
         if not events.empty():

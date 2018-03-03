@@ -74,12 +74,10 @@ def ui_to_server_reset_stage():
 def ui_to_server_reset_match():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_MATCH)
 
-'''
-E-stop is not implemented
+'''E-stop is not implemented
 @socketio.on('ui-to-server-stop-robot')
 def ui-to-server-ui-request(json):
-    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.STOP_ROBOT, json.loads(scores))
-'''
+    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.STOP_ROBOT, json.loads(scores))'''
 
 def receiver():
     events = gevent.queue.Queue()
