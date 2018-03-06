@@ -2,9 +2,9 @@ import json
 import threading
 import time
 import queue
-import gevent
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit, join_room, leave_room, send
+import gevent # pylint: disable=import-error
+from flask import Flask, render_template # pylint: disable=import-error
+from flask_socketio import SocketIO, emit, join_room, leave_room, send # pylint: disable=import-error
 from Utils import *
 from LCM import *
 
@@ -73,11 +73,6 @@ def ui_to_server_reset_stage():
 @socketio.on('ui-to-server-reset-match')
 def ui_to_server_reset_match():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_MATCH)
-
-'''E-stop is not implemented
-@socketio.on('ui-to-server-stop-robot')
-def ui-to-server-ui-request(json):
-    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.STOP_ROBOT, json.loads(scores))'''
 
 def receiver():
     events = gevent.queue.Queue()

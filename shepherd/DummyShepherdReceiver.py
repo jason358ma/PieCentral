@@ -1,12 +1,7 @@
-import threading
 import queue
 import random as rand
 from LCM import *
 from Utils import *
-
-def sender():
-    while True:
-        pass
 
 def receiver():
     events = queue.Queue()
@@ -45,12 +40,5 @@ def receiver():
         if event[0] == SHEPHERD_HEADER.RESET_MATCH:
             print("reset match")
 
-
-
-
-
 if __name__ == "__main__":
-    sender_thread = threading.Thread(target=sender, name="DummySensorSender")
-    recv_thread = threading.Thread(target=receiver, name="DummySensorReceiver")
-    sender_thread.start()
-    recv_thread.start()
+    receiver()
