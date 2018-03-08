@@ -28,17 +28,23 @@
         <script type='text/javascript' src='Scoreboard.js'></script>
     </div>
     <div style="position:absolute; top:600px; left:0px">
+        <canvas id="bottom_bar" width=900 height=300></canvas>
+        <script type='text/javascript' src='Scoreboard.js'></script>
+    </div>
+    <div style="position:absolute; top:800px; left:0px">
     <br>
     <form id="seconds">
-	  Initial Time: <br> Outer Circle:<input type="text" name="time">
-                    <br> Inner Circle:<input type="text" name="powerup">
+	  Initial Time: <br> Outer Circle:<input type="text" name="powerup1">
+                    <br> Outer Circle 2:<input type="text" name="powerup2">
+                    <br> Inner Circle:<input type="text" name="time">
                     <br>
 	    <input type="button" onclick="start()" value="Start">
 	</form>
     <form id="addTime">
     Adding Time:<br>
       Outer Circle:<input type="text" name="addtime"><br>
-      Inner Circle:<input type="text" name="addtime2"><br>
+      Outer Circle 2:<input type="text" name="addtime2"><br>
+      Inner Circle:<input type="text" name="addtime3"><br>
       <input type="button" onclick="addTime()" value="Add Time">
     </form>
     </div>
