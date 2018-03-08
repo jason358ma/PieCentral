@@ -89,17 +89,17 @@ def send_to_bid(ser, alliance_enum):
                     owner_color = "b"
                 else:
                     owner_color = "g"
-                send_str += owner_color + ";"
                 bidder = bidders_list[i]
-                if bidder == None and owner == alliance_enum:
+                if bidder is None:
                     send_str += owner_color
-                elif bidder == None and owner != alliance_enum:
-                    send_str += "n"
-                elif bidder == alliance_enum:
-                    send_str += "n"
+                elif bidder == alliance_enum and alliance_enum == ALLIANCE_COLOR.BLUE:
+                    send_str += "L" #Set LED to red, so we can't bid on it again
+                elif bidder == alliance_enum and bidder == ALLIANCE_COLOR.GOLD:
+                    send_str += "L" #Set LED to red, so we can't bid on it
                 else:
                     send_str += "e"
-                send_str += ";\r\n"
+                send_str += ";"
+            send_str += "\r\n"
         print(send_str, flush=True)
         print(send_str.encode("utf-8"))
         ser.write(send_str.encode("utf-8"))
@@ -159,12 +159,6 @@ def main():
     send_thread_blue.start()
     # recv_thread_gold.start()
     # send_thread_gold.start()
-
-    time.sleep(1)
-    send_dict_bp = {"price": [1, 2, 3, 4, 5], "alliance": ALLIANCE_COLOR.BLUE}
-    lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.BID_PRICE, send_dict_bp)
-    send_dict_cstatus = {"result": 1, "alliance": ALLIANCE_COLOR.BLUE}
-    lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, send_dict_cstatus)
 
     while True:
         time.sleep(100)
