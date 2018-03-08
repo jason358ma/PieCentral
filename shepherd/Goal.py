@@ -1,3 +1,4 @@
+import math
 from Utils import *
 from Timer import *
 from LCM import *
@@ -32,16 +33,20 @@ class Goal:
         self.initial_value = value
         self.value = value
         self.owner = None
-        self.start_bid = start_bid - CONSTANTS.BID_INCREASE_CONSTANT
+        self.start_bid = start_bid
         self.current_bid = self.start_bid
         self.current_bid_team = None
         self.previous_bid = self.start_bid
         self.previous_bid_team = None
+        self.next_bid = self.start_bid
         self.bid_timer = Timer(TIMER_TYPES.BID, name)
         self.gold_two_x_timer = Timer(TIMER_TYPES.DURATION)
         self.gold_zero_x_timer = Timer(TIMER_TYPES.DURATION)
         self.blue_two_x_timer = Timer(TIMER_TYPES.DURATION)
         self.blue_zero_x_timer = Timer(TIMER_TYPES.DURATION)
+
+    def calc_next_bid(self):
+        return math.floor((self.current_bid * CONSTANTS.BID_INCREASE_CONSTANT) + 0.5)
 
     def reset(self):
         self.value = self.initial_value
@@ -50,6 +55,7 @@ class Goal:
         self.current_bid_team = None
         self.previous_bid = self.start_bid
         self.previous_bid_team = None
+        self.next_bid = self.start_bid
         self.bid_timer.reset()
         self.gold_zero_x_timer.reset()
         self.gold_two_x_timer.reset()
@@ -58,22 +64,25 @@ class Goal:
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.GOAL_OWNED,
                  {"goal" : self.name, "alliance" : None})
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
-                 {"goal" : self.name, "alliance" : self.current_bid_team.name, "bid"
-                  : self.current_bid})
+                 {"goal" : self.name, "alliance" : None, "bid"
+                  : self.next_bid})
         #TODO: Send info to sensors about reset
         #TODO: Send info to UI about reset
 
     def set_autonomous(self):
         self.value = self.initial_value * 2
         self.current_bid = self.start_bid / 2
+        self.next_bid = self.current_bid
 
     def set_teleop(self):
         self.value = self.initial_value
         self.current_bid = self.start_bid
+        self.next_bid = self.start_bid
 
     def set_owner(self, alliance):
         self.owner = alliance
-        alliance.score -= self.current_bid
+        if self.name != GOAL.BLUE and self.name != GOAL.GOLD:
+            alliance.score -= self.current_bid
 
         #TODO: send updated score to scoreboard and sensors
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.GOAL_OWNED,
@@ -84,11 +93,12 @@ class Goal:
             return
         if self.current_bid_team == alliance:
             return
-        if alliance.score < self.current_bid + CONSTANTS.BID_INCREASE_CONSTANT:
+        if alliance.score < self.next_bid:
             return
 
         self.previous_bid = self.current_bid
-        self.current_bid += CONSTANTS.BID_INCREASE_CONSTANT
+        self.current_bid = self.next_bid
+        self.next_bid = self.calc_next_bid()
 
         self.previous_bid_team = self.current_bid_team
         self.current_bid_team = alliance
@@ -102,7 +112,7 @@ class Goal:
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
                  {"goal" : self.name,
                   "alliance" : self.current_bid_team.name,
-                  "bid" : self.current_bid})
+                  "bid" : self.next_bid})
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_TIMER,
                  {"goal" : self.name, "time" : time_increase})
         #TODO: Send bid amount, and curr bid owner to sensors
@@ -117,7 +127,7 @@ class Goal:
         """
         if self.owner is alliance:
             alliance.change_score(self.value * self.calc_multiplier() *\
-                alliance.alliance_multiplier)
+                alliance.alliance_multiplier + 0.0001)
 
     def calc_multiplier(self):
         """ returns an integer that represents the overall multiplier for this
@@ -141,50 +151,37 @@ class Goal:
             effect - enum representing an effect to be applied to the goal
             alliance - the alliance trying to apply the effect to the goal
         """
+
         def process_powerup(blue_timer, gold_timer, constants_cooldown, powerup_type):
             if alliance.name == ALLIANCE_COLOR.BLUE:
-                if blue_timer.is_running():
-                    lcm_send(LCM_TARGETS.SENSORS,
-                             SENSOR_HEADER.FAILED_POWERUP, {"alliance" : alliance.name})
-                else:
-                    blue_timer.start_timer(constants_cooldown)
-                    lcm_send(LCM_TARGETS.SCOREBOARD,
-                             SCOREBOARD_HEADER.POWERUPS,
-                             {"goal" : self.name,
-                              "alliance" : alliance.name,
-                              "powerup" : powerup_type})
-            elif alliance.name == ALLIANCE_COLOR.GOLD:
-                if gold_timer.is_running():
-                    lcm_send(LCM_TARGETS.SENSORS,
-                             SENSOR_HEADER.FAILED_POWERUP, {"alliance" : alliance.name})
-                else:
-                    gold_timer.start_timer(constants_cooldown)
-                    lcm_send(LCM_TARGETS.SCOREBOARD,
-                             SCOREBOARD_HEADER.POWERUPS,
-                             {"goal" : self.name,
-                              "alliance" : alliance.name,
-                              "powerup" : powerup_type})
-
-        if self.owner is None:
-            lcm_send(LCM_TARGETS.SENSORS,
-                     SENSOR_HEADER.FAILED_POWERUP, {"alliance" : alliance.name})
-        elif effect == POWERUP_TYPES.TWO_X:
-            process_powerup(self.blue_two_x_timer, self.gold_two_x_timer,
-                            CONSTANTS.TWO_X_COOLDOWN, POWERUP_TYPES.TWO_X)
-        elif effect == POWERUP_TYPES.ZERO_X:
-            process_powerup(self.blue_zero_x_timer, self.gold_zero_x_timer,
-                            CONSTANTS.ZERO_X_COOLDOWN, POWERUP_TYPES.ZERO_X)
-        elif effect == POWERUP_TYPES.STEAL:
-            if self.owner is alliance:
-                lcm_send(LCM_TARGETS.SENSORS,
-                         SENSOR_HEADER.FAILED_POWERUP, {"alliance" : alliance.name})
-            else:
-                self.owner = alliance
+                blue_timer.start_timer(constants_cooldown)
                 lcm_send(LCM_TARGETS.SCOREBOARD,
                          SCOREBOARD_HEADER.POWERUPS,
                          {"goal" : self.name,
                           "alliance" : alliance.name,
-                          "powerup" : POWERUP_TYPES.STEAL})
+                          "powerup" : powerup_type})
+            elif alliance.name == ALLIANCE_COLOR.GOLD:
+                gold_timer.start_timer(constants_cooldown)
+
+                lcm_send(LCM_TARGETS.SCOREBOARD,
+                         SCOREBOARD_HEADER.POWERUPS,
+                         {"goal" : self.name,
+                          "alliance" : alliance.name,
+                          "powerup" : powerup_type})
+
+        if effect == POWERUP_TYPES.TWO_X:
+            process_powerup(self.blue_two_x_timer, self.gold_two_x_timer,
+                            CONSTANTS.TWO_X_DURATION, POWERUP_TYPES.TWO_X)
+        elif effect == POWERUP_TYPES.ZERO_X:
+            process_powerup(self.blue_zero_x_timer, self.gold_zero_x_timer,
+                            CONSTANTS.ZERO_X_DURATION, POWERUP_TYPES.ZERO_X)
+        elif effect == POWERUP_TYPES.STEAL:
+            self.owner = alliance
+            lcm_send(LCM_TARGETS.SCOREBOARD,
+                     SCOREBOARD_HEADER.POWERUPS,
+                     {"goal" : self.name,
+                      "alliance" : alliance.name,
+                      "powerup" : POWERUP_TYPES.STEAL})
         else:
-            lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.FAILED_POWERUP, {"alliance" : alliance})
-        return
+            lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
+                                                                      "result" : 0})
