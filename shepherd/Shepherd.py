@@ -153,7 +153,7 @@ def to_end(args):
     and final score adjustments can be made.
     '''
     global game_state
-    lcm_send(LCM_TARGETS.UI, GUI_HEADER.SEND_SCORES,
+    lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES,
              {"blue_score" : math.floor(alliances[ALLIANCE_COLOR.BLUE].score),
               "gold_score" : math.floor(alliances[ALLIANCE_COLOR.GOLD].score)})
     game_state = STATE.END
@@ -240,7 +240,7 @@ def generate_rfids(args):
         rfid_list.remove(temp)
         rfids.append(temp)
     curr_rfids = rfids
-    lcm_send(LCM_TARGETS.UI, GUI_HEADER.SEND_RFIDS, {"RFID_list" : rfids})
+    lcm_send(LCM_TARGETS.UI, UI_HEADER.RFID_LIST, {"RFID_list" : rfids})
 
 def send_goal_owners_sensors():
 

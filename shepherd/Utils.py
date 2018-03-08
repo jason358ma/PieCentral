@@ -58,11 +58,6 @@ class SCOREBOARD_HEADER():
     ALL_INFO = "all_info"
 
 # pylint: disable=invalid-name
-class GUI_HEADER():
-    SEND_RFIDS = "send_rfids"
-    SEND_SCORES = "send_scores"
-
-# pylint: disable=invalid-name
 class CONSTANTS():
     AUTO_TIME = 30
     TELEOP_TIME = 180
