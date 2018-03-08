@@ -180,6 +180,15 @@ def reset(args=None):
 
     print("RESET MATCH, MOVE TO SETUP")
 
+def get_match(args):
+    '''
+    Retrieves the match based on match number and sends this information to the UI
+    '''
+    match_num = args["match_num"]
+    info = Sheet.get_match(match_num)
+    info["match_num"] = match_num
+    lcm_send(LCM_TARGETS.UI, UI.TEAMS_INFO, info)
+
 def score_adjust(args):
     '''
     Allow for score to be changed based on referee decisions
@@ -411,6 +420,7 @@ def bid_complete(args):
 setup_functions = {
     SHEPHERD_HEADER.GENERATE_RFID : generate_rfids,
     SHEPHERD_HEADER.SETUP_MATCH: to_setup,
+    SHEPHERD_HEADER.GET_MATCH_INFO : get_match,
     SHEPHERD_HEADER.START_NEXT_STAGE: to_auto
 }
 
@@ -445,6 +455,7 @@ end_functions = {
     SHEPHERD_HEADER.RESET_MATCH : reset,
     SHEPHERD_HEADER.SCORE_ADJUST : score_adjust,
     SHEPHERD_HEADER.SETUP_MATCH : to_setup,
+    SHEPHERD_HEADER.GET_MATCH_INFO : get_match,
     SHEPHERD_HEADER.GENERATE_RFID : generate_rfids,
 }
 
