@@ -37,6 +37,7 @@ var bottom = document.getElementById("bottom_bar");
 var ctx_bottom = bottom.getContext("2d");
 setTeamsInfo();
 setTime();
+setScores(10, 10)
 
 requestAnimationFrame(animate);
 
@@ -53,32 +54,59 @@ socket.on('server-to-gui-teamsinfo', function(data) {
     gold_1_name = parsed_data.g1name;
     gold_2_num = parsed_data.g2num;
     gold_2_name = parsed_data.g2name;
-    setTeamsInfo()
+    setScores(0, 0)
 });
 
+function setScores(score_blue, score_gold) {
+    width = bottom.width
+    setTeamsInfo()
+    ctx_bottom.fillStyle = "white"
+    ctx_bottom.font = "50px Helvetica"
+    ctx_bottom.textAlign = "right"
+    ctx_bottom.fillText(score_blue.toString(),290,110);
+    ctx_bottom.textAlign = "left"
+    ctx_bottom.fillText(score_gold.toString(), width - 290, 110);
+}
+
 function setTeamsInfo() {
-    ctx_bottom.font = "30px Helvetica";
-    ctx_bottom.fillText(blue_1_num.toString(),10,30);
-    ctx_bottom.fillText(blue_1_name,10,60);
-    ctx_bottom.fillText(blue_2_num.toString(),10, 120);
-    ctx_bottom.fillText(blue_2_name,10,150);
+    width = bottom.width
+    ctx_bottom.clearRect(0, 0, bottom.width, bottom.height)
+    ctx_bottom.font = "35px Helvetica";
+
+    ctx_bottom.fillStyle = "navy"
+    ctx_bottom.beginPath()
+    ctx_bottom.fillRect(10, 0, 300, 200)
+
+    ctx_bottom.beginPath()
+    ctx_bottom.fillStyle = "goldenrod"
+    ctx_bottom.fillRect(width - 310, 0, 300, 200)
+
+    ctx_bottom.fillStyle = "white"
+    ctx_bottom.textAlign = "left"
+    ctx_bottom.fillText(blue_1_num.toString(),30,40);
+    ctx_bottom.fillText(blue_1_name,30,75);
+    ctx_bottom.fillText(blue_2_num.toString(),30, 140);
+    ctx_bottom.fillText(blue_2_name,30,175);
     ctx_bottom.textAlign = "right";
-    ctx_bottom.fillText(gold_1_num.toString(),bottom.width,30);
-    ctx_bottom.fillText(gold_1_name,bottom.width,60);
-    ctx_bottom.fillText(gold_2_num.toString(),bottom.width,120);
-    ctx_bottom.fillText(gold_2_name,bottom.width,150);
+    ctx_bottom.fillText(gold_1_num.toString(), width - 30, 40);
+    ctx_bottom.fillText(gold_1_name,width - 30, 75);
+    ctx_bottom.fillText(gold_2_num.toString(), width - 30, 140);
+    ctx_bottom.fillText(gold_2_name, width - 30, 175);
+    setTime()
 }
 
 function setTime() {
+    ctx_bottom.fillStyle = "black"
     ctx_bottom.textAlign = "center";
     var time_string = (match_time / 60).toString() + " : "
     if (match_time % 60 < 10) {
         time_string += "0";
     }
     time_string += (match_time % 60).toString();
+    ctx_bottom.font = "60px Helvetica"
+    ctx_bottom.fillText(time_string,bottom.width/2, 85)
     ctx_bottom.font = "40px Helvetica"
-    ctx_bottom.fillText(time_string,bottom.width/2, 65)
-    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 115)
+    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 135)
 }
 
 function start(time){
@@ -123,14 +151,16 @@ function draw(ctx, pct, pct2, pct3) {
     var endRadians3 = -Math.PI/2 + Math.PI*2*pct3/100;
     ctx.fillStyle='white';
     ctx.fillRect(0,0,cw,ch);
+    // outer arc
     if (pct <= 100) {
         ctx.beginPath();
-        ctx.arc(150,125,100,-Math.PI/2,endRadians, true);
+        ctx.arc(150,125,110,-Math.PI/2,endRadians, true);
         ctx.moveTo(150,125);
         ctx.strokeStyle='purple';
         ctx.lineWidth = 20;
         ctx.stroke();
     }
+    // inner arc
     if (pct2 <= 100) {
         ctx.beginPath();
         ctx.arc(150,125,80,-Math.PI/2,endRadians2, true);
@@ -139,6 +169,7 @@ function draw(ctx, pct, pct2, pct3) {
         ctx.lineWidth = 20;
         ctx.stroke();
     }
+    // inner circle
     ctx.beginPath();
     ctx.arc(150,125,60,-Math.PI/2,endRadians3, false);
     ctx.lineTo(150,125);
