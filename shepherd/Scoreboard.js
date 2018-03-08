@@ -23,7 +23,7 @@ var ch=canvas.height;
 var duration=1;
 var endingPct=100;
 // var increment=duration/pct;
-var match_time = 300;
+var match_time = 493;
 var match_num = 0;
 var blue_1_num = 0;
 var blue_1_name = "blue 1";
@@ -64,9 +64,9 @@ function setScores(score_blue, score_gold) {
     ctx_bottom.fillStyle = "white"
     ctx_bottom.font = "50px Helvetica"
     ctx_bottom.textAlign = "right"
-    ctx_bottom.fillText(score_blue.toString(),290,110);
+    ctx_bottom.fillText(score_blue.toString(),290,95);
     ctx_bottom.textAlign = "left"
-    ctx_bottom.fillText(score_gold.toString(), width - 290, 110);
+    ctx_bottom.fillText(score_gold.toString(), width - 290, 95);
 }
 
 function setTeamsInfo() {
@@ -76,38 +76,44 @@ function setTeamsInfo() {
 
     ctx_bottom.fillStyle = "navy"
     ctx_bottom.beginPath()
-    ctx_bottom.fillRect(10, 0, 300, 200)
+    ctx_bottom.fillRect(10, 0, 300, 160)
 
     ctx_bottom.beginPath()
     ctx_bottom.fillStyle = "goldenrod"
-    ctx_bottom.fillRect(width - 310, 0, 300, 200)
+    ctx_bottom.fillRect(width - 310, 0, 300, 160)
 
     ctx_bottom.fillStyle = "white"
     ctx_bottom.textAlign = "left"
-    ctx_bottom.fillText(blue_1_num.toString(),30,40);
-    ctx_bottom.fillText(blue_1_name,30,75);
-    ctx_bottom.fillText(blue_2_num.toString(),30, 140);
-    ctx_bottom.fillText(blue_2_name,30,175);
+    var blue_1_string = blue_1_num.toString() + "   " + blue_1_name
+    ctx_bottom.fillText(blue_1_string,30,40);
+    // ctx_bottom.fillText(blue_1_name,30,75);
+
+    var blue_2_string = blue_2_num.toString() + "   " + blue_2_name
+    ctx_bottom.fillText(blue_2_string,30, 140);
+    // ctx_bottom.fillText(blue_2_name,30,175);
     ctx_bottom.textAlign = "right";
-    ctx_bottom.fillText(gold_1_num.toString(), width - 30, 40);
-    ctx_bottom.fillText(gold_1_name,width - 30, 75);
-    ctx_bottom.fillText(gold_2_num.toString(), width - 30, 140);
-    ctx_bottom.fillText(gold_2_name, width - 30, 175);
+    var gold_1_string = gold_1_name + "   " + gold_1_num.toString()
+    ctx_bottom.fillText(gold_1_string, width - 30, 40);
+    // ctx_bottom.fillText(gold_1_name,width - 30, 75);
+
+    var gold_2_string = gold_2_name + "   " + gold_2_num.toString()
+    ctx_bottom.fillText(gold_2_string, width - 30, 140);
+    // ctx_bottom.fillText(gold_2_name, width - 30, 175);
     setTime()
 }
 
 function setTime() {
     ctx_bottom.fillStyle = "black"
     ctx_bottom.textAlign = "center";
-    var time_string = (match_time / 60).toString() + " : "
+    var time_string = Math.round(match_time / 60).toString() + " : "
     if (match_time % 60 < 10) {
         time_string += "0";
     }
     time_string += (match_time % 60).toString();
     ctx_bottom.font = "60px Helvetica"
-    ctx_bottom.fillText(time_string,bottom.width/2, 85)
+    ctx_bottom.fillText(time_string,bottom.width/2, 75)
     ctx_bottom.font = "40px Helvetica"
-    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 135)
+    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 125)
 }
 
 function start(time){
