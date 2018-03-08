@@ -53,6 +53,7 @@ def ui_to_server_rfid_request():
 @socketio.on('ui-to-server-teams-info-request')
 def ui_to_server_match_info_request(match_num_dict):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GET_MATCH_INFO, json.loads(match_num_dict))
+    print(json.loads(match_num_dict))
 
 @socketio.on('ui-to-server-setup-match')
 def ui_to_server_setup_match(teams_info):
