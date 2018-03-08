@@ -46,7 +46,7 @@ int currentPrice = 0;
 int goalOwner[numGoals] = {'n', 'n', 'n', 'n', 'n'};
 int biddingPrice[numGoals] = {0, 0, 0, 0, 0};
 // ' ' = no owner, 'b' = blue, 'g' = goal
-int myScore = 100; //are these equivalent to the money a group has?
+int myScore = 0; //are these equivalent to the money a group has?
 char myTeam = 'b'; //change this var for other side LMAO
 char myEnemy = 'g';
 
@@ -174,6 +174,7 @@ void serialEvent() {
   while (Serial.available()) {
     char inChar[1];
     Serial.readBytes(inChar, 1);
+//    Serial.print(inChar);
     if (inChar[0] == '\n'){
       pyInpStr[inpStrIndex] = '\0';
       pyInpComplete = true;
@@ -248,6 +249,7 @@ void changeLED(int ledID, char color = ' ', bool blink = false) {
 
 // process code input mode
 void processCode() {
+  currentGoal = 0;
   disp.write(currentCode);
   clearLEDs();
   if (submitStage == 0) {
@@ -340,7 +342,7 @@ void processCode() {
       }
       delay(150);
       submitStage++;
-    } else if (submitStage == 1) {
+    } else if (submitStage == 1 && codeGoal != 0) {
 //      Serial.println("Submit stage 1 to stage 0");
 //      Serial.print("currCode: ");
 //      String code = String(currentCode);
@@ -351,6 +353,8 @@ void processCode() {
 //      Serial.write("\n");
 
       submitStage++;
+
+      //sent here
     }
     submitPressed = false;
 
@@ -376,25 +380,28 @@ void processBidding() {
   for (int goal = 0; goal < 5; goal++) {
     if (goalOwner[goal] == myTeam) {
       //owned by team
-      changeLED(goal + 1, 'b');
+      changeLED(goal + 1, 'r');
     } else if (biddingPrice[goal] <= myScore && goalOwner[goal] != myEnemy && goalOwner[goal] != 'e') {
       // able to be bid (price less than score, owner isnt enemy)
       changeLED(goal + 1, 'g');
     } else if (goalOwner[goal] == 'e'){
       // enemy bid in progress
-      changeLED(goal + 1, 'r', true);
+      changeLED(goal + 1, 'g', true);
     } else {
       changeLED(goal + 1, 'r');
     }
   }
-  if (goalOwner[currentGoal-1] == 'n'){
+  if (goalOwner[currentGoal-1] == 'n' && biddingPrice[currentGoal-1] <= myScore){
     changeLED(currentGoal, 'b');
+    currentPrice = biddingPrice[currentGoal-1];
+  } else {
     currentPrice = biddingPrice[currentGoal-1];
   }
   
   
   // when button pressed
-  if (!digitalRead(submitButton) && submitPressed) {
+  if (!digitalRead(submitButton) && submitPressed && currentGoal != 0) {
+    //sent here
     Serial.print("bg;");
     Serial.println(bidGoals[currentGoal-1]);
 //    Serial.write("\n");
@@ -411,7 +418,7 @@ void processBidding() {
     for (int ii = 1; ii <= numOfButtons; ii++) {
       changeLED(ii, ' ');
     }
-  } else if (digitalRead(submitButton) && !submitPressed) {
+  } else if (digitalRead(submitButton) && !submitPressed && currentGoal !=0) {
     submitPressed = true;
   }
 }
