@@ -119,12 +119,12 @@
       }
 
       $("#match-start").click(function() {
-        socket.emit('ui-to-server-start-match')
-      });
-
-      $("#match-next-stage").click(function() {
         socket.emit('ui-to-server-start-next-stage')
       });
+
+     /** $("#match-next-stage").click(function() {
+        socket.emit('ui-to-server-start-next-stage')
+    });**/
 
       $("#match-reset-stage").click(function() {
         socket.emit('ui-to-server-reset-stage')
@@ -192,7 +192,7 @@
     <h2>Match Creator</h2>
     <div class="btn-group bottom-padding" role="group" aria-label="...">
       <button type="button" class="btn btn-success" id="match-start"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</button>
-      <button type="button" class="btn btn-default" id="match-next-stage"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Start Next Stage</button>
+      <!--<button type="button" class="btn btn-default" id="match-next-stage"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Start Next Stage</button>-->
       <button type="button" class="btn btn-warning" id="match-reset-stage"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span> Reset Stage</button>
       <button type="button" class="btn btn-danger" id="match-reset"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span> Reset Match</button>
 
