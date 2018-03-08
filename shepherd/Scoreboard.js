@@ -16,6 +16,7 @@ var pct3 = [0, 0, 0, 0, 0];
 var grow = [1, 1, 1, 1, 1];
 var grow2 = [1, 1, 1, 1, 1];
 var grow3 = [1, 1, 1, 1, 1];
+var owner = ['n', 'n', 'n', 'n', 'n']
 
 var cw=canvas.width;
 var ch=canvas.height;
@@ -115,6 +116,7 @@ function start(time){
         grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
         grow2[i] = parseFloat(form.elements[1].value.split(" ")[i])*10;
         grow3[i] = parseFloat(form.elements[2].value.split(" ")[i])*10;
+        owner[i] = form.elements[3].value.split(" ")[i];
     }
     beginning = new Date();
     function animate(){
@@ -126,7 +128,7 @@ function start(time){
             pct3[i] = (date - beginning)/grow3[i];
         }
         for(var i = 0; i < 5; i++){
-            draw(contexts[i], pct[i], pct2[i], pct3[i]);
+            draw(contexts[i], pct[i], pct2[i], pct3[i], owner[i]);
         }
         // draw(ctx, pct, pct2);
         // draw(ctx2, pct, pct2);
@@ -145,18 +147,34 @@ function start(time){
 }
 
 
-function draw(ctx, pct, pct2, pct3) {
+function draw(ctx, pct, pct2, pct3, alliance) {
+    var color;
+    if(alliance == 'b'){
+      color = 'navy'
+    }
+    if(alliance == 'g'){
+      color = 'goldenrod'
+    }
     var endRadians = -Math.PI/2 + Math.PI*2*pct/100;
     var endRadians2 = -Math.PI/2 + Math.PI*2*pct2/100;
     var endRadians3 = -Math.PI/2 + Math.PI*2*pct3/100;
     ctx.fillStyle='white';
     ctx.fillRect(0,0,cw,ch);
+
+    ctx.beginPath();
+
+    ctx.arc(150, 125, 59, 0, 2*Math.PI, false);
+    ctx.moveTo(150,125);
+    ctx.strokeStyle='dimgrey';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
     // outer arc
     if (pct <= 100) {
         ctx.beginPath();
         ctx.arc(150,125,110,-Math.PI/2,endRadians, true);
         ctx.moveTo(150,125);
-        ctx.strokeStyle='purple';
+        ctx.strokeStyle='indigo';
         ctx.lineWidth = 20;
         ctx.stroke();
     }
@@ -165,7 +183,7 @@ function draw(ctx, pct, pct2, pct3) {
         ctx.beginPath();
         ctx.arc(150,125,80,-Math.PI/2,endRadians2, true);
         ctx.moveTo(150,125);
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = 'maroon';
         ctx.lineWidth = 20;
         ctx.stroke();
     }
@@ -173,7 +191,7 @@ function draw(ctx, pct, pct2, pct3) {
     ctx.beginPath();
     ctx.arc(150,125,60,-Math.PI/2,endRadians3, false);
     ctx.lineTo(150,125);
-    ctx.fillStyle = 'goldenrod';
+    ctx.fillStyle = color;
     ctx.fill();
 }
 
