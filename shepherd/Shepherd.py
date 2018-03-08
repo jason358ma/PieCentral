@@ -184,10 +184,10 @@ def get_match(args):
     '''
     Retrieves the match based on match number and sends this information to the UI
     '''
-    match_num = args["match_num"]
+    match_num = int(args["match_num"])
     info = Sheet.get_match(match_num)
     info["match_num"] = match_num
-    lcm_send(LCM_TARGETS.UI, UI.TEAMS_INFO, info)
+    lcm_send(LCM_TARGETS.UI, UI_HEADER.TEAMS_INFO, info)
 
 def score_adjust(args):
     '''

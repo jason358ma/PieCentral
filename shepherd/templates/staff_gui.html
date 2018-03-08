@@ -65,7 +65,8 @@
       });
 
       $("#populate-match").click(function() {
-          match_num = $("#new-match-num").val(match_num)
+        match_num = $("#new-match-num").val()
+        console.log(match_num)
         socket.emit('ui-to-server-teams-info-request', JSON.stringify({"match_num" : match_num}))
       });
 

@@ -4,7 +4,6 @@ class SHEPHERD_HEADER():
     GOAL_BID = "goal_bid"
     POWERUP_APPLICATION = "powerup_application"
 
-    START_MATCH = "start_match"
     START_NEXT_STAGE = "start_next_stage"
     RESET_CURRENT_STAGE = "reset_current_stage"
     RESET_MATCH = "reset_match"
