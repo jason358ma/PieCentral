@@ -132,15 +132,19 @@ function draw(ctx, pct, pct2, pct3, alliance) {
     var endRadians3 = -Math.PI/2 + Math.PI*2*pct3/100;
     ctx.fillStyle='white';
     ctx.fillRect(0,0,cw,ch);
-    ctx.fillStyle='grey'
-    ctx.arc(150, 125, 60, 0, 2*Math.PI, false);
-    ctx.lineTo(150,125);
-    ctx.fill();
+    ctx.beginPath();
+
+    ctx.arc(150, 125, 59, 0, 2*Math.PI, false);
+    ctx.moveTo(150,125);
+    ctx.strokeStyle='dimgrey';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
     if (pct <= 100) {
         ctx.beginPath();
         ctx.arc(150,125,100,-Math.PI/2,endRadians, true);
         ctx.moveTo(150,125);
-        ctx.strokeStyle='purple';
+        ctx.strokeStyle='indigo';
         ctx.lineWidth = 20;
         ctx.stroke();
     }
@@ -148,7 +152,7 @@ function draw(ctx, pct, pct2, pct3, alliance) {
         ctx.beginPath();
         ctx.arc(150,125,80,-Math.PI/2,endRadians2, true);
         ctx.moveTo(150,125);
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = 'maroon';
         ctx.lineWidth = 20;
         ctx.stroke();
     }
