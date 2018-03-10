@@ -18,7 +18,7 @@ var grow2 = [1, 1, 1, 1, 1];
 var grow3 = [1, 1, 1, 1, 1];
 var owner = ['n', 'n', 'n', 'n', 'n'];
 // we might need to change these??
-var bidAmounts = [0,0,0,0,0];
+var bidAmounts = [0, 0, 0, 0, 0];
 
 var cw=canvas.width;
 var ch=canvas.height;
@@ -122,7 +122,7 @@ socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
 socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
     parsed_data = JSON.parse(data);
     var goal_num = goalNumFromName(parsed_data.goal);
-    grow[goal_num] = parsed_data.time;
+    grow[goal_num] += parsed_data.time;
 });
 
 socket.on('SCOREBOARD_HEADER.POWERUPS', function(data) {
