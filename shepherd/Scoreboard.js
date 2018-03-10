@@ -53,7 +53,7 @@ requestAnimationFrame(animate);
 var socket = io('http://127.0.0.1:5000');
 
 socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     match_num = parsed_data.match_num;
     blue_1_num = parsed_data.b1num;
     blue_1_name = parsed_data.b1name;
@@ -72,7 +72,7 @@ socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
 });
 
 socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
     if(alliance == "GOLD"){
