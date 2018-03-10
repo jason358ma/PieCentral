@@ -43,7 +43,7 @@ var master_blue_score = 0;
 var gold_multiplier = 1;
 var blue_multiplier = 1;
 setTeamsInfo();
-setTime();
+setMatchTime();
 setScores(10, 10)
 
 requestAnimationFrame(animate);
@@ -63,6 +63,7 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
     gold_2_name = parsed_data.g2name;
     setScores(0, 0)
 });
+
 
 socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
     //reset ALL the timers;
@@ -107,6 +108,18 @@ socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
     owner[goal] = newOwner;
 });
 
+socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
+    parsed_data = JSON.parse(data);
+    var goal_num = goalNumFromName(parsed_data.goal);
+    grow[goal_num] = parsed_data.time;
+});
+
+function goalNumFromName(goal_name) {
+    var names = ["a", "b", "c", "d", "e"]
+    return names.indexOf(goal_name.toLowerCase())
+}
+
+
 function setScores(score_blue, score_gold) {
     width = bottom.width
     setTeamsInfo()
@@ -150,10 +163,10 @@ function setTeamsInfo() {
     var gold_2_string = gold_2_name + "   " + gold_2_num.toString()
     ctx_bottom.fillText(gold_2_string, width - 30, 140);
     // ctx_bottom.fillText(gold_2_name, width - 30, 175);
-    setTime()
+    setMatchTime()
 }
 
-function setTime() {
+function setMatchTime() {
     ctx_bottom.fillStyle = "black"
     ctx_bottom.textAlign = "center";
     var time_string = Math.round(match_time / 60).toString() + " : "
