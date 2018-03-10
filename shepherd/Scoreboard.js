@@ -212,7 +212,7 @@ function start(time){
             pct3[i] = (date - beginning)/grow3[i];
         }
         for(var i = 0; i < 5; i++){
-            draw(contexts[i], pct[i], pct2[i], pct3[i], owner[i]);
+            draw(contexts[i], pct[i], pct2[i], pct3[i], owner[i], ["A","B","C","D","E"][i]);
         }
         // draw(ctx, pct, pct2);
         // draw(ctx2, pct, pct2);
@@ -231,7 +231,7 @@ function start(time){
 }
 
 
-function draw(ctx, pct, pct2, pct3, alliance) {
+function draw(ctx, pct, pct2, pct3, alliance, name) {
     var color;
     if(alliance == 'b'){
       color = 'navy'
@@ -246,7 +246,6 @@ function draw(ctx, pct, pct2, pct3, alliance) {
     ctx.fillRect(0,0,cw,ch);
 
     ctx.beginPath();
-
     ctx.arc(150, 125, 59, 0, 2*Math.PI, false);
     ctx.moveTo(150,125);
     ctx.strokeStyle='black';
@@ -277,6 +276,20 @@ function draw(ctx, pct, pct2, pct3, alliance) {
     ctx.lineTo(150,125);
     ctx.fillStyle = color;
     ctx.fill();
+    //text
+    ctx.beginPath();
+    ctx.font = "40px Helvetica";
+    ctx.textAlign = "center";
+    ctx.strokeStyle="black";
+    ctx.lineWidth = 4;
+    ctx.strokeText(name, 150, 125 + 43 / 4 + 3);
+
+
+    ctx.beginPath();
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.fillText(name, 150, 125 + 43 / 4 + 3);
+
 }
 
 function addTime() {
