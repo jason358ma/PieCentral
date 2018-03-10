@@ -96,7 +96,15 @@ socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
 socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
     parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
-    var goal = 
+    var goal = GoalNumFromName(parsed_data.goal);
+    var newOwner = n;
+    if(alliance == "GOLD"){
+      newOwner = g;
+    }
+    if(alliance == "BLUE"){
+      newOwner = b;
+    }
+    owner[goal] = newOwner;
 });
 
 function setScores(score_blue, score_gold) {
