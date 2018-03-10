@@ -31,8 +31,6 @@ def receiver():
             print("Sent Team Info")
         if event[0] == SHEPHERD_HEADER.SETUP_MATCH:
             print(event[1])
-        if event[0] == SHEPHERD_HEADER.START_MATCH:
-            print("starting match")
         if event[0] == SHEPHERD_HEADER.START_NEXT_STAGE:
             print("starting stage")
         if event[0] == SHEPHERD_HEADER.RESET_CURRENT_STAGE:

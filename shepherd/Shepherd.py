@@ -202,12 +202,12 @@ def score_adjust(args):
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
              {"alliance" : alliances[ALLIANCE_COLOR.GOLD].name,
               "score" : math.floor(alliances[ALLIANCE_COLOR.GOLD].score)})
-             
+
 def get_score(args):
     '''
     Send the current blue and gold score to the UI
     '''
-    if alliances[ALLIANCE_COLOR.BLUE] == None:
+    if alliances[ALLIANCE_COLOR.BLUE] is None:
         lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES,
                  {"blue_score" : None,
                   "gold_score" : None})
