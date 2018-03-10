@@ -126,9 +126,9 @@
         socket.emit('ui-to-server-start-next-stage')
     });**/
 
-      $("#match-reset-stage").click(function() {
+     /** $("#match-reset-stage").click(function() {
         socket.emit('ui-to-server-reset-stage')
-      });
+    });**/
 
       $("#match-reset").click(function() {
         socket.emit('ui-to-server-reset-match')
@@ -193,7 +193,7 @@
     <div class="btn-group bottom-padding" role="group" aria-label="...">
       <button type="button" class="btn btn-success" id="match-start"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</button>
       <!--<button type="button" class="btn btn-default" id="match-next-stage"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Start Next Stage</button>-->
-      <button type="button" class="btn btn-warning" id="match-reset-stage"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span> Reset Stage</button>
+      <!--<button type="button" class="btn btn-warning" id="match-reset-stage"><span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span> Reset Stage</button>-->
       <button type="button" class="btn btn-danger" id="match-reset"><span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span> Reset Match</button>
 
       <button type="button" class="btn" id="toggle-all"> Toggle All</button>

@@ -59,17 +59,17 @@ def ui_to_server_match_info_request(match_num_dict):
 def ui_to_server_setup_match(teams_info):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SETUP_MATCH, json.loads(teams_info))
 
-@socketio.on('ui-to-server-start-match')
+'''@socketio.on('ui-to-server-start-match')
 def ui_to_server_start_match():
-    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_MATCH)
+    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_MATCH)'''
 
 @socketio.on('ui-to-server-start-next-stage')
 def ui_to_server_start_next_stage():
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_NEXT_STAGE)
 
-@socketio.on('ui-to-server-reset-stage')
+'''@socketio.on('ui-to-server-reset-stage')
 def ui_to_server_reset_stage():
-    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_CURRENT_STAGE)
+    lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_CURRENT_STAGE)'''
 
 @socketio.on('ui-to-server-reset-match')
 def ui_to_server_reset_match():
