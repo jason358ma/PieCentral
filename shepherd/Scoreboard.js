@@ -65,7 +65,7 @@ socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
 });
 
 function goalNumFromName(goal_name) {
-    var names = ["a", "b", "e", "d", "e"]
+    var names = ["a", "b", "c", "d", "e"]
     return names.indexOf(goal_name.toLowerCase())
 }
 
