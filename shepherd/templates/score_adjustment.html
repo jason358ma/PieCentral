@@ -98,7 +98,7 @@
 
       $("#send-scores").click(
       function() {
-        data = {"blueScore" : blueScore, "goldScore" : goldScore}
+        data = {"blue_score" : blueScore, "gold_score" : goldScore}
         socket.emit('ui-to-server-scores', JSON.stringify(data))
       });
 
