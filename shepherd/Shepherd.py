@@ -207,9 +207,14 @@ def get_score(args):
     '''
     Send the current blue and gold score to the UI
     '''
-    lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES,
-             {"blue_score" : alliances[ALLIANCE_COLOR.BLUE].score,
-              "gold_score" : alliances[ALLIANCE_COLOR.GOLD].score})
+    if alliances[ALLIANCE_COLOR.BLUE] == None:
+        lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES,
+                 {"blue_score" : None,
+                  "gold_score" : None})
+    else:
+        lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES,
+                 {"blue_score" : math.floor(alliances[ALLIANCE_COLOR.BLUE].score),
+                  "gold_score" : math.floor(alliances[ALLIANCE_COLOR.GOLD].score)})
 
 def flush_scores():
     '''
