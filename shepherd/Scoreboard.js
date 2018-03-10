@@ -74,21 +74,22 @@ socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
     if(alliance == "GOLD"){
-      setScores(master_blue_score,score);
+      master_gold_score = score;
     }
     if(alliance == "BLUE"){
-      setScores(score, master_gold_score);
+      master_blue_score = score
     }
+    setScores()
 });
 
 socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
     parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var multiplier = parsed_data.multiplier;
-    if(alliance == "GOLD"){
+    if (alliance == "GOLD"){
       gold_multiplier = multiplier;
     }
-    if(alliance == "BLUE"){
+    if (alliance == "BLUE"){
       blue_multiplier = multiplier;
     }
     setTeamsInfo();
@@ -99,10 +100,10 @@ socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
     var newOwner = n;
-    if(alliance == "GOLD"){
+    if (alliance == "GOLD") {
       newOwner = g;
     }
-    if(alliance == "BLUE"){
+    if (alliance == "BLUE") {
       newOwner = b;
     }
     owner[goal] = newOwner;
@@ -120,17 +121,15 @@ function goalNumFromName(goal_name) {
 }
 
 
-function setScores(score_blue, score_gold) {
+function setScores() {
     width = bottom.width
     setTeamsInfo()
     ctx_bottom.fillStyle = "white"
     ctx_bottom.font = "50px Helvetica"
     ctx_bottom.textAlign = "right"
-    ctx_bottom.fillText(score_blue.toString(),290,95);
+    ctx_bottom.fillText(master_blue_score.toString(),290,95);
     ctx_bottom.textAlign = "left"
-    ctx_bottom.fillText(score_gold.toString(), width - 290, 95);
-    master_blue_score = score_blue;
-    master_gold_score = score_gold;
+    ctx_bottom.fillText(master_gold_score.toString(), width - 290, 95);
 }
 
 function setTeamsInfo() {
