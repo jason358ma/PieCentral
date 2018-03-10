@@ -16,7 +16,9 @@ var pct3 = [0, 0, 0, 0, 0];
 var grow = [1, 1, 1, 1, 1];
 var grow2 = [1, 1, 1, 1, 1];
 var grow3 = [1, 1, 1, 1, 1];
-var owner = ['n', 'n', 'n', 'n', 'n']
+var owner = ['n', 'n', 'n', 'n', 'n'];
+// we might need to change these??
+var bidAmounts = [0,0,0,0,0];
 
 var cw=canvas.width;
 var ch=canvas.height;
@@ -98,14 +100,22 @@ socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
     parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
-    var newOwner = n;
+    var newOwner = 'n';
     if(alliance == "GOLD"){
-      newOwner = g;
+      newOwner = 'g';
     }
     if(alliance == "BLUE"){
-      newOwner = b;
+      newOwner = 'b';
     }
     owner[goal] = newOwner;
+});
+
+socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
+    parsed_data = JSON.parse(data);
+    var alliance = parsed_data.alliance;
+    var goal = GoalNumFromName(parsed_data.goal);
+    var bid = parsed_data.bid;
+    bidAmounts[goal] = bid;
 });
 
 socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
@@ -114,56 +124,60 @@ socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
     grow[goal_num] = parsed_data.time;
 });
 
+socket.on('SCOREBOARD_HEADER.POWERUPS', function(data) {
+    //TODO
+});
+
 function goalNumFromName(goal_name) {
-    var names = ["a", "b", "c", "d", "e"]
-    return names.indexOf(goal_name.toLowerCase())
+    var names = ["a", "b", "c", "d", "e"];
+    return names.indexOf(goal_name.toLowerCase());
 }
 
 
 function setScores(score_blue, score_gold) {
-    width = bottom.width
-    setTeamsInfo()
-    ctx_bottom.fillStyle = "white"
-    ctx_bottom.font = "50px Helvetica"
-    ctx_bottom.textAlign = "right"
+    width = bottom.width;
+    setTeamsInfo();
+    ctx_bottom.fillStyle = "white";
+    ctx_bottom.font = "50px Helvetica";
+    ctx_bottom.textAlign = "right";
     ctx_bottom.fillText(score_blue.toString(),290,95);
-    ctx_bottom.textAlign = "left"
+    ctx_bottom.textAlign = "left";
     ctx_bottom.fillText(score_gold.toString(), width - 290, 95);
     master_blue_score = score_blue;
     master_gold_score = score_gold;
 }
 
 function setTeamsInfo() {
-    width = bottom.width
-    ctx_bottom.clearRect(0, 0, bottom.width, bottom.height)
+    width = bottom.width;
+    ctx_bottom.clearRect(0, 0, bottom.width, bottom.height);
     ctx_bottom.font = "35px Helvetica";
 
-    ctx_bottom.fillStyle = "navy"
-    ctx_bottom.beginPath()
-    ctx_bottom.fillRect(10, 0, 300, 160)
+    ctx_bottom.fillStyle = "navy";
+    ctx_bottom.beginPath();
+    ctx_bottom.fillRect(10, 0, 300, 160);
 
-    ctx_bottom.beginPath()
-    ctx_bottom.fillStyle = "goldenrod"
-    ctx_bottom.fillRect(width - 310, 0, 300, 160)
+    ctx_bottom.beginPath();
+    ctx_bottom.fillStyle = "goldenrod";
+    ctx_bottom.fillRect(width - 310, 0, 300, 160);
 
-    ctx_bottom.fillStyle = "white"
-    ctx_bottom.textAlign = "left"
-    var blue_1_string = blue_1_num.toString() + "   " + blue_1_name
+    ctx_bottom.fillStyle = "white";
+    ctx_bottom.textAlign = "left";
+    var blue_1_string = blue_1_num.toString() + "   " + blue_1_name;
     ctx_bottom.fillText(blue_1_string,30,40);
     // ctx_bottom.fillText(blue_1_name,30,75);
 
-    var blue_2_string = blue_2_num.toString() + "   " + blue_2_name
+    var blue_2_string = blue_2_num.toString() + "   " + blue_2_name;
     ctx_bottom.fillText(blue_2_string,30, 140);
     // ctx_bottom.fillText(blue_2_name,30,175);
     ctx_bottom.textAlign = "right";
-    var gold_1_string = gold_1_name + "   " + gold_1_num.toString()
+    var gold_1_string = gold_1_name + "   " + gold_1_num.toString();
     ctx_bottom.fillText(gold_1_string, width - 30, 40);
     // ctx_bottom.fillText(gold_1_name,width - 30, 75);
 
-    var gold_2_string = gold_2_name + "   " + gold_2_num.toString()
+    var gold_2_string = gold_2_name + "   " + gold_2_num.toString();
     ctx_bottom.fillText(gold_2_string, width - 30, 140);
     // ctx_bottom.fillText(gold_2_name, width - 30, 175);
-    setMatchTime()
+    setMatchTime();
 }
 
 function setMatchTime() {
