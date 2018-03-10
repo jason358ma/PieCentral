@@ -202,6 +202,14 @@ def score_adjust(args):
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
              {"alliance" : alliances[ALLIANCE_COLOR.GOLD].name,
               "score" : math.floor(alliances[ALLIANCE_COLOR.GOLD].score)})
+             
+def get_score(args):
+    '''
+    Send the current blue and gold score to the UI
+    '''
+    lcm_send(LCM_TARGETS.UI, UI_HEADER.SCORES,
+             {"blue_score" : alliances[ALLIANCE_COLOR.BLUE].score,
+              "gold_score" : alliances[ALLIANCE_COLOR.GOLD].score})
 
 def flush_scores():
     '''
@@ -438,6 +446,7 @@ wait_functions = {
     SHEPHERD_HEADER.BID_TIMER_END : bid_complete,
     SHEPHERD_HEADER.RESET_MATCH : reset,
     SHEPHERD_HEADER.SCORE_ADJUST : score_adjust,
+    SHEPHERD_HEADER.GET_SCORES : get_score,
     SHEPHERD_HEADER.START_NEXT_STAGE : to_teleop
 }
 
@@ -454,6 +463,7 @@ teleop_functions = {
 end_functions = {
     SHEPHERD_HEADER.RESET_MATCH : reset,
     SHEPHERD_HEADER.SCORE_ADJUST : score_adjust,
+    SHEPHERD_HEADER.GET_SCORES : get_score,
     SHEPHERD_HEADER.SETUP_MATCH : to_setup,
     SHEPHERD_HEADER.GET_MATCH_INFO : get_match,
     SHEPHERD_HEADER.GENERATE_RFID : generate_rfids,
