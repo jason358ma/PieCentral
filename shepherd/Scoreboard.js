@@ -36,6 +36,12 @@ var gold_2_name = "gold 2";
 
 var bottom = document.getElementById("bottom_bar");
 var ctx_bottom = bottom.getContext("2d");
+
+var master_gold_score = 0;
+var master_blue_score = 0;
+
+var gold_multiplier = 1;
+var blue_multiplier = 1;
 setTeamsInfo();
 setTime();
 setScores(10, 10)
@@ -44,7 +50,7 @@ requestAnimationFrame(animate);
 
 var socket = io('http://127.0.0.1:5000');
 
-socket.on('server-to-gui-teamsinfo', function(data) {
+socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
     parsed_data = JSON.parse(data);
     match_num = parsed_data.match_num;
     blue_1_num = parsed_data.b1num;
@@ -58,6 +64,41 @@ socket.on('server-to-gui-teamsinfo', function(data) {
     setScores(0, 0)
 });
 
+socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
+    //reset ALL the timers;
+});
+
+socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
+    parsed_data = JSON.parse(data);
+    var alliance = parsed_data.alliance;
+    var score = parsed_data.score;
+    if(alliance == "GOLD"){
+      setScores(master_blue_score,score);
+    }
+    if(alliance == "BLUE"){
+      setScores(score, master_gold_score);
+    }
+});
+
+socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
+    parsed_data = JSON.parse(data);
+    var alliance = parsed_data.alliance;
+    var multiplier = parsed_data.multiplier;
+    if(alliance == "GOLD"){
+      gold_multiplier = multiplier;
+    }
+    if(alliance == "BLUE"){
+      blue_multiplier = multiplier;
+    }
+    setTeamsInfo();
+});
+
+socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
+    parsed_data = JSON.parse(data);
+    var alliance = parsed_data.alliance;
+    var goal = 
+});
+
 function setScores(score_blue, score_gold) {
     width = bottom.width
     setTeamsInfo()
@@ -67,6 +108,8 @@ function setScores(score_blue, score_gold) {
     ctx_bottom.fillText(score_blue.toString(),290,95);
     ctx_bottom.textAlign = "left"
     ctx_bottom.fillText(score_gold.toString(), width - 290, 95);
+    master_blue_score = score_blue;
+    master_gold_score = score_gold;
 }
 
 function setTeamsInfo() {
