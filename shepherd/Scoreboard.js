@@ -71,6 +71,7 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
 
 socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
     //reset ALL the timers;
+    resetTimers()
 });
 
 function resetTimers() {
@@ -230,17 +231,11 @@ function start(time){
                 pct3[i] = (date - beginning)/grow3[i];
             }
         }
-
         for(var i = 0; i < 5; i++){
             draw(i);
         }
 
-        for(var i = 0; i < 5; i++){
-            if(pct[i] <= endingPct || pct2[i] <= endingPct || pct3[i] <= endingPct){
-                requestAnimationFrame(animate);
-                break;
-            }
-        }
+        requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
 }
