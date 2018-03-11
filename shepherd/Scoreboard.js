@@ -69,6 +69,14 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
 
 socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
     //reset ALL the timers;
+    for (int i = 0; i < 5; i++) {
+        pct[i] = 0;
+        pct2[i] = 0;
+        pct3[i] = 0;
+        grow[i] = 0;
+        grow2[i] = 0;
+        grow3[i] = 0;
+    }
 });
 
 socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
@@ -122,11 +130,12 @@ socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
 socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
     parsed_data = JSON.parse(data);
     var goal_num = goalNumFromName(parsed_data.goal);
-    grow[goal_num] += parsed_data.time;
+    grow[goal_num] += parsed_data.time * 10;
 });
 
 socket.on('SCOREBOARD_HEADER.POWERUPS', function(data) {
     //TODO
+
 });
 
 function goalNumFromName(goal_name) {
@@ -194,7 +203,7 @@ function setMatchTime() {
 
 function start(time){
     form = document.getElementById("seconds");
-    for(var i = 0; i < 5; i++){
+    for (var i = 0; i < 5; i++) {
         grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
         grow2[i] = parseFloat(form.elements[1].value.split(" ")[i])*10;
         grow3[i] = parseFloat(form.elements[2].value.split(" ")[i])*10;
@@ -209,14 +218,10 @@ function start(time){
             pct2[i] = (date - beginning)/grow2[i];
             pct3[i] = (date - beginning)/grow3[i];
         }
+
         for(var i = 0; i < 5; i++){
             draw(contexts[i], pct[i], pct2[i], pct3[i], owner[i], ["A","B","C","D","E"][i]);
         }
-        // draw(ctx, pct, pct2);
-        // draw(ctx2, pct, pct2);
-        // draw(ctx3, pct, pct2);
-        // draw(ctx4, pct, pct2);
-        // draw(ctx5, pct, pct2);
 
         for(var i = 0; i < 5; i++){
             if(pct[i] <= endingPct || pct2[i] <= endingPct || pct3[i] <= endingPct){
@@ -227,7 +232,6 @@ function start(time){
     }
     requestAnimationFrame(animate);
 }
-
 
 function draw(ctx, pct, pct2, pct3, alliance, name) {
     var color;
