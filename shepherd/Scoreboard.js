@@ -18,7 +18,7 @@ var grow2 = [1, 1, 1, 1, 1];
 var grow3 = [1, 1, 1, 1, 1];
 var owner = ['n', 'n', 'n', 'n', 'n'];
 // we might need to change these??
-var bidAmounts = [0, 0, 0, 0, 0];
+var bidAmounts = [0, 666, 100, 20, 0];
 
 var cw=canvas.width;
 var ch=canvas.height;
