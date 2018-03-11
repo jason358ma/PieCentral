@@ -74,7 +74,7 @@ socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
 });
 
 function resetTimers() {
-    for (int i = 0; i < 5; i++) {
+    for (var i = 0; i < 5; i++) {
         pct[i] = 0;
         pct2[i] = 0;
         pct3[i] = 0;
