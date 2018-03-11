@@ -73,7 +73,6 @@ def receiver():
     counter = 0
 
     while True:
-        print("help", counter)
         counter = (counter + 1) % 10
 
         if not events.empty():
