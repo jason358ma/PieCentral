@@ -44,6 +44,10 @@ var master_blue_score = 0;
 
 var gold_multiplier = 1;
 var blue_multiplier = 1;
+
+var barGrow = .5 * 60 * 10;
+var barPct = 0;
+
 setTeamsInfo();
 setMatchTime();
 setScores(10, 10)
@@ -214,6 +218,10 @@ function start(time){
         for(var i = 0; i < 5; i++){
             draw(i);
         }
+
+        barPct = (date - beginning)/barGrow;
+        drawBar(ctx_bottom, barPct)
+
         // draw(ctx, pct, pct2);
         // draw(ctx2, pct, pct2);
         // draw(ctx3, pct, pct2);
@@ -221,7 +229,7 @@ function start(time){
         // draw(ctx5, pct, pct2);
 
         for(var i = 0; i < 5; i++){
-            if(pct[i] <= endingPct || pct2[i] <= endingPct || pct3[i] <= endingPct){
+            if(pct[i] <= endingPct || pct2[i] <= endingPct || pct3[i] <= endingPct || barPct <= endingPct){
                 requestAnimationFrame(animate);
                 break;
             }
@@ -230,6 +238,18 @@ function start(time){
     requestAnimationFrame(animate);
 }
 
+function drawBar(ctx, pct){
+    ctx.beginPath();
+    ctx.fillStyle='white';
+    ctx.fillRect(10,ch-130,900,20);
+
+    ctx.beginPath();
+    ctx.fillStyle='green';
+    if(pct>5/6*100){
+        ctx.fillStyle='orange';
+    }
+    ctx.fillRect(10,ch-130,880-(880*pct/100),20);
+}
 
 function draw(i) {
     var ctx = contexts[i];
@@ -250,7 +270,7 @@ function draw(i) {
     ctx.fillRect(0,0,cw,ch);
 
     ctx.beginPath();
-    ctx.arc(150, 125, 59, 0, 2*Math.PI, false);
+    ctx.arc(150, 125, 79, 0, 2*Math.PI, false);
     ctx.moveTo(150,125);
     ctx.strokeStyle='black';
     ctx.lineWidth = 2;
@@ -259,49 +279,50 @@ function draw(i) {
     // outer arc
     if (pct[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(150,125,110,-Math.PI/2,endRadians, true);
+        ctx.arc(150,125,115,-Math.PI/2,endRadians, true);
         ctx.moveTo(150,125);
         ctx.strokeStyle='#004E8A';
-        ctx.lineWidth = 20;
+        ctx.lineWidth = 10;
         ctx.stroke();
     }
     // inner arc
     if (pct2[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(150, 125, 80, -Math.PI / 2, endRadians2, true);
+        ctx.arc(150, 125, 95, -Math.PI / 2, endRadians2, true);
         ctx.moveTo(150, 125);
         ctx.strokeStyle = '#99000F';
-        ctx.lineWidth = 20;
+        ctx.lineWidth = 10;
         ctx.stroke();
     }
     // inner circle
     ctx.beginPath();
-    ctx.arc(150, 125, 60, -Math.PI / 2, endRadians3, false);
+    ctx.arc(150, 125, 80, -Math.PI / 2, endRadians3, false);
     ctx.lineTo(150, 125);
     ctx.fillStyle = color;
     ctx.fill();
     //text
     ctx.beginPath();
+    ctx.font = "60px Helvetica";
+    ctx.textAlign = "center";
+    ctx.strokeStyle="black";
+    ctx.lineWidth = 5;
+    ctx.strokeText(name, 150, 125 + 43 / 4 - 20);
+    ctx.beginPath();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.fillText(name, 150, 125 + 43 / 4 - 20);
+    //bid values
+    ctx.beginPath();
     ctx.font = "40px Helvetica";
     ctx.textAlign = "center";
     ctx.strokeStyle="black";
     ctx.lineWidth = 4;
-    ctx.strokeText(name, 150, 125 + 43 / 4 - 10);
+    ctx.strokeText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 30);
     ctx.beginPath();
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(name, 150, 125 + 43 / 4 - 10);
-    //bid values
-    ctx.beginPath();
-    ctx.font = "20px Helvetica";
-    ctx.textAlign = "center";
-    ctx.strokeStyle="black";
-    ctx.lineWidth = 3;
-    ctx.strokeText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 20);
-    ctx.beginPath();
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
-    ctx.fillText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 20);
+    ctx.fillText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 30);
 }
 
 function addTime() {
