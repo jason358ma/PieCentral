@@ -39,8 +39,8 @@ var gold_2_name = "gold 2";
 var bottom = document.getElementById("bottom_bar");
 var ctx_bottom = bottom.getContext("2d");
 
-var master_gold_score = 0;
-var master_blue_score = 0;
+var master_gold_score = 10;
+var master_blue_score = 10;
 
 var gold_multiplier = 1;
 var blue_multiplier = 1;
@@ -50,7 +50,7 @@ var barPct = 0;
 
 setTeamsInfo();
 setMatchTime();
-setScores(10, 10)
+setScores()
 
 requestAnimationFrame(animate);
 
@@ -67,7 +67,9 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
     gold_1_name = parsed_data.g1name;
     gold_2_num = parsed_data.g2num;
     gold_2_name = parsed_data.g2name;
-    setScores(0, 0)
+    master_blue_score = 0;
+    master_gold_score = 0;
+    setScores()
 });
 
 
@@ -75,16 +77,28 @@ socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
     //reset ALL the timers;
 });
 
+function resetTimers() {
+    for (var i = 0; i < 5; i++) {
+        pct[i] = 0;
+        pct2[i] = 0;
+        pct3[i] = 0;
+        grow[i] = 0;
+        grow2[i] = 0;
+        grow3[i] = 0;
+    }
+}
+
 socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
     parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
     if(alliance == "GOLD"){
-      setScores(master_blue_score,score);
+      master_gold_score = score;
     }
     if(alliance == "BLUE"){
-      setScores(score, master_gold_score);
+      master_blue_score = score;
     }
+    setScores()
 });
 
 socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
@@ -125,11 +139,12 @@ socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
 socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
     parsed_data = JSON.parse(data);
     var goal_num = goalNumFromName(parsed_data.goal);
-    grow[goal_num] += parsed_data.time;
+    grow[goal_num] += parsed_data.time * 10;
 });
 
 socket.on('SCOREBOARD_HEADER.POWERUPS', function(data) {
     //TODO
+
 });
 
 function goalNumFromName(goal_name) {
@@ -138,17 +153,15 @@ function goalNumFromName(goal_name) {
 }
 
 
-function setScores(score_blue, score_gold) {
+function setScores() {
     width = bottom.width;
     setTeamsInfo();
     ctx_bottom.fillStyle = "white";
     ctx_bottom.font = "50px Helvetica";
     ctx_bottom.textAlign = "right";
-    ctx_bottom.fillText(score_blue.toString(),290,95);
+    ctx_bottom.fillText(master_blue_score.toString(),290,95);
     ctx_bottom.textAlign = "left";
-    ctx_bottom.fillText(score_gold.toString(), width - 290, 95);
-    master_blue_score = score_blue;
-    master_gold_score = score_gold;
+    ctx_bottom.fillText(master_gold_score.toString(), width - 290, 95);
 }
 
 function setTeamsInfo() {
@@ -200,7 +213,7 @@ function setMatchTime() {
 
 function start(time){
     form = document.getElementById("seconds");
-    for(var i = 0; i < 5; i++){
+    for (var i = 0; i < 5; i++) {
         grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
         grow2[i] = parseFloat(form.elements[1].value.split(" ")[i])*10;
         grow3[i] = parseFloat(form.elements[2].value.split(" ")[i])*10;
@@ -211,22 +224,23 @@ function start(time){
         date = new Date();
         // pct += grow;
         for(var i = 0; i < 5; i++){
-            pct[i] = (date - beginning)/grow[i];
-            pct2[i] = (date - beginning)/grow2[i];
-            pct3[i] = (date - beginning)/grow3[i];
+            if (grow[i] > 0) {
+                pct[i] = (date - beginning)/grow[i];
+            }
+            if (grow2[i] > 0) {
+                pct2[i] = (date - beginning)/grow2[i];
+            }
+            if (grow3[i] > 0) {
+                pct3[i] = (date - beginning)/grow3[i];
+            }
         }
+
         for(var i = 0; i < 5; i++){
             draw(i);
         }
 
         barPct = (date - beginning)/barGrow;
         drawBar(ctx_bottom, barPct)
-
-        // draw(ctx, pct, pct2);
-        // draw(ctx2, pct, pct2);
-        // draw(ctx3, pct, pct2);
-        // draw(ctx4, pct, pct2);
-        // draw(ctx5, pct, pct2);
 
         for(var i = 0; i < 5; i++){
             if(pct[i] <= endingPct || pct2[i] <= endingPct || pct3[i] <= endingPct || barPct <= endingPct){
