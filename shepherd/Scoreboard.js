@@ -53,7 +53,7 @@ requestAnimationFrame(animate);
 var socket = io('http://127.0.0.1:5000');
 
 socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     match_num = parsed_data.match_num;
     blue_1_num = parsed_data.b1num;
     blue_1_name = parsed_data.b1name;
@@ -72,26 +72,25 @@ socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
 });
 
 socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
     if(alliance == "GOLD"){
-      master_gold_score = score;
+      setScores(master_blue_score,score);
     }
     if(alliance == "BLUE"){
-      master_blue_score = score
+      setScores(score, master_gold_score);
     }
-    setScores()
 });
 
 socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
     parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var multiplier = parsed_data.multiplier;
-    if (alliance == "GOLD"){
+    if(alliance == "GOLD"){
       gold_multiplier = multiplier;
     }
-    if (alliance == "BLUE"){
+    if(alliance == "BLUE"){
       blue_multiplier = multiplier;
     }
     setTeamsInfo();
@@ -134,15 +133,18 @@ function goalNumFromName(goal_name) {
     return names.indexOf(goal_name.toLowerCase());
 }
 
-function setScores() {
-    width = bottom.width
-    setTeamsInfo()
-    ctx_bottom.fillStyle = "white"
-    ctx_bottom.font = "50px Helvetica"
-    ctx_bottom.textAlign = "right"
-    ctx_bottom.fillText(master_blue_score.toString(),290,95);
-    ctx_bottom.textAlign = "left"
-    ctx_bottom.fillText(master_gold_score.toString(), width - 290, 95);
+
+function setScores(score_blue, score_gold) {
+    width = bottom.width;
+    setTeamsInfo();
+    ctx_bottom.fillStyle = "white";
+    ctx_bottom.font = "50px Helvetica";
+    ctx_bottom.textAlign = "right";
+    ctx_bottom.fillText(score_blue.toString(),290,95);
+    ctx_bottom.textAlign = "left";
+    ctx_bottom.fillText(score_gold.toString(), width - 290, 95);
+    master_blue_score = score_blue;
+    master_gold_score = score_gold;
 }
 
 function setTeamsInfo() {
@@ -210,7 +212,7 @@ function start(time){
             pct3[i] = (date - beginning)/grow3[i];
         }
         for(var i = 0; i < 5; i++){
-            draw(contexts[i], pct[i], pct2[i], pct3[i], owner[i], ["A","B","C","D","E"][i]);
+            draw(i);
         }
         // draw(ctx, pct, pct2);
         // draw(ctx2, pct, pct2);
@@ -229,7 +231,11 @@ function start(time){
 }
 
 
-function draw(ctx, pct, pct2, pct3, alliance, name) {
+function draw(i) {
+    var ctx = contexts[i];
+    var alliance = owner[i];
+    var name = ["A","B","C","D","E"][i];
+    var bidValue = bidAmounts[i];
     var color;
     if(alliance == 'b'){
       color = 'navy'
@@ -237,9 +243,9 @@ function draw(ctx, pct, pct2, pct3, alliance, name) {
     if(alliance == 'g'){
       color = 'goldenrod'
     }
-    var endRadians = -Math.PI/2 + Math.PI*2*pct/100;
-    var endRadians2 = -Math.PI/2 + Math.PI*2*pct2/100;
-    var endRadians3 = -Math.PI/2 + Math.PI*2*pct3/100;
+    var endRadians = -Math.PI/2 + Math.PI*2*pct[i]/100;
+    var endRadians2 = -Math.PI/2 + Math.PI*2*pct2[i]/100;
+    var endRadians3 = -Math.PI/2 + Math.PI*2*pct3[i]/100;
     ctx.fillStyle='white';
     ctx.fillRect(0,0,cw,ch);
 
@@ -251,7 +257,7 @@ function draw(ctx, pct, pct2, pct3, alliance, name) {
     ctx.stroke();
 
     // outer arc
-    if (pct <= 100) {
+    if (pct[i] <= 100) {
         ctx.beginPath();
         ctx.arc(150,125,110,-Math.PI/2,endRadians, true);
         ctx.moveTo(150,125);
@@ -260,18 +266,18 @@ function draw(ctx, pct, pct2, pct3, alliance, name) {
         ctx.stroke();
     }
     // inner arc
-    if (pct2 <= 100) {
+    if (pct2[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(150,125,80,-Math.PI/2,endRadians2, true);
-        ctx.moveTo(150,125);
+        ctx.arc(150, 125, 80, -Math.PI / 2, endRadians2, true);
+        ctx.moveTo(150, 125);
         ctx.strokeStyle = '#99000F';
         ctx.lineWidth = 20;
         ctx.stroke();
     }
     // inner circle
     ctx.beginPath();
-    ctx.arc(150,125,60,-Math.PI/2,endRadians3, false);
-    ctx.lineTo(150,125);
+    ctx.arc(150, 125, 60, -Math.PI / 2, endRadians3, false);
+    ctx.lineTo(150, 125);
     ctx.fillStyle = color;
     ctx.fill();
     //text
@@ -280,14 +286,22 @@ function draw(ctx, pct, pct2, pct3, alliance, name) {
     ctx.textAlign = "center";
     ctx.strokeStyle="black";
     ctx.lineWidth = 4;
-    ctx.strokeText(name, 150, 125 + 43 / 4 + 3);
-
-
+    ctx.strokeText(name, 150, 125 + 43 / 4 - 10);
     ctx.beginPath();
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(name, 150, 125 + 43 / 4 + 3);
-
+    ctx.fillText(name, 150, 125 + 43 / 4 - 10);
+    //bid values
+    ctx.beginPath();
+    ctx.font = "20px Helvetica";
+    ctx.textAlign = "center";
+    ctx.strokeStyle="black";
+    ctx.lineWidth = 3;
+    ctx.strokeText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 20);
+    ctx.beginPath();
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.fillText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 20);
 }
 
 function addTime() {
