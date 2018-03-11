@@ -235,16 +235,11 @@ function start(time){
     requestAnimationFrame(animate);
 }
 
-<<<<<<< HEAD
-function draw(ctx, pct, pct2, pct3, alliance, name) {
-=======
-
 function draw(i) {
     var ctx = contexts[i];
     var alliance = owner[i];
     var name = ["A","B","C","D","E"][i];
     var bidValue = bidAmounts[i];
->>>>>>> ac62b70c2f2e53169cb719427252cc302204767e
     var color;
     if(alliance == 'b'){
       color = 'navy'
