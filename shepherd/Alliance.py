@@ -1,3 +1,4 @@
+import math
 from Utils import *
 from Timer import *
 from LCM import *
@@ -19,11 +20,9 @@ class Alliance:
                               can use another 0x powerup
             steal_cooldown - Timer representing the time until the alliance
                              can use another steal powerup
-            code_cooldown - Timer representing the time until the alliance can
-                            submit another code
     """
 
-    def __init__(self, name, team_1_name, team_2_name, team_1_number,
+    def __init__(self, name, team_1_name, team_1_number, team_2_name,
                  team_2_number):
 
         self.name = name
@@ -33,10 +32,9 @@ class Alliance:
         self.team_2_number = team_2_number
         self.score = 0
         self.alliance_multiplier = 1
-        self.two_x_cooldown = Timer(TIMER_TYPES.COOLDOWN)
-        self.zero_x_cooldown = Timer(TIMER_TYPES.COOLDOWN)
-        self.steal_cooldown = Timer(TIMER_TYPES.COOLDOWN)
-        self.code_cooldown = Timer(TIMER_TYPES.CODE_COOLDOWN)
+        self.two_x_cooldown = Timer(TIMER_TYPES.CODE_COOLDOWN)
+        self.zero_x_cooldown = Timer(TIMER_TYPES.CODE_COOLDOWN)
+        self.steal_cooldown = Timer(TIMER_TYPES.CODE_COOLDOWN)
 
     def change_score(self, amount):
         """ changes score of this alliance by Amount,
@@ -44,8 +42,25 @@ class Alliance:
         """
         self.score += amount
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
-                 [self.name, self.score])
+                 {"alliance" : self.name, "score" : math.floor(self.score)})
+
+    def increment_multiplier(self):
+        if self.alliance_multiplier == 1:
+            self.alliance_multiplier = CONSTANTS.MULTIPLIER_INCREASES[0]
+        elif self.alliance_multiplier == CONSTANTS.MULTIPLIER_INCREASES[0]:
+            self.alliance_multiplier = CONSTANTS.MULTIPLIER_INCREASES[1]
+        elif self.alliance_multiplier == CONSTANTS.MULTIPLIER_INCREASES[1]:
+            self.alliance_multiplier = CONSTANTS.MULTIPLIER_INCREASES[2]
 
     def reset(self):
-        #TODO
-        pass
+        self.score = 0
+        self.alliance_multiplier = 1
+        self.two_x_cooldown.reset()
+        self.zero_x_cooldown.reset()
+        self.steal_cooldown.reset()
+        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
+                 {"alliance" : self.name, "score" : math.floor(self.score)})
+        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER,
+                 {"alliance" : self.name, "multiplier" : self.alliance_multiplier})
+        #TODO: Send info to sensors about reset
+        #TODO: Send info to UI about reset

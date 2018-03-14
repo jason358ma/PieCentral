@@ -2,7 +2,7 @@
 class SHEPHERD_HEADER():
     GOAL_SCORE = "goal_score"
     GOAL_BID = "goal_bid"
-    CODE_INPUT = "code_input"
+    POWERUP_APPLICATION = "powerup_application"
 
     START_MATCH = "start_match"
     SETUP_MATCH = "setup_match"
@@ -15,34 +15,47 @@ class SHEPHERD_HEADER():
 
     BID_TIMER_END = "bid_timer_end"
     STAGE_TIMER_END = "stage_timer_end"
+    CODE_COOLDOWN_END = "code_cooldown_end"
 
 # pylint: disable=invalid-name
 class SENSOR_HEADER():
     CODE_RESULT = "code_result"
-    FAILED_POWERUP = "failed_powerup"
-    CURRENT_BID = "current_bid"
+    GOAL_OWNERS = "bid_owners"
+    TEAM_SCORE = "team_score"
+    BID_PRICE = "bid_price"
+
+class DAWN_HEADER():
+    ROBOT_STATE = "robot_state"
+    CODES = "codes"
 
 # pylint: disable=invalid-name
 class SCOREBOARD_HEADER():
     SCORE = "score"
     TEAMS = "teams"
-    BID_TIMER_START = "bid_timer_start"
+    BID_TIMER = "bid_timer"
     BID_AMOUNT = "bid_amount"
-    BID_WIN = "bid_win"
+    GOAL_OWNED = "bid_win"
     STAGE = "stage"
     STAGE_TIMER_START = "stage_timer_start"
     POWERUPS = "powerups"
     ALLIANCE_MULTIPLIER = "alliance_multiplier"
+    RESET_TIMERS = "reset_timers"
+
+# pylint: disable=invalid-name
+class GUI_HEADER():
+    SEND_RFIDS = "send_rfids"
+    SEND_SCORES = "send_scores"
 
 # pylint: disable=invalid-name
 class CONSTANTS():
     AUTO_TIME = 30
     TELEOP_TIME = 180
-    TWO_X_COOLDOWN = 5
-    ZERO_X_COOLDOWN = 5
-    STEAL_COOLDOWN = 5
-    CODE_COOLDOWN = 5
-    BID_INCREASE_CONSTANT = 5
+    BID_TIME_INCREASE = 2
+    BID_TIME_INITIAL = 5
+    TWO_X_DURATION = 30
+    ZERO_X_DURATION = 30
+    CODE_COOLDOWN = 60
+    BID_INCREASE_CONSTANT = 1.1
     GOAL_BASE_VALUE = 1
     GOAL_LOW_VALUE = 5
     GOAL_MED_VALUE = 10
@@ -50,8 +63,9 @@ class CONSTANTS():
     GOAL_LOW_COST = 20
     GOAL_MED_COST = 40
     GOAL_HIGH_COST = 100
-
-
+    MULTIPLIER_INCREASES = [1.1, 1.25, 1.5]
+    SPREADSHEET_ID = "1ikEY2pnESr_e7okP9H5KZiJYK29RI5ISPSaCgQU41RU"
+    CSV_FILE_NAME = "Sheets/PIE test sheet - qual_matches.csv"
 
 # pylint: disable=invalid-name
 class ALLIANCE_COLOR():
@@ -64,12 +78,12 @@ class LCM_TARGETS():
     SCOREBOARD = "lcm_target_scoreboard"
     SENSORS = "lcm_target_sensors"
     UI = "lcm_target_ui"
+    DAWN = "lcm_target_dawn"
 
 # pylint: disable=invalid-name
 class TIMER_TYPES():
     BID = "bid"
     MATCH = "match"
-    COOLDOWN = "cooldown"
     CODE_COOLDOWN = "code_cooldown"
     DURATION = "duration"
 
@@ -94,5 +108,5 @@ class STATE():
     SETUP = "setup"
     AUTO = "auto"
     WAIT = "wait"
-    TELE = "tele"
+    TELEOP = "teleop"
     END = "end"
