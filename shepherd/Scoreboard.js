@@ -20,12 +20,16 @@ var owner = ['n', 'n', 'n', 'n', 'n'];
 // we might need to change these??
 var bidAmounts = [0, 666, 100, 20, 0];
 
+var dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
+var dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
+var dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
+var date_main = new Date();
+
 var cw=canvas.width;
 var ch=canvas.height;
 var duration=1;
 var endingPct=100;
 // var increment=duration/pct;
-var match_time = 493;
 var match_num = 0;
 var blue_1_num = 0;
 var blue_1_name = "blue 1";
@@ -83,9 +87,10 @@ function resetTimers() {
         pct[i] = 0;
         pct2[i] = 0;
         pct3[i] = 0;
-        grow[i] = 0;
-        grow2[i] = 0;
-        grow3[i] = 0;
+        dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        date_main = new Date();
     }
 }
 
@@ -199,20 +204,50 @@ function setTeamsInfo() {
 }
 
 function setMatchTime() {
-    ctx_bottom.fillStyle = "black"
+    ctx_bottom.fillStyle = "black";
     ctx_bottom.textAlign = "center";
-    var time_string = Math.round(match_time / 60).toString() + " : "
-    if (match_time % 60 < 10) {
+    maintime = (barGrow/10)-(date - date_main)/barGrow;
+    var time_string = Math.floor(maintime / 60).toString() + " : ";
+    if (Math.floor(maintime) % 600 < 10) {
         time_string += "0";
     }
-    time_string += (match_time % 60).toString();
-    ctx_bottom.font = "60px Helvetica"
-    ctx_bottom.fillText(time_string,bottom.width/2, 75)
-    ctx_bottom.font = "40px Helvetica"
-    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 125)
+    time_string += (Math.floor(maintime) % 60).toString();
+    if(maintime<0){
+      time_string = "0:00";
+    }
+    console.log(time_string)
+    ctx_bottom.font = "60px Helvetica";
+    ctx_bottom.fillText(time_string,bottom.width/2, 75);
+    ctx_bottom.font = "40px Helvetica";
+    ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 125);
 }
 
 function start(time){
+    function animate(){
+        date = new Date();
+        for(var i = 0; i < 5; i++){
+          if (grow[i] > 0) {
+              pct[i] = (date - dates_outer[i])/grow[i];
+          }
+          if (grow2[i] > 0) {
+              pct2[i] = (date - dates_middle[i])/grow2[i];
+          }
+          if (grow3[i] > 0) {
+              pct3[i] = (date - dates_inner[i])/grow3[i];
+          }
+        }
+        for(var i = 0; i < 5; i++){
+            draw(i);
+        }
+        barPct = (date - date_main)/barGrow;
+        drawBar(ctx_bottom, barPct)
+        setMatchTime();
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+};
+
+/*function start(time){
     form = document.getElementById("seconds");
     for (var i = 0; i < 5; i++) {
         grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
@@ -245,7 +280,7 @@ function start(time){
         requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
-}
+}*/
 
 function drawBar(ctx, pct){
     ctx.beginPath();
