@@ -9,6 +9,7 @@ var ctx4 = canvas4.getContext("2d");
 var canvas5 = document.getElementById("canvas5");
 var ctx5 = canvas5.getContext("2d");
 
+var canvas_lst = [canvas, canvas2, canvas3, canvas4, canvas5]
 var contexts = [ctx, ctx2, ctx3, ctx4, ctx5];
 var pct = [0, 0, 0, 0, 0];
 var pct2 = [0, 0, 0, 0, 0];
@@ -358,6 +359,9 @@ function draw(i) {
     var name = ["A","B","C","D","E"][i];
     var bidValue = bidAmounts[i];
     var color;
+    var width = canvas_lst[i].width;
+    var height = canvas_lst[i].height;
+
     if(alliance == 'b'){
       color = 'navy'
     }
@@ -371,8 +375,8 @@ function draw(i) {
     ctx.fillRect(0,0,cw,ch);
 
     ctx.beginPath();
-    ctx.arc(150, 125, 79, 0, 2*Math.PI, false);
-    ctx.moveTo(150,125);
+    ctx.arc(width/2, height/2 - 10, 80, 0, 2*Math.PI, false);
+    ctx.moveTo(width/2,height/2);
     ctx.strokeStyle='black';
     ctx.lineWidth = 2;
     ctx.stroke();
@@ -380,25 +384,25 @@ function draw(i) {
     // outer arc
     if (pct[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(150,125,115,-Math.PI/2,endRadians, true);
-        ctx.moveTo(150,125);
+        ctx.arc(width/2,height/2 - 10,125,-Math.PI/2,endRadians, true);
+        ctx.moveTo(width/2,height/2);
         ctx.strokeStyle='#004E8A';
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 15;
         ctx.stroke();
     }
     // inner arc
     if (pct2[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(150, 125, 95, -Math.PI / 2, endRadians2, true);
-        ctx.moveTo(150, 125);
+        ctx.arc(width/2, height/2 - 10, 100, -Math.PI / 2, endRadians2, true);
+        ctx.moveTo(width/2, height/2);
         ctx.strokeStyle = '#99000F';
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 15;
         ctx.stroke();
     }
     // inner circle
     ctx.beginPath();
-    ctx.arc(150, 125, 80, -Math.PI / 2, endRadians3, false);
-    ctx.lineTo(150, 125);
+    ctx.arc(width/2, height/2 - 10, 80, -Math.PI / 2, endRadians3, false);
+    ctx.lineTo(width/2, height/2);
     ctx.fillStyle = color;
     ctx.fill();
     //text
@@ -407,23 +411,23 @@ function draw(i) {
     ctx.textAlign = "center";
     ctx.strokeStyle="black";
     ctx.lineWidth = 5;
-    ctx.strokeText(name, 150, 125 + 43 / 4 - 20);
+    ctx.strokeText(name, width/2, height/2 + 43 / 4 - 30);
     ctx.beginPath();
 
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(name, 150, 125 + 43 / 4 - 20);
+    ctx.fillText(name, width/2, height/2 + 43 / 4 - 30);
     //bid values
     ctx.beginPath();
     ctx.font = "40px Helvetica";
     ctx.textAlign = "center";
     ctx.strokeStyle="black";
     ctx.lineWidth = 4;
-    ctx.strokeText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 30);
+    ctx.strokeText(Math.round(bidValue,2), width/2, height/2 + 43 / 4 + 20);
     ctx.beginPath();
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 30);
+    ctx.fillText(Math.round(bidValue,2), width/2, height/2 + 43 / 4 + 20);
 }
 
 function addTime() {
