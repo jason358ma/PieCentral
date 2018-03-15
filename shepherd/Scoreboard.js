@@ -62,7 +62,7 @@ requestAnimationFrame(animate);
 var socket = io('http://127.0.0.1:5000');
 
 socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     match_num = parsed_data.match_num;
     blue_1_num = parsed_data.b1num;
     blue_1_name = parsed_data.b1name;
@@ -96,47 +96,47 @@ function resetTimers() {
 }
 
 socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
-    if(alliance == "GOLD"){
+    if(alliance == "gold"){
       master_gold_score = score;
     }
-    if(alliance == "BLUE"){
+    if(alliance == "blue"){
       master_blue_score = score;
     }
     setScores()
 });
 
 socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var multiplier = parsed_data.multiplier;
-    if(alliance == "GOLD"){
+    if(alliance == "gold"){
       gold_multiplier = multiplier;
     }
-    if(alliance == "BLUE"){
+    if(alliance == "blue"){
       blue_multiplier = multiplier;
     }
     setTeamsInfo();
 });
 
 socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
     var newOwner = 'n';
-    if(alliance == "GOLD"){
+    if(alliance == "gold"){
       newOwner = 'g';
     }
-    if(alliance == "BLUE"){
+    if(alliance == "blue"){
       newOwner = 'b';
     }
     owner[goal] = newOwner;
 });
 
 socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
     var bid = parsed_data.bid;
@@ -144,14 +144,28 @@ socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
 });
 
 socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
-    parsed_data = JSON.parse(data);
+    var parsed_data = JSON.parse(data);
     var goal_num = goalNumFromName(parsed_data.goal);
     grow[goal_num] += parsed_data.time * 10;
 });
 
 socket.on('SCOREBOARD_HEADER.POWERUPS', function(data) {
     //TODO
-
+    var parsed_data = JSON.parse(data);
+    var goal = goalNumFromName(parsed_data.goal)
+    var alliance = parsed_data.alliance
+    var powerup = parsed_data.powerup
+    if (powerup == "zero_x") {
+        grow2[goal] = 30
+    } else if (powerup == "two_x") {
+        grow[goal] = 30
+    } else if (powerup == "steal") {
+        if (alliance == "blue") {
+            owner[goal] = "b"
+        } else if (alliance == "gold") {
+            owner[goal] = "g"
+        }
+    }
 });
 
 function goalNumFromName(goal_name) {
@@ -233,7 +247,10 @@ function setMatchTime() {
     ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 125);
 }
 
+var start_date = new Date();
+
 function start(time){
+
     function animate(){
         date = new Date();
         for(var i = 0; i < 5; i++){
@@ -252,6 +269,7 @@ function start(time){
         }
         barPct = (date - date_main)/barGrow;
         drawBar(ctx_bottom, barPct)
+        match
         setMatchTime();
         requestAnimationFrame(animate);
       }
