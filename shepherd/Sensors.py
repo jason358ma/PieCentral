@@ -1,8 +1,8 @@
 import sys
 import time
 import threading
-import serial
 import queue
+import serial
 from LCM import *
 from Utils import *
 
@@ -56,7 +56,7 @@ def send_to_bid(ser, alliance_enum):
         msg = recv_q.get()
         payload_dict = msg[1]
         send_str = ""
-        if (msg[0] == SENSOR_HEADER.BID_PRICE):
+        if msg[0] == SENSOR_HEADER.BID_PRICE:
             send_str = "bp;"
             goal_list = payload_dict["price"]
             if alliance_enum == ALLIANCE_COLOR.BLUE:
@@ -64,16 +64,16 @@ def send_to_bid(ser, alliance_enum):
             for price in goal_list:
                 send_str += str(price) + ";"
             send_str += '\r\n'
-        elif (msg[0] == SENSOR_HEADER.TEAM_SCORE):
+        elif msg[0] == SENSOR_HEADER.TEAM_SCORE:
             send_str = "ts;"
             score = str(payload_dict["score"][alliance_enum])
             send_str += score + ";\r\n"
-        elif (msg[0] == SENSOR_HEADER.CODE_RESULT):
+        elif msg[0] == SENSOR_HEADER.CODE_RESULT:
             if alliance_enum != payload_dict["alliance"]:
                 continue
             send_str = "cstatus;"
             send_str += str(payload_dict["result"]) + ";\r\n"
-        elif (msg[0] == SENSOR_HEADER.GOAL_OWNERS):
+        elif msg[0] == SENSOR_HEADER.GOAL_OWNERS:
             send_str = "go;"
             owners_list = payload_dict["owners"]
             bidders_list = payload_dict["bidders"]
@@ -83,7 +83,7 @@ def send_to_bid(ser, alliance_enum):
             for i in range(len(owners_list)):
                 owner = owners_list[i]
                 owner_color = ""
-                if owner == None:
+                if owner is None:
                     owner_color = "n"
                 elif owner == ALLIANCE_COLOR.BLUE:
                     owner_color = "b"
@@ -141,14 +141,18 @@ def main():
     goal_thread_two.start()
 
     recv_thread_blue = threading.Thread(
-        target=recv_from_bid, name="receive thread blue", args=([bid_serial_blue, ALLIANCE_COLOR.BLUE]))
+        target=recv_from_bid, name="receive thread blue",
+        args=([bid_serial_blue, ALLIANCE_COLOR.BLUE]))
     send_thread_blue = threading.Thread(
-        target=send_to_bid, name="send thread blue", args=([bid_serial_blue, ALLIANCE_COLOR.BLUE]))
+        target=send_to_bid, name="send thread blue",
+        args=([bid_serial_blue, ALLIANCE_COLOR.BLUE]))
 
     recv_thread_gold = threading.Thread(
-        target=recv_from_bid, name="receive thread gold", args=([bid_serial_gold, ALLIANCE_COLOR.GOLD]))
+        target=recv_from_bid, name="receive thread gold",
+        args=([bid_serial_gold, ALLIANCE_COLOR.GOLD]))
     send_thread_gold = threading.Thread(
-        target=send_to_bid, name="send thread gold", args=([bid_serial_gold, ALLIANCE_COLOR.GOLD]))
+        target=send_to_bid, name="send thread gold",
+        args=([bid_serial_gold, ALLIANCE_COLOR.GOLD]))
 
     recv_thread_blue.daemon = True
     send_thread_blue.daemon = True
