@@ -76,7 +76,6 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
     setScores()
 });
 
-
 socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
     //reset ALL the timers;
     resetTimers()
