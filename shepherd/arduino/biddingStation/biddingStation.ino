@@ -5,7 +5,8 @@ const int numOfButtons = 5;
 const int numGoals = 5;
 
 int digitPins[numOfDigits] = {6, 5, 4, 3};
-char bidGoals[numGoals] = {'a', 'b', 'c', 'd', 'e'};
+//char bidGoals[numGoals] = {'a', 'b', 'c', 'd', 'e'}; //for gold side
+char bidGoals[numGoals] = {'e', 'd', 'c', 'b', 'a'}; //for blue side
 
 int switchIn = 2;
 int prevSwitchVal = 0;
@@ -98,12 +99,13 @@ void loop() {
           index++;
         }
       } else if (strcmp(pyInpBuffer, "ts") == 0){
-        // Serial.println("received team score info");
+//        Serial.println("received team score info");
         pyInpBuffer = strtok(NULL, ";");
+             
         if (pyInpBuffer == NULL){
           // Serial.println("received null for team score, error");
         } else {
-          myScore = atoi(pyInpBuffer);          
+          myScore = atoi(pyInpBuffer);        
         }
       } else if (strcmp(pyInpBuffer, "cstatus") == 0){
         // Serial.println("received code + goal status");
@@ -197,6 +199,7 @@ void changeLED(int ledID, char color = ' ', bool blink = false) {
 // process code input mode
 void processCode() {
   currentGoal = 0;
+  currentPrice = 0;
   disp.write(currentCode);
   clearLEDs();
   if (submitStage == 0) {
@@ -309,6 +312,7 @@ void processBidding() {
   currentCode = 0;
   submitStage = 0;
   codeGoal = 0;
+
   disp.write(currentPrice);
   clearLEDs();
   for (int ii = 0; ii < numOfButtons; ii++) {
@@ -334,7 +338,7 @@ void processBidding() {
   if (goalOwner[currentGoal-1] == 'n' && biddingPrice[currentGoal-1] <= myScore){
     changeLED(currentGoal, 'b');
     currentPrice = biddingPrice[currentGoal-1];
-  } else {
+  } else if (currentGoal != 0){
     currentPrice = biddingPrice[currentGoal-1];
   }  
   // when button pressed
