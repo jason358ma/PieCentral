@@ -9,7 +9,6 @@ var ctx4 = canvas4.getContext("2d");
 var canvas5 = document.getElementById("canvas5");
 var ctx5 = canvas5.getContext("2d");
 
-var canvas_lst = [canvas, canvas2, canvas3, canvas4, canvas5]
 var contexts = [ctx, ctx2, ctx3, ctx4, ctx5];
 var pct = [0, 0, 0, 0, 0];
 var pct2 = [0, 0, 0, 0, 0];
@@ -57,11 +56,11 @@ setTeamsInfo();
 setMatchTime();
 setScores()
 
-requestAnimationFrame(animate);
+// requestAnimationFrame(animate);
 
 var socket = io('http://127.0.0.1:5000');
 
-socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
+socket.on('teams', function(data) {
     var parsed_data = JSON.parse(data);
     match_num = parsed_data.match_num;
     blue_1_num = parsed_data.b1num;
@@ -78,7 +77,7 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
 });
 
 
-socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
+socket.on('reset_timers', function(data) {
     //reset ALL the timers;
     resetTimers()
 });
@@ -88,6 +87,9 @@ function resetTimers() {
         pct[i] = 0;
         pct2[i] = 0;
         pct3[i] = 0;
+        grow[i] = 0;
+        grow2[i] = 0;
+        grow3[i] = 0;
         dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
         dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
         dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
@@ -95,7 +97,7 @@ function resetTimers() {
     }
 }
 
-socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
+socket.on('score', function(data) {
     var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
@@ -108,7 +110,7 @@ socket.on('SCOREBOARD_HEADER.SCORE', function(data) {
     setScores()
 });
 
-socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
+socket.on('alliance_multiplier', function(data) {
     var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var multiplier = parsed_data.multiplier;
@@ -121,7 +123,7 @@ socket.on('SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER', function(data) {
     setTeamsInfo();
 });
 
-socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
+socket.on('goal_owned', function(data) {
     var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
@@ -135,21 +137,29 @@ socket.on('SCOREBOARD_HEADER.GOAL_OWNED', function(data) {
     owner[goal] = newOwner;
 });
 
-socket.on('SCOREBOARD_HEADER.BID_AMOUNT', function(data) {
+socket.on('bid_amount', function(data) {
     var parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
     var bid = parsed_data.bid;
     bidAmounts[goal] = bid;
+    var o = 'n';
+    if(alliance == "gold"){
+        o = 'g';
+    }
+    if(alliance == "blue"){
+        o = 'b';
+    }
+    owners[goal] = o;
 });
 
-socket.on('SCOREBOARD_HEADER.BID_TIMER', function(data) {
+socket.on('bid_timer', function(data) {
     var parsed_data = JSON.parse(data);
     var goal_num = goalNumFromName(parsed_data.goal);
     grow[goal_num] += parsed_data.time * 10;
 });
 
-socket.on('SCOREBOARD_HEADER.POWERUPS', function(data) {
+socket.on('powerups', function(data) {
     //TODO
     var parsed_data = JSON.parse(data);
     var goal = goalNumFromName(parsed_data.goal)
@@ -250,6 +260,21 @@ function setMatchTime() {
 var start_date = new Date();
 
 function start(time){
+  //TODO remove this code when the HTML input stuff gets removed
+  //**********************
+  form = document.getElementById("seconds");
+  for (var i = 0; i < 5; i++) {
+      grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
+      grow2[i] = parseFloat(form.elements[1].value.split(" ")[i])*10;
+      grow3[i] = parseFloat(form.elements[2].value.split(" ")[i])*10;
+      owner[i] = form.elements[3].value.split(" ")[i];
+  }
+  //**********************
+
+    dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
+    dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
+    dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
+    date_main = new Date();
 
     function animate(){
         date = new Date();
@@ -269,7 +294,6 @@ function start(time){
         }
         barPct = (date - date_main)/barGrow;
         drawBar(ctx_bottom, barPct)
-        match
         setMatchTime();
         requestAnimationFrame(animate);
       }
@@ -312,20 +336,20 @@ function start(time){
 }*/
 
 function drawBar(ctx, pct){
-    var width = bottom.width
-    var height = bottom.height
     ctx.beginPath();
     ctx.fillStyle='white';
-    ctx.fillRect(0,height - 130, width, 20);
+    ctx.fillRect(10,ch-130,1200,20);
 
     ctx.beginPath();
     ctx.fillStyle='green';
     if(pct>5/6*100){
         ctx.fillStyle='orange';
     }
-    if(pct <= 100) {
-        ctx.fillRect(10,height - 130,(width - 20) - ((width - 20)*pct/100),20);
+    var length = 1180-(1180*pct/100);
+    if(length<0){
+      length = 0;
     }
+    ctx.fillRect(10,ch-130,length,20);
 }
 
 function draw(i) {
@@ -334,9 +358,6 @@ function draw(i) {
     var name = ["A","B","C","D","E"][i];
     var bidValue = bidAmounts[i];
     var color;
-    var width = canvas_lst[i].width;
-    var height = canvas_lst[i].height;
-
     if(alliance == 'b'){
       color = 'navy'
     }
@@ -350,8 +371,8 @@ function draw(i) {
     ctx.fillRect(0,0,cw,ch);
 
     ctx.beginPath();
-    ctx.arc(width/2, height/2 - 10, 80, 0, 2*Math.PI, false);
-    ctx.moveTo(width/2,height/2);
+    ctx.arc(150, 125, 79, 0, 2*Math.PI, false);
+    ctx.moveTo(150,125);
     ctx.strokeStyle='black';
     ctx.lineWidth = 2;
     ctx.stroke();
@@ -359,25 +380,25 @@ function draw(i) {
     // outer arc
     if (pct[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(width/2,height/2 - 10,125,-Math.PI/2,endRadians, true);
-        ctx.moveTo(width/2,height/2);
+        ctx.arc(150,125,115,-Math.PI/2,endRadians, true);
+        ctx.moveTo(150,125);
         ctx.strokeStyle='#004E8A';
-        ctx.lineWidth = 15;
+        ctx.lineWidth = 10;
         ctx.stroke();
     }
     // inner arc
     if (pct2[i] <= 100) {
         ctx.beginPath();
-        ctx.arc(width/2, height/2 - 10, 100, -Math.PI / 2, endRadians2, true);
-        ctx.moveTo(width/2, height/2);
+        ctx.arc(150, 125, 95, -Math.PI / 2, endRadians2, true);
+        ctx.moveTo(150, 125);
         ctx.strokeStyle = '#99000F';
-        ctx.lineWidth = 15;
+        ctx.lineWidth = 10;
         ctx.stroke();
     }
     // inner circle
     ctx.beginPath();
-    ctx.arc(width/2, height/2 - 10, 80, -Math.PI / 2, endRadians3, false);
-    ctx.lineTo(width/2, height/2);
+    ctx.arc(150, 125, 80, -Math.PI / 2, endRadians3, false);
+    ctx.lineTo(150, 125);
     ctx.fillStyle = color;
     ctx.fill();
     //text
@@ -386,23 +407,23 @@ function draw(i) {
     ctx.textAlign = "center";
     ctx.strokeStyle="black";
     ctx.lineWidth = 5;
-    ctx.strokeText(name, width/2, height/2 + 43 / 4 - 30);
+    ctx.strokeText(name, 150, 125 + 43 / 4 - 20);
     ctx.beginPath();
 
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(name, width/2, height/2 + 43 / 4 - 30);
+    ctx.fillText(name, 150, 125 + 43 / 4 - 20);
     //bid values
     ctx.beginPath();
     ctx.font = "40px Helvetica";
     ctx.textAlign = "center";
     ctx.strokeStyle="black";
     ctx.lineWidth = 4;
-    ctx.strokeText(Math.round(bidValue,2), width/2, height/2 + 43 / 4 + 20);
+    ctx.strokeText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 30);
     ctx.beginPath();
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText(Math.round(bidValue,2), width/2, height/2 + 43 / 4 + 20);
+    ctx.fillText(Math.round(bidValue,2), 150, 125 + 43 / 4 + 30);
 }
 
 function addTime() {
