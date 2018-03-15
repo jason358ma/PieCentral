@@ -76,6 +76,7 @@ socket.on('SCOREBOARD_HEADER.TEAMS', function(data) {
     setScores()
 });
 
+
 socket.on('SCOREBOARD_HEADER.RESET_TIMERS', function(data) {
     //reset ALL the timers;
     resetTimers()
@@ -203,20 +204,30 @@ function setTeamsInfo() {
 }
 
 function setMatchTime() {
+    ctx_bottom.fillStyle='white';
+    ctx_bottom.fillRect(bottom.width/2-100,0,200,150);
+    ctx_bottom.fill();
+
+    ctx_bottom.beginPath();
     ctx_bottom.fillStyle = "black";
     ctx_bottom.textAlign = "center";
-    maintime = (barGrow/10)-(date - date_main)/barGrow;
+    date = new Date();
+    maintime = (barGrow/10)-(date/1000 - date_main/1000);
     var time_string = Math.floor(maintime / 60).toString() + " : ";
-    if (Math.floor(maintime) % 600 < 10) {
+    if (Math.ceil(maintime) % 60 < 10) {
         time_string += "0";
     }
-    time_string += (Math.floor(maintime) % 60).toString();
+    time_string += (Math.ceil(maintime) % 60).toString();
     if(maintime<0){
       time_string = "0:00";
+    }
+    if(maintime<10){
+      ctx_bottom.fillStyle = "red";
     }
     console.log(time_string)
     ctx_bottom.font = "60px Helvetica";
     ctx_bottom.fillText(time_string,bottom.width/2, 75);
+    ctx_bottom.fillStyle = "black";
     ctx_bottom.font = "40px Helvetica";
     ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 125);
 }
