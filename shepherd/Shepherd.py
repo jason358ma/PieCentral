@@ -121,6 +121,8 @@ def to_auto(args):
     game_timer.start_timer(CONSTANTS.AUTO_TIME)
     game_state = STATE.AUTO
     enable_robots(True)
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
+             {"time" : CONSTANTS.AUTO_TIME}
     print("ENTERING AUTO STATE")
 
 def to_wait(args):
@@ -149,6 +151,8 @@ def to_teleop(args):
     regenerate_codes()
     game_timer.start_timer(CONSTANTS.TELEOP_TIME)
     enable_robots(False)
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
+             {"time" : CONSTANTS.TELEOP_TIME}
     print("ENTERING TELEOP STATE")
 
 def to_end(args):
