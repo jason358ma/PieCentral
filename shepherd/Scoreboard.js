@@ -32,13 +32,13 @@ var endingPct=100;
 // var increment=duration/pct;
 var match_num = 0;
 var blue_1_num = 0;
-var blue_1_name = "blue 1";
+var blue_1_name = "Madison Park";
 var blue_2_num = 0;
-var blue_2_name = "blue 2";
+var blue_2_name = "Middle College";
 var gold_1_num = 0;
-var gold_1_name = "gold 1";
+var gold_1_name = "Pinole Valley";
 var gold_2_num = 0;
-var gold_2_name = "gold 2";
+var gold_2_name = "Lighthouse";
 
 var bottom = document.getElementById("bottom_bar");
 var ctx_bottom = bottom.getContext("2d");
@@ -56,12 +56,12 @@ setTeamsInfo();
 setMatchTime();
 setScores()
 
-// requestAnimationFrame(animate);
+requestAnimationFrame(animate);
 
 var socket = io('http://127.0.0.1:5000');
 
 socket.on('teams', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     match_num = parsed_data.match_num;
     blue_1_num = parsed_data.b1num;
     blue_1_name = parsed_data.b1name;
@@ -98,33 +98,33 @@ function resetTimers() {
 }
 
 socket.on('score', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var score = parsed_data.score;
-    if(alliance == "gold"){
+    if(alliance == "GOLD"){
       master_gold_score = score;
     }
-    if(alliance == "blue"){
+    if(alliance == "BLUE"){
       master_blue_score = score;
     }
     setScores()
 });
 
 socket.on('alliance_multiplier', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var multiplier = parsed_data.multiplier;
-    if(alliance == "gold"){
+    if(alliance == "GOLD"){
       gold_multiplier = multiplier;
     }
-    if(alliance == "blue"){
+    if(alliance == "BLUE"){
       blue_multiplier = multiplier;
     }
     setTeamsInfo();
 });
 
 socket.on('goal_owned', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
     var newOwner = 'n';
@@ -138,7 +138,7 @@ socket.on('goal_owned', function(data) {
 });
 
 socket.on('bid_amount', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     var alliance = parsed_data.alliance;
     var goal = GoalNumFromName(parsed_data.goal);
     var bid = parsed_data.bid;
@@ -154,28 +154,14 @@ socket.on('bid_amount', function(data) {
 });
 
 socket.on('bid_timer', function(data) {
-    var parsed_data = JSON.parse(data);
+    parsed_data = JSON.parse(data);
     var goal_num = goalNumFromName(parsed_data.goal);
     grow[goal_num] += parsed_data.time * 10;
 });
 
 socket.on('powerups', function(data) {
     //TODO
-    var parsed_data = JSON.parse(data);
-    var goal = goalNumFromName(parsed_data.goal)
-    var alliance = parsed_data.alliance
-    var powerup = parsed_data.powerup
-    if (powerup == "zero_x") {
-        grow2[goal] = 30
-    } else if (powerup == "two_x") {
-        grow[goal] = 30
-    } else if (powerup == "steal") {
-        if (alliance == "blue") {
-            owner[goal] = "b"
-        } else if (alliance == "gold") {
-            owner[goal] = "g"
-        }
-    }
+
 });
 
 function goalNumFromName(goal_name) {
@@ -190,9 +176,11 @@ function setScores() {
     ctx_bottom.fillStyle = "white";
     ctx_bottom.font = "50px Helvetica";
     ctx_bottom.textAlign = "right";
-    ctx_bottom.fillText(master_blue_score.toString(),290,95);
+    ctx_bottom.fillText(blue_multiplier.toString()+'X',310,95);
+    ctx_bottom.fillText(master_blue_score.toString(),460,95);
     ctx_bottom.textAlign = "left";
-    ctx_bottom.fillText(master_gold_score.toString(), width - 290, 95);
+    ctx_bottom.fillText(gold_multiplier.toString()+'X', width - 310, 95);
+    ctx_bottom.fillText(master_gold_score.toString(), width - 460, 95);
 }
 
 function setTeamsInfo() {
@@ -202,11 +190,13 @@ function setTeamsInfo() {
 
     ctx_bottom.fillStyle = "navy";
     ctx_bottom.beginPath();
-    ctx_bottom.fillRect(10, 0, 300, 160);
+    ctx_bottom.fillRect(10, 0, 320, 160);
+    ctx_bottom.fillRect(350, 0, 130, 160);
 
     ctx_bottom.beginPath();
     ctx_bottom.fillStyle = "goldenrod";
-    ctx_bottom.fillRect(width - 310, 0, 300, 160);
+    ctx_bottom.fillRect(width - 310 - 20, 0, 320, 160);
+    ctx_bottom.fillRect(width - 350 - 130, 0, 130, 160);
 
     ctx_bottom.fillStyle = "white";
     ctx_bottom.textAlign = "left";
@@ -256,8 +246,6 @@ function setMatchTime() {
     ctx_bottom.font = "40px Helvetica";
     ctx_bottom.fillText("Match " + match_num.toString(), bottom.width/2, 125);
 }
-
-var start_date = new Date();
 
 function start(time){
   //TODO remove this code when the HTML input stuff gets removed
