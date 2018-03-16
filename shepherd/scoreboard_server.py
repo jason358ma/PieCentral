@@ -15,6 +15,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'omegalul!'
 socketio = SocketIO(app)
 
+@app.route('/Scoreboard.html/')
+def Scoreboard_control():
+    return render_template('Scoreboard.html')
+
 def receiver():
 
     events = gevent.queue.Queue()
