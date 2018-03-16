@@ -102,7 +102,8 @@ def to_setup(args):
         "b1name" : b1_name, "b1num" : b1_num,
         "b2name" : b2_name, "b2num" : b2_num,
         "g1name" : g1_name, "g1num" : g1_num,
-        "g2name" : g2_name, "g2num" : g2_num})
+        "g2name" : g2_name, "g2num" : g2_num,
+        "match_num" : match_number})
 
     game_state = STATE.SETUP
     print("ENTERING SETUP STATE")
@@ -319,7 +320,7 @@ def goal_score(args):
     goal_name = args["goal"]
     goals.get(goal_name).score(alliances.get(alliance))
     send_team_scores_sensors()
-    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADERS.SCORE, {"score" : alliances.get(alliance).score,
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE, {"score" : math.floor(alliances.get(alliance).score),
                                                                 "alliance" : alliance})
     #TODO: send score update to scoreboard
 
