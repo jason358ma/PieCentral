@@ -58,12 +58,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
     ///setMatchTime();
     //setScores()
 
-    //requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
     var socket = io('http://127.0.0.1:5500');
 
     socket.on('teams', function(data) {
-        console.log('teams sent')
+        console.log('teams')
         parsed_data = JSON.parse(data);
         match_num = parsed_data.match_num;
         blue_1_num = parsed_data.b1num;
@@ -93,15 +93,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
             grow[i] = 0;
             grow2[i] = 0;
             grow3[i] = 0;
-            dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
-            dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
-            dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
-            date_main = new Date();
         }
+        dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        date_main = new Date();
     }
 
     socket.on('score', function(data) {
-        console.log(data)
+        console.log('score')
         parsed_data = JSON.parse(data);
         var alliance = parsed_data.alliance;
         var score = parsed_data.score;
@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
 
     socket.on('alliance_multiplier', function(data) {
+        console.log('multiplier')
         parsed_data = JSON.parse(data);
         var alliance = parsed_data.alliance;
         var multiplier = parsed_data.multiplier;
@@ -127,7 +128,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
         setTeamsInfo();
     });
 
-    socket.on('goal_owned', function(data) {
+    socket.on('bid_win', function(data) {
+        console.log('bid_win')
         parsed_data = JSON.parse(data);
         var alliance = parsed_data.alliance;
         var goal = goalNumFromName(parsed_data.goal);
@@ -142,6 +144,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
 
     socket.on('bid_amount', function(data) {
+        console.log('bid_amount')
         parsed_data = JSON.parse(data);
         var alliance = parsed_data.alliance;
         var goal = goalNumFromName(parsed_data.goal);
@@ -157,7 +160,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
         owner[goal] = o;
     });
 
+    socket.on('bid_timer_start', function(data) {
+        console.log('bid_start')
+        parsed_data = JSON.parse(data);
+        var goal_num = goalNumFromName(parsed_data.goal);
+        dates_inner[goal_num] = 0;
+        grow[goal_num] = parsed_data.time * 10;
+    });
+
     socket.on('bid_timer', function(data) {
+        console.log('bid_time_increase')
         parsed_data = JSON.parse(data);
         var goal_num = goalNumFromName(parsed_data.goal);
         grow[goal_num] += parsed_data.time * 10;
@@ -222,6 +234,28 @@ document.addEventListener("DOMContentLoaded", function(event) {
         setMatchTime();
     }
 
+    function animate(){
+        date = new Date();
+        for(var i = 0; i < 5; i++){
+          if (grow[i] > 0) {
+              pct[i] = (date - dates_outer[i])/grow[i];
+          }
+          if (grow2[i] > 0) {
+              pct2[i] = (date - dates_middle[i])/grow2[i];
+          }
+          if (grow3[i] > 0) {
+              pct3[i] = (date - dates_inner[i])/grow3[i];
+          }
+        }
+        for(var i = 0; i < 5; i++){
+            draw(i);
+        }
+        barPct = (date - date_main)/barGrow;
+        drawBar(ctx_bottom, barPct)
+        setMatchTime();
+        requestAnimationFrame(animate);
+    }
+
     function setMatchTime() {
         ctx_bottom.fillStyle='white';
         ctx_bottom.fillRect(bottom.width/2-100,0,200,150);
@@ -243,7 +277,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         if(maintime<10){
           ctx_bottom.fillStyle = "red";
         }
-        console.log(time_string)
+        //console.log(time_string)
         ctx_bottom.font = "60px Helvetica";
         ctx_bottom.fillText(time_string,bottom.width/2, 75);
         ctx_bottom.fillStyle = "black";
@@ -268,28 +302,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
         date_main = new Date();
 
-        function animate(){
-            date = new Date();
-            for(var i = 0; i < 5; i++){
-              if (grow[i] > 0) {
-                  pct[i] = (date - dates_outer[i])/grow[i];
-              }
-              if (grow2[i] > 0) {
-                  pct2[i] = (date - dates_middle[i])/grow2[i];
-              }
-              if (grow3[i] > 0) {
-                  pct3[i] = (date - dates_inner[i])/grow3[i];
-              }
-            }
-            for(var i = 0; i < 5; i++){
-                draw(i);
-            }
-            barPct = (date - date_main)/barGrow;
-            drawBar(ctx_bottom, barPct)
-            setMatchTime();
-            requestAnimationFrame(animate);
-          }
-          requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
     };
 
     /*function start(time){

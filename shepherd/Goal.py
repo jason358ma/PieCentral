@@ -105,16 +105,18 @@ class Goal:
 
         if self.bid_timer.is_running():
             time_increase = CONSTANTS.BID_TIME_INCREASE
+            lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_TIMER,
+                 {"goal" : self.name, "time" : time_increase})
         else:
             time_increase = CONSTANTS.BID_TIME_INITIAL
+            lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_TIMER_START,
+                 {"goal" : self.name, "time" : time_increase})
 
         self.bid_timer.start_timer(time_increase)
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
                  {"goal" : self.name,
                   "alliance" : self.current_bid_team.name,
                   "bid" : self.next_bid})
-        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_TIMER,
-                 {"goal" : self.name, "time" : time_increase})
         #TODO: Send bid amount, and curr bid owner to sensors
 
 

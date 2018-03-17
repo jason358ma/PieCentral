@@ -428,6 +428,8 @@ def bid_complete(args):
             goal.previous_bid = goal.start_bid
             goal.previous_bid_team = None
             goal.next_bid = goal.calc_next_bid()
+            lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
+                     {"goal" : goal.name, "alliance" : goal.current_bid_team.name, "bid" : goal.current_bid})
             #TODO: send current bid team to scoreboard
         if goal.current_bid_team is None:
             goal.bid_timer.reset()
