@@ -102,7 +102,8 @@ def to_setup(args):
         "b1name" : b1_name, "b1num" : b1_num,
         "b2name" : b2_name, "b2num" : b2_num,
         "g1name" : g1_name, "g1num" : g1_num,
-        "g2name" : g2_name, "g2num" : g2_num})
+        "g2name" : g2_name, "g2num" : g2_num,
+        "match_num" : match_number})
 
     game_state = STATE.SETUP
     print("ENTERING SETUP STATE")
@@ -121,6 +122,8 @@ def to_auto(args):
     game_timer.start_timer(CONSTANTS.AUTO_TIME)
     game_state = STATE.AUTO
     enable_robots(True)
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
+             {"time" : CONSTANTS.AUTO_TIME})
     print("ENTERING AUTO STATE")
 
 def to_wait(args):
@@ -149,6 +152,8 @@ def to_teleop(args):
     regenerate_codes()
     game_timer.start_timer(CONSTANTS.TELEOP_TIME)
     enable_robots(False)
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
+             {"time" : CONSTANTS.TELEOP_TIME})
     print("ENTERING TELEOP STATE")
 
 def to_end(args):
@@ -315,6 +320,8 @@ def goal_score(args):
     goal_name = args["goal"]
     goals.get(goal_name).score(alliances.get(alliance))
     send_team_scores_sensors()
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE, {"score" : math.floor(alliances.get(alliance).score),
+                                                                "alliance" : alliance})
     #TODO: send score update to scoreboard
 
 def goal_bid(args):

@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Filling Circle</title>
-        <link rel='stylesheet' type='text/css' href='stylesheet.css'/>
+        <link rel='stylesheet' type='text/css' href={{url_for( 'static', filename='socket.io.js' )}}/>
         <script type="text/javascript" src={{url_for( 'static', filename='socket.io.js' )}}></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
     </head>
@@ -29,7 +29,7 @@
         </div>
         <div style="margin:auto; width:1200px; position:relative; top:600px">
             <canvas id="bottom_bar" width=1200 height=300></canvas>
-            <script type='text/javascript' src='Scoreboard.js'></script>
+            <script type="text/javascript" src={{url_for( 'static', filename='scoreboard.js' )}}></script>
         </div>
     </div>
     <div style="position:absolute; top:800px; left:0px">
