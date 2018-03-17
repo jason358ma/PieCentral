@@ -1,12 +1,12 @@
-var canvas=document.getElementById("canvas");
+var canvas=document.getElementById("canvasA");
 var ctx=canvas.getContext("2d");
-var canvas2 = document.getElementById("canvas2");
+var canvas2 = document.getElementById("canvasB");
 var ctx2 = canvas2.getContext("2d");
-var canvas3 = document.getElementById("canvas3");
+var canvas3 = document.getElementById("canvasC");
 var ctx3 = canvas3.getContext("2d");
-var canvas4 = document.getElementById("canvas4");
+var canvas4 = document.getElementById("canvasD");
 var ctx4 = canvas4.getContext("2d");
-var canvas5 = document.getElementById("canvas5");
+var canvas5 = document.getElementById("canvasE");
 var ctx5 = canvas5.getContext("2d");
 
 var canvas_lst = [canvas, canvas2, canvas3, canvas4, canvas5]
@@ -33,13 +33,13 @@ var endingPct=100;
 // var increment=duration/pct;
 var match_num = 0;
 var blue_1_num = 0;
-var blue_1_name = "blue 1";
+var blue_1_name = "Madison Park";
 var blue_2_num = 0;
-var blue_2_name = "blue 2";
-var gold_1_num = 0;
-var gold_1_name = "gold 1";
+var blue_2_name = "Pinole Valley";
+var gold_1_num = 35;
+var gold_1_name = "Middle College";
 var gold_2_num = 0;
-var gold_2_name = "gold 2";
+var gold_2_name = "Lighthouse";
 
 var bottom = document.getElementById("bottom_bar");
 var ctx_bottom = bottom.getContext("2d");
@@ -153,6 +153,10 @@ socket.on('bid_amount', function(data) {
     }
     owners[goal] = o;
 });
+
+socket.on('bid_timer_start', function(data) {
+    
+})
 
 socket.on('bid_timer', function(data) {
     var parsed_data = JSON.parse(data);
