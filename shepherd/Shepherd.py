@@ -72,7 +72,7 @@ def to_setup(args):
 
     b1_name, b1_num = args["b1name"], args["b1num"]
     b2_name, b2_num = args["b2name"], args["b2num"]
-    g1_name, g1_num = args["g1name"], args["g2num"]
+    g1_name, g1_num = args["g1name"], args["g1num"]
     g2_name, g2_num = args["g2name"], args["g2num"]
 
     if game_state == STATE.END:
@@ -102,7 +102,8 @@ def to_setup(args):
         "b1name" : b1_name, "b1num" : b1_num,
         "b2name" : b2_name, "b2num" : b2_num,
         "g1name" : g1_name, "g1num" : g1_num,
-        "g2name" : g2_name, "g2num" : g2_num})
+        "g2name" : g2_name, "g2num" : g2_num,
+        "match_num" : match_number})
 
     game_state = STATE.SETUP
     print("ENTERING SETUP STATE")
@@ -123,7 +124,7 @@ def to_auto(args):
     enable_robots(True)
     send_scoreboard_goals()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
-             {"time" : CONSTANTS.AUTO_TIME}
+             {"time" : CONSTANTS.AUTO_TIME})
     print("ENTERING AUTO STATE")
 
 def to_wait(args):
@@ -154,7 +155,7 @@ def to_teleop(args):
     enable_robots(False)
     send_scoreboard_goals()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
-             {"time" : CONSTANTS.TELEOP_TIME}
+             {"time" : CONSTANTS.TELEOP_TIME})
     print("ENTERING TELEOP STATE")
 
 def to_end(args):
@@ -328,6 +329,8 @@ def goal_score(args):
     goal_name = args["goal"]
     goals.get(goal_name).score(alliances.get(alliance))
     send_team_scores_sensors()
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE, {"score" : math.floor(alliances.get(alliance).score),
+                                                               "alliance" : alliance})
     #TODO: send score update to scoreboard
 
 def goal_bid(args):
@@ -354,6 +357,9 @@ def regenerate_codes(args=None):
     lcm_send(LCM_TARGETS.DAWN, DAWN_HEADER.CODES, {"rfids" : curr_rfids,
                                                    "codes" : curr_challenge_codes,
                                                    "solutions" : curr_codegen_solutions})
+    print("new codes")
+    print(curr_codegen_solutions)
+    print(dirty_codes)
 
 def powerup_application(args):
     '''
@@ -365,7 +371,10 @@ def powerup_application(args):
     alliance = alliances.get(args["alliance"])
     goal = goals.get(args["goal"])
     code = args["code"]
-
+    print("code submitted")
+    print(code)
+    print(curr_codegen_solutions)
+    
     try:
         index = curr_codegen_solutions.index(int(code))
     except ValueError:
@@ -386,6 +395,7 @@ def powerup_application(args):
         if alliance.zero_x_cooldown.is_running():
             lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
                                                                       "result" : 0})
+            print("zero_x")
             return
         else:
             alliance.zero_x_cooldown.start_timer(CONSTANTS.CODE_COOLDOWN)
@@ -393,6 +403,7 @@ def powerup_application(args):
         if alliance.two_x_cooldown.is_running():
             lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
                                                                       "result" : 0})
+            print("two_x")
             return
         else:
             alliance.two_x_cooldown.start_timer(CONSTANTS.CODE_COOLDOWN)
@@ -401,20 +412,21 @@ def powerup_application(args):
            ((goal.owner is None or goal.owner == alliance) and game_state != STATE.AUTO):
             lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
                                                                       "result" : 0})
+            print("steal")
             return
         else:
             alliance.steal_cooldown.start_timer(CONSTANTS.CODE_COOLDOWN)
 
     dirty_codes[index] = True
-
+    print(dirty_codes)
     if game_state == STATE.AUTO:
         alliance.increment_multiplier()
     elif game_state == STATE.TELEOP:
         goal.apply_powerup(powerup, alliance)
-
-    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.POWERUPS, {"alliance" : alliance.name,
+        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.POWERUPS, {"alliance" : alliance.name,
                                                                    "goal" : goal.name,
                                                                    "powerup" : powerup})
+
     lcm_send(LCM_TARGETS.DAWN, DAWN_HEADER.CODES, {"rfids" : curr_rfids,
                                                    "codes" : curr_challenge_codes,
                                                    "solutions" : curr_codegen_solutions})

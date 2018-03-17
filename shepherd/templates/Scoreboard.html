@@ -32,22 +32,11 @@
             <script type="text/javascript" src={{url_for( 'static', filename='scoreboard.js' )}}></script>
         </div>
     </div>
-    <div style="position:absolute; top:800px; left:0px">
-        <br>
-        <form id="seconds">
-    	  Initial Time: <br> Outer Circle:<input type="text" name="powerup1" value="5 8 4 6 10">
-                        <br> Outer Circle 2:<input type="text" name="powerup2" value="6 9 10 4 5">
-                        <br> Inner Circle:<input type="text" name="time" value="7 3 5 8 6">
-                        <br> Owner (n/b/g):<input type="text" name="owner" value="g b g b g">
-                        <br>
-    	    <input type="button" onclick="start()" value="Start">
-    	</form>
-        <form id="addTime">
-        Adding Time:<br>
-          Outer Circle:<input type="text" name="addtime"><br>
-          Outer Circle 2:<input type="text" name="addtime2"><br>
-          Inner Circle:<input type="text" name="addtime3"><br>
-          <input type="button" onclick="addTime()" value="Add Time">
-        </form>
+    <div style="margin:auto; width:1450px; position:absolute; top:600px">
+        <div style="position:relative; left:65px">
+            <canvas id="multipliers" width=1450 height=300></canvas>
+            <script type="text/javascript" src={{url_for( 'static', filename='scoreboard.js' )}}></script>
+        </div>
     </div>
+    
 </html>

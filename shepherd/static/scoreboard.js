@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     var bottom = document.getElementById("bottom_bar");
     var ctx_bottom = bottom.getContext("2d");
+    var multipliercanvas = document.getElementById("multipliers");
+    var ctx_multiplier = multipliercanvas.getContext("2d");
 
     var master_gold_score = 0;
     var master_blue_score = 0;
@@ -54,28 +56,83 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var barGrow = 0 * 60 * 10;
     var barPct = 0;
 
-    setTeamsInfo();
-    setMatchTime();
-    setScores()
+    function reset() {
+        pct = [0, 0, 0, 0, 0];
+        pct2 = [0, 0, 0, 0, 0];
+        pct3 = [0, 0, 0, 0, 0];
+        grow = [1, 1, 1, 1, 1];
+        grow2 = [1, 1, 1, 1, 1];
+        grow3 = [1, 1, 1, 1, 1];
+        owner = ['n', 'n', 'n', 'n', 'n'];
+        // we might need to change these??
+        bidAmounts = [20, 40, 100, 40, 20];
 
-    requestAnimationFrame(animate);
+        dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
+        date_main = new Date();
+
+        cw=canvas.width;
+        ch=canvas.height;
+        duration=1;
+        endingPct=100;
+        // increment=duration/pct;
+        match_num = 0;
+        blue_1_num = 0;
+        blue_1_name = "Blue 1";
+        blue_2_num = 0;
+        blue_2_name = "Blue 2";
+        gold_1_num = 0;
+        gold_1_name = "Gold 1";
+        gold_2_num = 0;
+        gold_2_name = "Gold 2";
+
+        bottom = document.getElementById("bottom_bar");
+        ctx_bottom = bottom.getContext("2d");
+        multipliercanvas = document.getElementById("multipliers");
+        ctx_multiplier = multipliercanvas.getContext("2d");
+
+        master_gold_score = 0;
+        master_blue_score = 0;
+
+        gold_multiplier = 1;
+        blue_multiplier = 1;
+
+        barGrow = 0 * 60 * 10;
+        barPct = 0;
+
+
+        setTeamsInfo();
+        setMatchTime();
+        setScores()
+
+        requestAnimationFrame(animate);
+    }
 
     var socket = io('http://127.0.0.1:5500');
+    reset();
 
     socket.on('teams', function(data) {
         console.log('teams')
+        reset();
         parsed_data = JSON.parse(data);
         match_num = parsed_data.match_num;
         blue_1_num = parsed_data.b1num;
         blue_1_name = parsed_data.b1name;
+
         blue_2_num = parsed_data.b2num;
         blue_2_name = parsed_data.b2name;
+
         gold_1_num =  parsed_data.g1num;
         gold_1_name = parsed_data.g1name;
+
         gold_2_num = parsed_data.g2num;
         gold_2_name = parsed_data.g2name;
+
         master_blue_score = 0;
         master_gold_score = 0;
+        gold_multiplier = 1;
+        blue_multiplier = 1;
         setScores()
     });
 
@@ -119,13 +176,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
         parsed_data = JSON.parse(data);
         var alliance = parsed_data.alliance;
         var multiplier = parsed_data.multiplier;
-        if(alliance == "GOLD"){
+        if(alliance == "gold"){
           gold_multiplier = multiplier;
         }
-        if(alliance == "BLUE"){
+        if(alliance == "blue"){
           blue_multiplier = multiplier;
         }
-        setTeamsInfo();
+        setScores();
     });
 
     socket.on('bid_win', function(data) {
@@ -221,12 +278,40 @@ document.addEventListener("DOMContentLoaded", function(event) {
         setTeamsInfo();
         ctx_bottom.fillStyle = "white";
         ctx_bottom.font = "50px Helvetica";
-        ctx_bottom.textAlign = "right";
-        ctx_bottom.fillText(blue_multiplier.toString()+'X',310,95);
-        ctx_bottom.fillText(master_blue_score.toString(),460,95);
+        if(master_blue_score < 10){
+            ctx_bottom.fillText(master_blue_score.toString(),415,95);
+        } else if (master_blue_score < 100){
+            ctx_bottom.fillText(master_blue_score.toString(),412,95);
+        } else {
+            ctx_bottom.fillText(master_blue_score.toString(),413,95);
+        }
         ctx_bottom.textAlign = "left";
-        ctx_bottom.fillText(gold_multiplier.toString()+'X', width - 310, 95);
-        ctx_bottom.fillText(master_gold_score.toString(), width - 460, 95);
+        ctx_bottom.fillStyle = "white";
+        if(master_gold_score < 10){
+            ctx_bottom.fillText(master_gold_score.toString(), width - 427, 95);
+        } else if (master_gold_score < 100){
+            ctx_bottom.fillText(master_gold_score.toString(), width - 443, 95);
+        } else {
+            ctx_bottom.fillText(master_gold_score.toString(), width - 458, 95);
+        }
+        ctx_multiplier.font = "40px Helvetica";
+        ctx_multiplier.fillStyle = "navy";
+        ctx_multiplier.beginPath();
+        ctx_multiplier.fillRect(10, 8, 121, 160);
+        ctx_multiplier.fillStyle = "goldenrod";
+        ctx_multiplier.beginPath();
+        ctx_multiplier.fillRect(1309, 8, 121, 160);
+        ctx_multiplier.fillStyle = "white";
+
+        ctx_multiplier.textAlign = "left";
+        ctx_multiplier.fillText(blue_multiplier.toString(), 35,120);
+        ctx_multiplier.font = "20px Helvetica";
+        ctx_multiplier.fillText('Multiplier', 35,60);
+
+        ctx_multiplier.textAlign = "right";
+        ctx_multiplier.fillText('Multiplier', 1405,60);
+        ctx_multiplier.font = "40px Helvetica";
+        ctx_multiplier.fillText(gold_multiplier.toString(), 1405, 120);
     }
 
     function setTeamsInfo() {
@@ -246,20 +331,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         ctx_bottom.fillStyle = "white";
         ctx_bottom.textAlign = "left";
-        var blue_1_string = blue_1_num.toString() + "   " + blue_1_name;
-        ctx_bottom.fillText(blue_1_string,30,40);
+        // var blue_1_string = blue_1_num.toString() + "   " + blue_1_name;
+        // ctx_bottom.fillText(blue_1_string,30,60);
+
+        ctx_bottom.fillText(blue_1_num.toString(), 30, 60);
+        ctx_bottom.fillText(blue_1_name, 90, 60)
         // ctx_bottom.fillText(blue_1_name,30,75);
 
-        var blue_2_string = blue_2_num.toString() + "   " + blue_2_name;
-        ctx_bottom.fillText(blue_2_string,30, 140);
+        // var blue_2_string = blue_2_num.toString() + "   " + blue_2_name;
+        // ctx_bottom.fillText(blue_2_string,30, 120);
+
+        ctx_bottom.fillText(blue_2_num.toString(), 30, 120);
+        ctx_bottom.fillText(blue_2_name, 90, 120)
+
         // ctx_bottom.fillText(blue_2_name,30,175);
         ctx_bottom.textAlign = "right";
-        var gold_1_string = gold_1_name + "   " + gold_1_num.toString();
-        ctx_bottom.fillText(gold_1_string, width - 30, 40);
+        // var gold_1_string = gold_1_name + "   " + gold_1_num.toString();
+        // ctx_bottom.fillText(gold_1_string, width - 30, 60);
+
+        ctx_bottom.fillText(gold_1_num.toString(), width-30, 60);
+        ctx_bottom.fillText(gold_1_name, width - 90, 60)
+
         // ctx_bottom.fillText(gold_1_name,width - 30, 75);
 
-        var gold_2_string = gold_2_name + "   " + gold_2_num.toString();
-        ctx_bottom.fillText(gold_2_string, width - 30, 140);
+        // var gold_2_string = gold_2_name + "   " + gold_2_num.toString();
+        // ctx_bottom.fillText(gold_2_string, width - 30, 120);
+
+        ctx_bottom.fillText(gold_2_num.toString(), width-30, 120);
+        ctx_bottom.fillText(gold_2_name, width - 90, 120)
+
         // ctx_bottom.fillText(gold_2_name, width - 30, 175);
         setMatchTime();
     }
@@ -281,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             draw(i);
         }
         barPct = (date - date_main)/barGrow;
-        drawBar(ctx_bottom, barPct)
+        drawBar(ctx_multiplier, barPct)
         setMatchTime();
         requestAnimationFrame(animate);
     }
@@ -373,18 +473,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
     function drawBar(ctx, pct){
         ctx.beginPath();
         ctx.fillStyle='white';
-        ctx.fillRect(10,ch-130,1200,20);
+        var width = multipliercanvas.width
+        var height = multipliercanvas.height
+
+        ctx.fillRect(10,height-120,width,20);
 
         ctx.beginPath();
         ctx.fillStyle='green';
         if(pct>5/6*100){
             ctx.fillStyle='orange';
         }
-        var length = 1180-(1180*pct/100);
+        var length = (width-30) - ((width-30)*pct/100);
         if(length<0){
           length = 0;
         }
-        ctx.fillRect(10,ch-130,length,20);
+        ctx.fillRect(10,height-120,length,20);
     }
 
     function draw(i) {

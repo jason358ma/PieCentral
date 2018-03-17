@@ -353,18 +353,21 @@ function start(time){
 function drawBar(ctx, pct){
     ctx.beginPath();
     ctx.fillStyle='white';
-    ctx.fillRect(10,ch-130,1200,20);
+    var width = multipliercanvas.width
+    var height = multipliercanvas.height
+
+    ctx.fillRect(10,height-130,1200,20);
 
     ctx.beginPath();
     ctx.fillStyle='green';
     if(pct>5/6*100){
         ctx.fillStyle='orange';
     }
-    var length = 1180-(1180*pct/100);
+    var length = (width-20) - ((width-20)*pct/100);
     if(length<0){
       length = 0;
     }
-    ctx.fillRect(10,ch-130,length,20);
+    ctx.fillRect(10,height-130,length,20);
 }
 
 function draw(i) {
