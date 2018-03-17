@@ -1,13 +1,13 @@
 document.addEventListener("DOMContentLoaded", function(event) {
-    var canvas=document.getElementById("canvas");
+    var canvas=document.getElementById("canvasA");
     var ctx=canvas.getContext("2d");
-    var canvas2 = document.getElementById("canvas2");
+    var canvas2 = document.getElementById("canvasB");
     var ctx2 = canvas2.getContext("2d");
-    var canvas3 = document.getElementById("canvas3");
+    var canvas3 = document.getElementById("canvasC");
     var ctx3 = canvas3.getContext("2d");
-    var canvas4 = document.getElementById("canvas4");
+    var canvas4 = document.getElementById("canvasD");
     var ctx4 = canvas4.getContext("2d");
-    var canvas5 = document.getElementById("canvas5");
+    var canvas5 = document.getElementById("canvasE");
     var ctx5 = canvas5.getContext("2d");
 
     var canvas_lst = [canvas, canvas2, canvas3, canvas4, canvas5]
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var grow3 = [1, 1, 1, 1, 1];
     var owner = ['n', 'n', 'n', 'n', 'n'];
     // we might need to change these??
-    var bidAmounts = [0, 666, 100, 20, 0];
+    var bidAmounts = [20, 40, 100, 40, 20];
 
     var dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
     var dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
@@ -34,29 +34,29 @@ document.addEventListener("DOMContentLoaded", function(event) {
     // var increment=duration/pct;
     var match_num = 0;
     var blue_1_num = 0;
-    var blue_1_name = "Madison Park";
+    var blue_1_name = "Blue 1";
     var blue_2_num = 0;
-    var blue_2_name = "Middle College";
+    var blue_2_name = "Blue 2";
     var gold_1_num = 0;
-    var gold_1_name = "Pinole Valley";
+    var gold_1_name = "Gold 1";
     var gold_2_num = 0;
-    var gold_2_name = "Lighthouse";
+    var gold_2_name = "Gold 2";
 
     var bottom = document.getElementById("bottom_bar");
     var ctx_bottom = bottom.getContext("2d");
 
-    var master_gold_score = 10;
-    var master_blue_score = 10;
+    var master_gold_score = 0;
+    var master_blue_score = 0;
 
     var gold_multiplier = 1;
     var blue_multiplier = 1;
 
-    var barGrow = .5 * 60 * 10;
+    var barGrow = 0 * 60 * 10;
     var barPct = 0;
 
-    ///setTeamsInfo();
-    ///setMatchTime();
-    //setScores()
+    setTeamsInfo();
+    setMatchTime();
+    setScores()
 
     requestAnimationFrame(animate);
 
@@ -164,20 +164,50 @@ document.addEventListener("DOMContentLoaded", function(event) {
         console.log('bid_start')
         parsed_data = JSON.parse(data);
         var goal_num = goalNumFromName(parsed_data.goal);
-        dates_inner[goal_num] = 0;
-        grow[goal_num] = parsed_data.time * 10;
+        pct3[goal_num] = 0;
+        dates_inner[goal_num] = new Date();
+        grow3[goal_num] = parsed_data.time * 10;
     });
 
     socket.on('bid_timer', function(data) {
         console.log('bid_time_increase')
         parsed_data = JSON.parse(data);
         var goal_num = goalNumFromName(parsed_data.goal);
-        grow[goal_num] += parsed_data.time * 10;
+        grow3[goal_num] += parsed_data.time * 10;
+        console.log(parsed_data.time)
+    });
+
+    socket.on('stage_timer_start', function(data) {
+        console.log('stage_time')
+        parsed_data = JSON.parse(data);
+        barGrow = parsed_data.time * 10;
+        barPct = 0;
+        date_main = new Date();
+        console.log(parsed_data.time)
+        setMatchTime();
     });
 
     socket.on('powerups', function(data) {
-        //TODO
-
+        var parsed_data = JSON.parse(data);
+        var goal = goalNumFromName(parsed_data.goal)
+        var alliance = parsed_data.alliance
+        var powerup = parsed_data.powerup
+        if (powerup == "zero_x") {
+            dates_middle[goal] = new Date();
+            pct2[goal] = 0
+            grow2[goal] = 300
+        } else if (powerup == "two_x") {
+            dates_outer[goal] = new Date();
+            pct[goal] = 0
+            grow[goal] = 300
+        } else if (powerup == "steal") {
+            if (alliance == "blue") {
+                owner[goal] = "b"
+            } else if (alliance == "gold") {
+                owner[goal] = "g"
+            }
+        }
+   
     });
 
     function goalNumFromName(goal_name) {
@@ -265,14 +295,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
         ctx_bottom.fillStyle = "black";
         ctx_bottom.textAlign = "center";
         date = new Date();
-        maintime = (barGrow/10)-(date/1000 - date_main/1000);
+        maintime = Math.ceil((barGrow/10)-(date/1000 - date_main/1000));
         var time_string = Math.floor(maintime / 60).toString() + " : ";
         if (Math.ceil(maintime) % 60 < 10) {
             time_string += "0";
         }
         time_string += (Math.ceil(maintime) % 60).toString();
         if(maintime<0){
-          time_string = "0:00";
+          time_string = "0 : 00";
         }
         if(maintime<10){
           ctx_bottom.fillStyle = "red";

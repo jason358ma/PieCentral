@@ -122,6 +122,7 @@ def to_auto(args):
     game_timer.start_timer(CONSTANTS.AUTO_TIME)
     game_state = STATE.AUTO
     enable_robots(True)
+    send_scoreboard_goals()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
              {"time" : CONSTANTS.AUTO_TIME})
     print("ENTERING AUTO STATE")
@@ -152,6 +153,7 @@ def to_teleop(args):
     regenerate_codes()
     game_timer.start_timer(CONSTANTS.TELEOP_TIME)
     enable_robots(False)
+    send_scoreboard_goals()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
              {"time" : CONSTANTS.TELEOP_TIME})
     print("ENTERING TELEOP STATE")
@@ -273,6 +275,13 @@ def generate_rfids(args):
     curr_rfids = rfids
     lcm_send(LCM_TARGETS.UI, UI_HEADER.RFID_LIST, {"RFID_list" : rfids})
 
+def send_scoreboard_goals():
+    for goal in goals.values():
+        if goal.owner is None:
+            lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
+                     {"goal" : goal.name, "alliance" : None, "bid" : goal.next_bid})
+
+
 def send_goal_owners_sensors():
 
     goal_a = goals.get(GOAL.A)
@@ -365,11 +374,13 @@ def powerup_application(args):
     except ValueError:
         lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
                                                                   "result" : 0})
+        print("Incorrect code submitted")
         return
     if alliance.name == ALLIANCE_COLOR.BLUE and index > 2 or \
        alliance.name == ALLIANCE_COLOR.GOLD and index < 3:
         lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
                                                                   "result" : 0})
+        print("Code for wrong side")
         return
 
     powerup = powerup_functions[index]
@@ -404,6 +415,9 @@ def powerup_application(args):
     elif game_state == STATE.TELEOP:
         goal.apply_powerup(powerup, alliance)
 
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.POWERUPS, {"alliance" : alliance.name,
+                                                                   "goal" : goal.name,
+                                                                   "powerup" : powerup})
     lcm_send(LCM_TARGETS.DAWN, DAWN_HEADER.CODES, {"rfids" : curr_rfids,
                                                    "codes" : curr_challenge_codes,
                                                    "solutions" : curr_codegen_solutions})
@@ -419,6 +433,8 @@ def bid_complete(args):
     alliance = goals.get(goal_name).current_bid_team
     goals.get(goal_name).set_owner(alliance)
     goals.get(goal_name).current_bid_team = None
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
+                     {"goal" : goal_name, "alliance" : alliance.name, "bid" : 0})
     for goal in goals.values():
         if goal.owner is not None:
             continue
