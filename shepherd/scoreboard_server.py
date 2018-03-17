@@ -9,24 +9,16 @@ from Utils import *
 from LCM import *
 
 HOST_URL = "127.0.0.1"
-PORT = 5500
+PORT = 6000
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'omegalul!'
 socketio = SocketIO(app)
 
-@app.route('/')
-def hello_world():
-    return 'Hello, world!'
-
-@app.route('/Scoreboard.html/')
-def scoreboard_control():
-    return render_template('Scoreboard.html')
-
 def receiver():
 
     events = gevent.queue.Queue()
-    lcm_start_read(str.encode(LCM_TARGETS.SCOREBOARD), events)
+    lcm_start_read(str.encode(LCM_TARGETS.UI), events)
 
     while True:
         if not events.empty():
@@ -62,7 +54,7 @@ def receiver():
                               json.dumps(event[1], ensure_ascii=False))
             #if event[0] == SCOREBOARD_HEADER.ALL_INFO):
             #    socketio.emit('server-to-gui-all-info', json.dumps(event[1], ensure_ascii=False))
-        socketio.sleep(0)
+        socketio.sleep(1)
 
 socketio.start_background_task(receiver)
 socketio.run(app, host=HOST_URL, port=PORT)
