@@ -7,6 +7,7 @@ from Timer import *
 from Utils import *
 import Codegen
 import Sheet
+import time
 
 
 ###########################################
@@ -22,6 +23,7 @@ def start():
     events = queue.Queue()
     lcm_start_read(LCM_TARGETS.SHEPHERD, events)
     while True:
+        #time.sleep(50)
         print("GAME STATE OUTSIDE: ", game_state)
         payload = events.get(True)
         print(payload)
@@ -154,6 +156,7 @@ def to_teleop(args):
     game_timer.start_timer(CONSTANTS.TELEOP_TIME)
     enable_robots(False)
     send_scoreboard_goals()
+    send_goal_costs_sensors()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.STAGE_TIMER_START,
              {"time" : CONSTANTS.TELEOP_TIME})
     print("ENTERING TELEOP STATE")

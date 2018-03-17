@@ -9,7 +9,7 @@ from Utils import *
 linebreak_port_one = "/dev/ttyACM0" # change to correct port
 linebreak_port_two = "/dev/ttyACM0" # change to correct port
 bidding_port_blue = "/dev/ttyACM0" # change to correct port
-bidding_port_gold = "/dev/ttyACM0" # change to correct port
+bidding_port_gold = "/dev/ttyACM1" # change to correct port
 
 alliance_mapping = {
     "gold": ALLIANCE_COLOR.GOLD,
@@ -125,28 +125,28 @@ def transfer_linebreak_data(ser):
         time.sleep(0.01)
 
 def main():
-    goal_serial_one = serial.Serial(linebreak_port_one)
-    goal_serial_two = serial.Serial(linebreak_port_two)
-    bid_serial_blue = serial.Serial(bidding_port_blue)
+    #goal_serial_one = serial.Serial(linebreak_port_one)
+    #goal_serial_two = serial.Serial(linebreak_port_two)
+    #bid_serial_blue = serial.Serial(bidding_port_blue)
     bid_serial_gold = serial.Serial(bidding_port_gold)
-
+    '''
     goal_thread_one = threading.Thread(
         target=transfer_linebreak_data, name="transfer thread one", args=([goal_serial_one]))
     goal_thread_two = threading.Thread(
         target=transfer_linebreak_data, name="transfer thread two", args=([goal_serial_two]))
     goal_thread_one.daemon = True
     goal_thread_two.daemon = True
-
+    
     goal_thread_one.start()
     goal_thread_two.start()
-
+    
     recv_thread_blue = threading.Thread(
         target=recv_from_bid, name="receive thread blue",
         args=([bid_serial_blue, ALLIANCE_COLOR.BLUE]))
     send_thread_blue = threading.Thread(
         target=send_to_bid, name="send thread blue",
         args=([bid_serial_blue, ALLIANCE_COLOR.BLUE]))
-
+    '''
     recv_thread_gold = threading.Thread(
         target=recv_from_bid, name="receive thread gold",
         args=([bid_serial_gold, ALLIANCE_COLOR.GOLD]))
@@ -154,13 +154,13 @@ def main():
         target=send_to_bid, name="send thread gold",
         args=([bid_serial_gold, ALLIANCE_COLOR.GOLD]))
 
-    recv_thread_blue.daemon = True
-    send_thread_blue.daemon = True
+    #recv_thread_blue.daemon = True
+    #send_thread_blue.daemon = True
     recv_thread_gold.daemon = True
     send_thread_gold.daemon = True
 
-    recv_thread_blue.start()
-    send_thread_blue.start()
+    #recv_thread_blue.start()
+    #send_thread_blue.start()
     recv_thread_gold.start()
     send_thread_gold.start()
 
