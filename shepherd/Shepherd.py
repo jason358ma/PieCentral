@@ -329,8 +329,8 @@ def goal_score(args):
     goal_name = args["goal"]
     goals.get(goal_name).score(alliances.get(alliance))
     send_team_scores_sensors()
-    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE, {"score" : math.floor(alliances.get(alliance).score),
-                                                               "alliance" : alliance})
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
+             {"score" : math.floor(alliances.get(alliance).score), "alliance" : alliance})
     #TODO: send score update to scoreboard
 
 def goal_bid(args):
@@ -374,7 +374,7 @@ def powerup_application(args):
     print("code submitted")
     print(code)
     print(curr_codegen_solutions)
-    
+
     try:
         index = curr_codegen_solutions.index(int(code))
     except ValueError:
@@ -424,8 +424,8 @@ def powerup_application(args):
     elif game_state == STATE.TELEOP:
         goal.apply_powerup(powerup, alliance)
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.POWERUPS, {"alliance" : alliance.name,
-                                                                   "goal" : goal.name,
-                                                                   "powerup" : powerup})
+                                                                      "goal" : goal.name,
+                                                                      "powerup" : powerup})
 
     lcm_send(LCM_TARGETS.DAWN, DAWN_HEADER.CODES, {"rfids" : curr_rfids,
                                                    "codes" : curr_challenge_codes,
@@ -443,7 +443,7 @@ def bid_complete(args):
     goals.get(goal_name).set_owner(alliance)
     goals.get(goal_name).current_bid_team = None
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
-                     {"goal" : goal_name, "alliance" : alliance.name, "bid" : 0})
+             {"goal" : goal_name, "alliance" : alliance.name, "bid" : 0})
     for goal in goals.values():
         if goal.owner is not None:
             continue
@@ -454,7 +454,9 @@ def bid_complete(args):
             goal.previous_bid_team = None
             goal.next_bid = goal.calc_next_bid()
             lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
-                     {"goal" : goal.name, "alliance" : goal.current_bid_team.name, "bid" : goal.current_bid})
+                     {"goal" : goal.name,
+                      "alliance" : goal.current_bid_team.name,
+                      "bid" : goal.current_bid})
             #TODO: send current bid team to scoreboard
         if goal.current_bid_team is None:
             goal.bid_timer.reset()
