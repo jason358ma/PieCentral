@@ -1,5 +1,6 @@
 import queue
 import random
+import time
 from Alliance import *
 from Goal import *
 from LCM import *
@@ -22,6 +23,7 @@ def start():
     events = queue.Queue()
     lcm_start_read(LCM_TARGETS.SHEPHERD, events)
     while True:
+        time.sleep(0.05)
         print("GAME STATE OUTSIDE: ", game_state)
         payload = events.get(True)
         print(payload)
@@ -182,7 +184,7 @@ def reset(args=None):
     Timer.reset_all()
     events = queue.Queue()
     lcm_start_read(LCM_TARGETS.SHEPHERD, events)
-    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.RESET_TIMERS)
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.RESET)
     for alliance in alliances.values():
         if alliance is not None:
             alliance.reset()
@@ -331,7 +333,6 @@ def goal_score(args):
     send_team_scores_sensors()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
              {"score" : math.floor(alliances.get(alliance).score), "alliance" : alliance})
-    #TODO: send score update to scoreboard
 
 def goal_bid(args):
     '''
@@ -382,6 +383,7 @@ def powerup_application(args):
                                                                   "result" : 0})
         print("Incorrect code submitted")
         return
+
     if alliance.name == ALLIANCE_COLOR.BLUE and index > 2 or \
        alliance.name == ALLIANCE_COLOR.GOLD and index < 3:
         lcm_send(LCM_TARGETS.SENSORS, SENSOR_HEADER.CODE_RESULT, {"alliance" : alliance.name,
@@ -421,6 +423,8 @@ def powerup_application(args):
     print(dirty_codes)
     if game_state == STATE.AUTO:
         alliance.increment_multiplier()
+        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.ALLIANCE_MULTIPLIER,
+                 {"alliance" : alliance.name, "multiplier" : alliance.alliance_multiplier})
     elif game_state == STATE.TELEOP:
         goal.apply_powerup(powerup, alliance)
         lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.POWERUPS, {"alliance" : alliance.name,
