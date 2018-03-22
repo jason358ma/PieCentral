@@ -4,7 +4,6 @@ import lcm # pylint: disable=import-error
 
 LCM_address = 'udpm://239.255.76.68:7667?ttl=2'
 
-
 def lcm_start_read(receive_channel, queue, put_json=False):
     '''
     Takes in receiving channel name (string), queue (Python queue object).
@@ -35,8 +34,8 @@ def lcm_start_read(receive_channel, queue, put_json=False):
     rec_thread.run = run
     rec_thread.start()
 
-def lcm_send(target_channel, header, dic={}):
 
+def lcm_send(target_channel, header, dic={}): # pylint: disable=dangerous-default-value
     '''
     Send header and dictionary to target channel (string)
     '''

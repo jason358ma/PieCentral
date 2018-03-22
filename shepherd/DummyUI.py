@@ -3,45 +3,42 @@ import time
 from LCM import *
 from Utils import *
 
-
 def sender():
     while True:
         command = input("Command (setup, start next, restart, score adjust, rfid): ")
         if command is None:
             continue
-
         if command == "setup":
-            bName1 = input("Blue 1 Name: ")
-            bNum1 = input("Blue 1 Num: ")
-            bName2 = input("Blue 2 Name: ")
-            bNum2 = input("Blue 2 Num: ")
+            send_dict = {}
+            send_dict["b1name"] = "Hayward"
+            send_dict["b1num"] = 31
+            send_dict["b2name"] = "El Cerrito"
+            send_dict["b2num"] = 4
 
-            gName1 = input("Gold 1 Name: ")
-            gNum1 = input("Gold 1 Num: ")
-            gName2 = input("Gold 2 Name: ")
-            gNum2 = input("Gold 2 Num: ")
+            send_dict["g1name"] = "Middle College"
+            send_dict["g1num"] = 36
+            send_dict["g2name"] = "Brandon"
+            send_dict["g2num"] = 8
 
-            lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SETUP_MATCH,
-                     bName1, bNum1, bName2, bNum2, gName1, gNum1, gName2, gNum2)
+            send_dict["match_num"] = 9
 
+            lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SETUP_MATCH, send_dict)
         elif command == "start next":
+            print("TESTING")
             lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.START_NEXT_STAGE)
-
-        elif command == "restart match":
+        elif command == "restart":
             lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.RESET_MATCH)
-
         elif command == "score adjust":
-            blueAdjust = input("Blue Score Adjust: ")
-            goldAdjust = input("Gold Score Adjust: ")
-            lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SCORE_ADJUST, blueAdjust, goldAdjust)
-
+            send_dict = {}
+            send_dict["blue_score"] = input("Blue Score Adjust: ")
+            send_dict["gold_score"] = input("Gold Score Adjust: ")
+            lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.SCORE_ADJUST, send_dict)
         elif command == "rfid":
             lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GENERATE_RFID)
 
-
 def receiver():
     events = queue.Queue()
-    lcm_start_read(str.encode(LCM_TARGETS.UI), events)
+    lcm_start_read(LCM_TARGETS.UI, events)
     while True:
         event = events.get()
         print("RECEIVED:", event)
