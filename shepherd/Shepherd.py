@@ -23,7 +23,7 @@ def start():
     events = queue.Queue()
     lcm_start_read(LCM_TARGETS.SHEPHERD, events)
     while True:
-        #time.sleep(50)
+        time.sleep(0.05)
         print("GAME STATE OUTSIDE: ", game_state)
         payload = events.get(True)
         print(payload)
