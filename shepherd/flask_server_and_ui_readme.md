@@ -48,11 +48,13 @@ socket.on('server-to-ui-message-event-name', function(data) {
 })
 ```
 
-# Client-side HTML template modifications
+# Client-side HTML -> Jinja template modifications
 
 Anywhere a static dependency is linked to, it must be replaced with a url_for() call:
 ```javascript
 <script type="text/javascript" src="socket.io.js"></script>
-<!--becomes-->
+```
+becomes
+```javascript
 <script type="text/javascript" src={{url_for( 'static', filename='socket.io.js' )}}></script>
 ```
