@@ -15,12 +15,12 @@ Server Name: server.py
 Port: 5000
 Pages: RFID_control.html, score_adjustment.html, staff_gui.html
 
-####Scoreboard:
+#### Scoreboard:
 Server Name: scoreboard_server.py
 Port: 5500
 Pages: Scoreboard.html
 
-####Dawn:
+#### Dawn:
 Server Name: dawn_server.py
 Port: 7000
 # Server-side modifications
