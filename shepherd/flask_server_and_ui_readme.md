@@ -11,15 +11,18 @@ flask run
 # Server-side modifications
 
 ## Fill in a unique port number not used by another server or by local machine processes
-
+Change the line:
+```python
 PORT = (NUM)
+```
 
 ## Serving a new page with a jinja template
 @app.route('/page.html/')
 
+```python
 def page():
-
     return render_template('page.html')
+```
 
 ## Receiving message from UI and forwarding it to LCM
 @socketio.on('ui-to-server-message-event-name')
