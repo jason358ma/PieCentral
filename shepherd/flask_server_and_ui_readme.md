@@ -4,10 +4,19 @@ In the command line:
 
     pip install flask-socketio
     pip install gevent
-    export FLASK_APP=server.py
+    export FLASK_APP=[SERVER_NAME.py]
     flask run
 
-Go to localhost:[PORTNUM]/[page_name.html] in a browser
+Go to localhost:[PORTNUM]/[page_name.html] in a browser.
+
+### 2018 Configurations:
+UI: server.py, 5000
+Pages: RFID_control.html, score_adjustment.html, staff_gui.html
+
+Scoreboard: scoreboard_server.py, 5500
+Pages: Scoreboard.html
+
+Dawn: dawn_server.py, 7000
 # Server-side modifications
 
 ## Fill in a unique port number not used by another server or by local machine processes
@@ -23,7 +32,7 @@ Add a new function with an @app.route decorator that returns render_template for
 def page():
     return render_template('page.html')
 ```
-The page.html should be in the 'templates' folder
+The page.html should be in the 'templates' folder.
 
 ## Receiving message from UI and forwarding it to LCM
 Use the @socketio.on decorator to register an event handler to a specific callback:
