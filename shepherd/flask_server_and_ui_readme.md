@@ -10,13 +10,19 @@ In the command line:
 Go to localhost:[PORTNUM]/[page_name.html] in a browser.
 
 ### 2018 Configurations:
-UI: server.py, 5000
+#### UI:
+Server Name: server.py
+Port: 5000
 Pages: RFID_control.html, score_adjustment.html, staff_gui.html
 
-Scoreboard: scoreboard_server.py, 5500
+####Scoreboard:
+Server Name: scoreboard_server.py
+Port: 5500
 Pages: Scoreboard.html
 
-Dawn: dawn_server.py, 7000
+####Dawn:
+Server Name: dawn_server.py
+Port: 7000
 # Server-side modifications
 
 ## Fill in a unique port number not used by another server or by local machine processes
