@@ -28,9 +28,14 @@ Pages: Scoreboard.html
 Server Name: dawn_server.py
 
 Port: 7000
+
+
+
 # Server-side modifications
 
-Reading the official flask-socketio and socket.io docs may help get you started: https://flask-socketio.readthedocs.io/en/latest/ and https://socket.io/docs/.
+Reading the official flask-socketio and socket.io docs may help get you started with the socket stuff used here: https://flask-socketio.readthedocs.io/en/latest/ and https://socket.io/docs/.
+
+Jinja is a general purpose templating language, but here it is basically used as an HTML template that is compatible with Python. For more about Jinja, go check the official docs: http://jinja.pocoo.org/docs/2.10/.
 
 ## Fill in a unique port number not used by another server or by local machine processes
 Change the line:
@@ -39,7 +44,7 @@ PORT = (NUM)
 ```
 
 ## Serving a new page with a Jinja template
-Add a new function with an @app.route decorator that returns render_template for a Jinja template:
+Registers a certain app route with a specific Jinja template:
 ```python
 @app.route('/page.html/')
 def page():
@@ -55,8 +60,8 @@ def ui_to_server_message_name(received_data):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.TARGET_NAME, json.loads(received_data))
 ```
 
-## Inside the receiver loop sending a particular event to UI
-Use socketio.emit to send an event name and some data:
+## Sending a particular event to UI
+Inside the receiver loop, use socketio.emit to send an event name and some data:
 ```python
 if event[0] == UI_HEADER.EVENT_NAME:
     socketio.emit('server-to-ui-message-event-name', json.dumps(event[1], ensure_ascii=False))
@@ -64,7 +69,8 @@ if event[0] == UI_HEADER.EVENT_NAME:
 
 # Client-side JS modifications
 
-Receiving a message from the server:
+## Receiving a message from the server
+Register an event handler to a specific callback using socket.on:
 ```javascript
 socket.on('server-to-ui-message-event-name', function(data) {
     //do stuff
@@ -72,9 +78,6 @@ socket.on('server-to-ui-message-event-name', function(data) {
 ```
 
 # Client-side Jinja template modifications
-
-The Jinja is a general purpose templating language, but here it is basically used as an HTML template that is compatible with Python. For more about Jinja, go check the official docs: http://jinja.pocoo.org/docs/2.10/.
-
 
 The main thing for compatibility with the PiE servers is that anywhere a static dependency would have been linked to, it must be replaced with a Jinja url_for() call:
 ```javascript
