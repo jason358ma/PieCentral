@@ -1,13 +1,13 @@
 
-Running the server:
+<h1>Running the server</h1>
 pip install flask-socketio
 pip install gevent
 export FLASK_APP=(server.py)
 flask run
 
-Server-side modifications:
+<h1>Server-side modifications</h1>
 
-#Fill in a unique port number not used by another server or by local machine processes
+<h2>Fill in a unique port number not used by another server or by local machine processes</h2>
 PORT = (NUM)
 
 #Serving a new page with a jinja template
