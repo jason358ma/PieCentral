@@ -1,13 +1,13 @@
 
 # Running the server
-pip install flask-socketio
+In the command line:
 
-pip install gevent
+    pip install flask-socketio
+    pip install gevent
+    export FLASK_APP=server.py
+    flask run
 
-export FLASK_APP=(server.py)
-
-flask run
-
+Go to localhost://[PORTNUM]
 # Server-side modifications
 
 ## Fill in a unique port number not used by another server or by local machine processes
