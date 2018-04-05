@@ -1,21 +1,27 @@
 
-<h1>Running the server</h1>
-<p>pip install flask-socketio</p>
-<p>pip install gevent</p>
-<p>export FLASK_APP=(server.py)</p>
-<p>flask run</p>
+#Running the server
+pip install flask-socketio
 
-<h1>Server-side modifications</h1>
+pip install gevent
 
-<strong>Fill in a unique port number not used by another server or by local machine processes</strong>
-<p>PORT = (NUM)</p>
+export FLASK_APP=(server.py)
 
-<strong>Serving a new page with a jinja template</strong>
-<p>@app.route('/page.html/')</p>
-<p>def page():</p>
-<p>    return render_template('page.html')</p>
+flask run
 
-<strong>Receiving message from UI and forwarding it to LCM</strong>
+#Server-side modifications
+
+##Fill in a unique port number not used by another server or by local machine processes
+
+PORT = (NUM)
+
+##Serving a new page with a jinja template
+@app.route('/page.html/')
+
+def page():
+
+    return render_template('page.html')
+
+##Receiving message from UI and forwarding it to LCM
 @socketio.on('ui-to-server-message-event-name')
 def ui_to_server_message_name(received_data):
     lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.TARGET_NAME, json.loads(received_data))
