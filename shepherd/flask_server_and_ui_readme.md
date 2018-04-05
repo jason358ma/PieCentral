@@ -52,6 +52,18 @@ def page():
 ```
 The page.html should be in the 'templates' folder.
 
+Additionally, the main thing for compatibility with the PiE servers is that anywhere a static dependency would have been linked to, it must be replaced with a Jinja url_for() call:
+```javascript
+<script type="text/javascript" src="socket.io.js"></script>
+```
+becomes
+```javascript
+<script type="text/javascript" src={{url_for( 'static', filename='socket.io.js' )}}></script>
+```
+
+The socket.io.js file should be in the 'static' folder.
+
+
 ## Receiving message from UI and forwarding it to LCM
 Use the @socketio.on decorator to register an event handler to a specific callback:
 ```python
@@ -76,16 +88,3 @@ socket.on('server-to-ui-message-event-name', function(data) {
     //do stuff
 })
 ```
-
-# Client-side Jinja template modifications
-
-The main thing for compatibility with the PiE servers is that anywhere a static dependency would have been linked to, it must be replaced with a Jinja url_for() call:
-```javascript
-<script type="text/javascript" src="socket.io.js"></script>
-```
-becomes
-```javascript
-<script type="text/javascript" src={{url_for( 'static', filename='socket.io.js' )}}></script>
-```
-
-The socket.io.js file should be in the 'static' folder.
