@@ -52,7 +52,7 @@ def page():
 ```
 The page.html should be in the 'templates' folder.
 
-Additionally, the main thing for compatibility with the PiE servers is that anywhere a static dependency would have been linked to, it must be replaced with a Jinja url_for() call:
+Additionally, the main thing for compatibility with the PiE servers is that anywhere a static dependency would have been linked to in HTML, it must be replaced with a Jinja url_for() call:
 ```javascript
 <script type="text/javascript" src="socket.io.js"></script>
 ```
