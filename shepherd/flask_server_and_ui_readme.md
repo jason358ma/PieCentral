@@ -23,6 +23,7 @@ Add a new function with an @app.route decorator that returns render_template for
 def page():
     return render_template('page.html')
 ```
+The page.html should be in the 'templates' folder
 
 ## Receiving message from UI and forwarding it to LCM
 Use the @socketio.on decorator to register an event handler to a specific callback:
@@ -50,7 +51,7 @@ socket.on('server-to-ui-message-event-name', function(data) {
 
 # Client-side HTML -> Jinja template modifications
 
-Anywhere a static dependency is linked to, it must be replaced with a url_for() call:
+Anywhere a static dependency is linked to, it must be replaced with a Jinja url_for() call:
 ```javascript
 <script type="text/javascript" src="socket.io.js"></script>
 ```
@@ -58,3 +59,5 @@ becomes
 ```javascript
 <script type="text/javascript" src={{url_for( 'static', filename='socket.io.js' )}}></script>
 ```
+
+The socket.io.js file should be in the 'static' folder.
