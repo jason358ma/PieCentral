@@ -1,7 +1,6 @@
 import math
 from Utils import *
 from Timer import *
-from LCM import *
 
 class Alliance:
     """This is the Alliance class, which holds the state values used to track

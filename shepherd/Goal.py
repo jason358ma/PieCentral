@@ -61,13 +61,6 @@ class Goal:
         self.gold_two_x_timer.reset()
         self.blue_two_x_timer.reset()
         self.blue_zero_x_timer.reset()
-        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.GOAL_OWNED,
-                 {"goal" : self.name, "alliance" : None})
-        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
-                 {"goal" : self.name, "alliance" : None, "bid"
-                  : self.next_bid})
-        #TODO: Send info to sensors about reset
-        #TODO: Send info to UI about reset
 
     def set_autonomous(self):
         self.value = self.initial_value * 2

@@ -190,6 +190,12 @@ def reset(args=None):
             alliance.reset()
     for goal in goals.values():
         goal.reset()
+        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.GOAL_OWNED,
+                 {"goal" : goal.name, "alliance" : None})
+        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
+                 {"goal" : goal.name, "alliance" : None, "bid"
+                  : goal.next_bid})
+        #TODO: Send info to sensors about reset
 
     print("RESET MATCH, MOVE TO SETUP")
 
