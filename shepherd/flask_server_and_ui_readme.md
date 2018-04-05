@@ -30,13 +30,15 @@ Server Name: dawn_server.py
 Port: 7000
 # Server-side modifications
 
+Reading the official flask-socketio and socket.io docs may help get you started: https://flask-socketio.readthedocs.io/en/latest/ and https://socket.io/docs/.
+
 ## Fill in a unique port number not used by another server or by local machine processes
 Change the line:
 ```python
 PORT = (NUM)
 ```
 
-## Serving a new page with a jinja template
+## Serving a new page with a Jinja template
 Add a new function with an @app.route decorator that returns render_template for a Jinja template:
 ```python
 @app.route('/page.html/')
@@ -69,9 +71,12 @@ socket.on('server-to-ui-message-event-name', function(data) {
 })
 ```
 
-# Client-side HTML -> Jinja template modifications
+# Client-side Jinja template modifications
 
-Anywhere a static dependency is linked to, it must be replaced with a Jinja url_for() call:
+The Jinja is a general purpose templating language, but here it is basically used as an HTML template that is compatible with Python. For more about Jinja, go check the official docs: http://jinja.pocoo.org/docs/2.10/.
+
+
+The main thing for compatibility with the PiE servers is that anywhere a static dependency would have been linked to, it must be replaced with a Jinja url_for() call:
 ```javascript
 <script type="text/javascript" src="socket.io.js"></script>
 ```
