@@ -355,7 +355,7 @@ def goal_bid(args):
     send_goal_costs_sensors()
     lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
              {"goal" : goal.name,
-              "alliance" : alliance.name,
+              "alliance" : alliance,
               "bid" : goal.next_bid})
 
 def regenerate_codes(args=None):
