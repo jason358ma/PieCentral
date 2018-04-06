@@ -77,10 +77,6 @@ class Goal:
         if self.name != GOAL.BLUE and self.name != GOAL.GOLD:
             alliance.score -= self.current_bid
 
-        #TODO: send updated score to scoreboard and sensors
-        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
-                 {"alliance" : self.owner.name, "score" : math.floor(self.owner.score)})
-
     def bid(self, alliance):
         if self.owner is not None:
             return
@@ -106,10 +102,6 @@ class Goal:
                      {"goal" : self.name, "time" : time_increase})
 
         self.bid_timer.start_timer(time_increase)
-        lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
-                 {"goal" : self.name,
-                  "alliance" : self.current_bid_team.name,
-                  "bid" : self.next_bid})
         #TODO: Send bid amount, and curr bid owner to sensors
 
 

@@ -60,7 +60,7 @@ def start():
 
 def to_setup(args):
     '''
-    Move to the setup stage which is should push scores from previous game to spreadsheet,
+    Move to the setup stage which should push scores from previous game to spreadsheet,
     load the teams for the upcoming match, reset all state, and send information to scoreboard.
     By the end, should be ready to start match.
     '''
@@ -349,9 +349,14 @@ def goal_bid(args):
     goal_name = args["goal"]
     if game_state == STATE.WAIT and not goals.get(goal_name).bid_timer.is_running():
         return
-    goals.get(goal_name).bid(alliances.get(alliance))
+    goal = goals.get(goal_name)
+    goal.bid(alliances.get(alliance))
     send_goal_owners_sensors()
     send_goal_costs_sensors()
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.BID_AMOUNT,
+             {"goal" : goal.name,
+              "alliance" : alliance.name,
+              "bid" : goal.next_bid})
 
 def regenerate_codes(args=None):
     global curr_challenge_codes, curr_codegen_solutions
@@ -474,6 +479,8 @@ def bid_complete(args):
 
     send_team_scores_sensors()
     send_goal_owners_sensors()
+    lcm_send(LCM_TARGETS.SCOREBOARD, SCOREBOARD_HEADER.SCORE,
+             {"alliance" : alliance.name, "score" : math.floor(alliance.score)})
     #TODO: send owner info and bid leader info to scoreboard
 
 ###########################################
