@@ -4,8 +4,10 @@ import {
   editorUpdate,
   saveFile,
   openFile,
+  dragFile,
   createNewFile,
   downloadCode,
+  uploadCode,
 } from '../actions/EditorActions';
 import {
   changeTheme,
@@ -46,6 +48,9 @@ const mapDispatchToProps = dispatch => ({
   onOpenFile: () => {
     dispatch(openFile());
   },
+  onDragFile: (filepath) => {
+    dispatch(dragFile(filepath));
+  },
   onCreateNewFile: () => {
     dispatch(createNewFile());
   },
@@ -69,6 +74,9 @@ const mapDispatchToProps = dispatch => ({
   },
   onDownloadCode: () => {
     dispatch(downloadCode());
+  },
+  onUploadCode: () => {
+    dispatch(uploadCode());
   },
 });
 

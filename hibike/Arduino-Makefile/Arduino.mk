@@ -47,8 +47,12 @@
 #
 # On the Mac you might want to set:
 #
-#   ARDUINO_DIR   = /Applications/Arduino.app/Contents/Resources/Java
-#   ARDMK_DIR     = /usr/local
+  # ARDUINO_DIR   = /Applications/Arduino.app/Contents/Java
+  # AVR_TOOLS_DIR = ${ARDUINO_DIR}/hardware/tools/avr
+  # AVRDUDE_CONF  = $(AVR_TOOLS_DIR)/etc/avrdude.conf
+  # AVRDUDE = ${AVR_TOOLS_DIR}/bin/avrdude
+  # MONITOR_PORT = /dev/tty.usbmodem*
+
 #
 # On Linux, you might prefer:
 #
@@ -397,9 +401,11 @@ ifndef NM_NAME
 NM_NAME      = avr-nm
 endif
 
+
 ifndef AVR_TOOLS_DIR
 
     BUNDLED_AVR_TOOLS_DIR := $(call dir_if_exists,$(ARDUINO_DIR)/hardware/tools/avr)
+
 
     ifdef BUNDLED_AVR_TOOLS_DIR
         AVR_TOOLS_DIR     = $(BUNDLED_AVR_TOOLS_DIR)
@@ -466,6 +472,7 @@ endif
 
 ARDUINO_LIB_PATH  = $(ARDUINO_DIR)/libraries
 $(call show_config_variable,ARDUINO_LIB_PATH,[COMPUTED],(from ARDUINO_DIR))
+
 
 # 1.5.x platform dependent libs path
 ifndef ARDUINO_PLATFORM_LIB_PATH
@@ -1514,6 +1521,12 @@ endif
 clean::
 		$(REMOVE) $(OBJDIR)
 
+clean-uid:
+	$(REMOVE) $(OBJDIR)/hibike.*
+	$(REMOVE) $(OBJDIR)/userlibs/hibike
+	$(REMOVE) $(OBJDIR)/$(PROJECT_DIR)
+	@$(ECHO) "Removed Hibike binaries\n"
+
 size:	$(TARGET_HEX)
 		$(call avr_size,$(TARGET_ELF),$(TARGET_HEX))
 
@@ -1589,7 +1602,7 @@ help:
 
 .PHONY: all upload raw_upload raw_eeprom error_on_caterina reset reset_stty ispload \
         clean depends size show_boards monitor disasm symbol_sizes generated_assembly \
-        generate_assembly verify_size burn_bootloader help pre-build
+        generate_assembly verify_size burn_bootloader help pre-build clean-uid
 
 # added - in the beginning, so that we don't get an error if the file is not present
 -include $(DEPS)

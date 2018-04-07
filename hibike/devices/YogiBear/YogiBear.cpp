@@ -4,6 +4,7 @@
 #include "current_limit.h"
 #include "motor.h"
 #include "LED.h"
+#include <avr/wdt.h>
 
 //////////////// DEVICE UID ///////////////////
 hibike_uid_t UID = {
@@ -15,7 +16,7 @@ UID_RANDOM,     // ID
 
 //A space for constants.
 float pwmInput = 0; //Value that is received from hibike and is the goal PWM
-uint8_t driveMode = 0; 
+uint8_t driveMode = 0;
 
 void setup() {
   motorSetup();
@@ -27,12 +28,15 @@ void setup() {
   hibike_setup(); //use default heartbeat rates. look at /lib/hibike/hibike_device.cpp for exact values
   motorDisable();
   driveMode = MANUALDRIVE;
+  // Enable the watchdog timer, with a one second period
+  wdt_reset();
+  wdt_enable(WDTO_1S);
 }
 
 void loop() {
   ctrl_LEDs();
   hibike_loop();
-
+  wdt_reset();
 }
 
 
@@ -58,7 +62,7 @@ uint32_t device_write(uint8_t param, uint8_t* data, size_t len) {
       return sizeof(float);
       break;
 
-    case PID_POS_SETPOINT: 
+    case PID_POS_SETPOINT:
       motorEnable();
       driveMode = PID_POS;
       enablePos();
@@ -66,50 +70,50 @@ uint32_t device_write(uint8_t param, uint8_t* data, size_t len) {
       return sizeof(float);
       break;
 
-    case PID_POS_KP: 
+    case PID_POS_KP:
       setPosKP(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case PID_POS_KI: 
+    case PID_POS_KI:
       setPosKI(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case PID_POS_KD: 
+    case PID_POS_KD:
       setPosKD(((float *)data)[0]);
       return sizeof(float);
       break;
 
     case PID_VEL_SETPOINT:
-      motorEnable(); 
+      motorEnable();
       driveMode = PID_VEL;
       enableVel();
       setVelSetpoint(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case PID_VEL_KP: 
+    case PID_VEL_KP:
       setVelKP(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case PID_VEL_KI: 
+    case PID_VEL_KI:
       setVelKI(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case PID_VEL_KD: 
+    case PID_VEL_KD:
       setVelKD(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case CURRENT_THRESH: 
+    case CURRENT_THRESH:
       setCurrentThreshold(((float *)data)[0]);
       return sizeof(float);
       break;
 
-    case ENC_POS: 
+    case ENC_POS:
       if((float) data[0] == 0) {
         resetEncoder();
         return sizeof(float);
@@ -117,10 +121,10 @@ uint32_t device_write(uint8_t param, uint8_t* data, size_t len) {
 
       break;
 
-    case ENC_VEL: 
+    case ENC_VEL:
       break;
 
-    case MOTOR_CURRENT: 
+    case MOTOR_CURRENT:
       break;
 
     case DEADBAND:
@@ -150,7 +154,7 @@ uint8_t device_read(uint8_t param, uint8_t* data_update_buf, size_t buf_len) {
 
   switch (param) {
 
-    case DUTY_CYCLE: 
+    case DUTY_CYCLE:
       if(buf_len < sizeof(float)) {
         return 0;
       }
@@ -159,34 +163,34 @@ uint8_t device_read(uint8_t param, uint8_t* data_update_buf, size_t buf_len) {
       return sizeof(float);
       break;
 
-    case PID_POS_SETPOINT: 
+    case PID_POS_SETPOINT:
      break;
 
-    case PID_POS_KP: 
+    case PID_POS_KP:
       break;
 
     case PID_POS_KI:
      break;
 
-    case PID_POS_KD: 
+    case PID_POS_KD:
      break;
 
-    case PID_VEL_SETPOINT: 
+    case PID_VEL_SETPOINT:
      break;
 
-    case PID_VEL_KP: 
+    case PID_VEL_KP:
      break;
 
-    case PID_VEL_KI: 
+    case PID_VEL_KI:
      break;
 
-    case PID_VEL_KD: 
+    case PID_VEL_KD:
      break;
 
-    case CURRENT_THRESH: 
+    case CURRENT_THRESH:
      break;
 
-    case ENC_POS: 
+    case ENC_POS:
       if(buf_len < sizeof(float)) {
         return 0;
       }
@@ -195,7 +199,7 @@ uint8_t device_read(uint8_t param, uint8_t* data_update_buf, size_t buf_len) {
       return sizeof(float);
       break;
 
-    case ENC_VEL: 
+    case ENC_VEL:
       if(buf_len < sizeof(float)) {
         return 0;
       }
@@ -204,7 +208,7 @@ uint8_t device_read(uint8_t param, uint8_t* data_update_buf, size_t buf_len) {
       return sizeof(float);
       break;
 
-    case MOTOR_CURRENT: 
+    case MOTOR_CURRENT:
       if(buf_len < sizeof(float)) {
         return 0;
       }

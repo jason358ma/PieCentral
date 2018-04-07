@@ -1,7 +1,6 @@
 import keyMirror from 'keymirror';
 
-export const REG_VERSION = '0.7.0';
-export const FC_VERSION = 'FC-0.3.0';
+export const VERSION = '2018.2.0';
 export const PeripheralTypes = keyMirror({
   MOTOR_SCALAR: null,
   SENSOR_BOOLEAN: null,
@@ -18,6 +17,7 @@ export const PeripheralTypes = keyMirror({
   RFID: null,
   BatteryBuzzer: null,
   TeamFlag: null,
+  GameValues: null,
 });
 
 export const ActionTypes = keyMirror({

@@ -10,7 +10,8 @@ const initialPeripheralState = {
 function getParams(peripheral) {
   const res = {};
   peripheral.param_value.forEach((obj) => {
-    res[obj.param] = obj[obj.kind];
+    // eslint-disable-next-line prefer-destructuring
+    res[obj.param] = Object.values(obj)[0];
   });
   return res;
 }
@@ -35,8 +36,27 @@ const peripherals = (state = initialPeripheralState, action) => {
           nextState.runtimeVersion = `${version.major}.${version.minor}.${version.patch}`;
         } else {
           keys.push(peripheral.uid);
-          if (peripheral.uid in nextPeripherals) {
-            peripheral.device_name = nextPeripherals[peripheral.uid].device_name;
+          switch (peripheral.uid) {
+            case '0': {
+              peripheral.device_name = 'Blackout';
+              peripheral.device_type = PeripheralTypes.GameValues;
+              break;
+            }
+            case '1': {
+              peripheral.device_name = 'Supercharge';
+              peripheral.device_type = PeripheralTypes.GameValues;
+              break;
+            }
+            case '2': {
+              peripheral.device_name = 'Solar Inverter';
+              peripheral.device_type = PeripheralTypes.GameValues;
+              break;
+            }
+            default: {
+              if (peripheral.uid in nextPeripherals) {
+                peripheral.device_name = nextPeripherals[peripheral.uid].device_name;
+              }
+            }
           }
           nextPeripherals[peripheral.uid] = peripheral;
         }
