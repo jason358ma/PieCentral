@@ -87,8 +87,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         bottom = document.getElementById("bottom_bar");
         ctx_bottom = bottom.getContext("2d");
-        // multipliercanvas = document.getElementById("multipliers");
-        // ctx_multiplier = multipliercanvas.getContext("2d");
 
         master_gold_score = 0;
         master_blue_score = 0;
@@ -280,22 +278,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         ctx_bottom.textAlign = "center"
         ctx_bottom.fillText(master_blue_score.toString(), 535, 95)
         ctx_bottom.fillText(master_gold_score.toString(), width - 535, 95)
-        // if(master_blue_score < 10){
-        //     ctx_bottom.fillText(master_blue_score.toString(),525,95);
-        // } else if (master_blue_score < 100){
-        //     ctx_bottom.fillText(master_blue_score.toString(),522,95);
-        // } else {
-        //     ctx_bottom.fillText(master_blue_score.toString(),523,95);
-        // }
-        // ctx_bottom.textAlign = "left";
-        // ctx_bottom.fillStyle = "white";
-        // if(master_gold_score < 10){
-        //     ctx_bottom.fillText(master_gold_score.toString(), width - 527, 95);
-        // } else if (master_gold_score < 100){
-        //     ctx_bottom.fillText(master_gold_score.toString(), width - 543, 95);
-        // } else {
-        //     ctx_bottom.fillText(master_gold_score.toString(), width - 558, 95);
-        // }
 
         ctx_bottom.font = "40px Helvetica";
         ctx_bottom.fillStyle = "navy";
@@ -334,36 +316,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         ctx_bottom.fillStyle = "white";
         ctx_bottom.textAlign = "left";
-        // var blue_1_string = blue_1_num.toString() + "   " + blue_1_name;
-        // ctx_bottom.fillText(blue_1_string,30,60);
 
         ctx_bottom.fillText(blue_1_num.toString(), mult + 30, 60);
         ctx_bottom.fillText(blue_1_name, mult + 90, 60)
-        // ctx_bottom.fillText(blue_1_name,30,75);
-
-        // var blue_2_string = blue_2_num.toString() + "   " + blue_2_name;
-        // ctx_bottom.fillText(blue_2_string,30, 120);
 
         ctx_bottom.fillText(blue_2_num.toString(), mult + 30, 120);
         ctx_bottom.fillText(blue_2_name, mult + 90, 120)
 
-        // ctx_bottom.fillText(blue_2_name,30,175);
         ctx_bottom.textAlign = "right";
-        // var gold_1_string = gold_1_name + "   " + gold_1_num.toString();
-        // ctx_bottom.fillText(gold_1_string, width - 30, 60);
 
         ctx_bottom.fillText(gold_1_num.toString(), width- mult - 30, 60);
         ctx_bottom.fillText(gold_1_name, width - mult - 90, 60)
 
-        // ctx_bottom.fillText(gold_1_name,width - 30, 75);
-
-        // var gold_2_string = gold_2_name + "   " + gold_2_num.toString();
-        // ctx_bottom.fillText(gold_2_string, width - 30, 120);
-
         ctx_bottom.fillText(gold_2_num.toString(), width- mult - 30, 120);
         ctx_bottom.fillText(gold_2_name, width - mult - 90, 120)
 
-        // ctx_bottom.fillText(gold_2_name, width - 30, 175);
         setMatchTime();
     }
 
@@ -419,17 +386,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     function start(time){
-      //TODO remove this code when the HTML input stuff gets removed
-      //**********************
-      //form = document.getElementById("seconds");
-      //for (var i = 0; i < 5; i++) {
-      //    grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
-      //    grow2[i] = parseFloat(form.elements[1].value.split(" ")[i])*10;
-      //    grow3[i] = parseFloat(form.elements[2].value.split(" ")[i])*10;
-      //    owner[i] = form.elements[3].value.split(" ")[i];
-      //}
-      //**********************
-
         dates_inner = [new Date(), new Date(), new Date(), new Date(), new Date()];
         dates_middle = [new Date(), new Date(), new Date(), new Date(), new Date()];
         dates_outer = [new Date(), new Date(), new Date(), new Date(), new Date()];
@@ -437,41 +393,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         requestAnimationFrame(animate);
     };
-
-    /*function start(time){
-        form = document.getElementById("seconds");
-        for (var i = 0; i < 5; i++) {
-            grow[i] = parseFloat(form.elements[0].value.split(" ")[i])*10;
-            grow2[i] = parseFloat(form.elements[1].value.split(" ")[i])*10;
-            grow3[i] = parseFloat(form.elements[2].value.split(" ")[i])*10;
-            owner[i] = form.elements[3].value.split(" ")[i];
-        }
-        beginning = new Date();
-        function animate(){
-            date = new Date();
-            // pct += grow;
-            for(var i = 0; i < 5; i++){
-                if (grow[i] > 0) {
-                    pct[i] = (date - beginning)/grow[i];
-                }
-                if (grow2[i] > 0) {
-                    pct2[i] = (date - beginning)/grow2[i];
-                }
-                if (grow3[i] > 0) {
-                    pct3[i] = (date - beginning)/grow3[i];
-                }
-            }
-            for(var i = 0; i < 5; i++){
-                draw(i);
-            }
-
-            barPct = (date - beginning)/barGrow;
-            drawBar(ctx_bottom, barPct)
-
-            requestAnimationFrame(animate);
-        }
-        requestAnimationFrame(animate);
-    }*/
 
     function drawBar(ctx, pct){
         ctx.beginPath();
