@@ -10,7 +10,7 @@ LCM uses UDP multicast to exchange messages, and can be used for to send byte re
 
 [LCM Python API](https://lcm-proj.github.io/python/lcm.LCM-class.html#publish)
 
-Read [here](https://lcm-proj.github.io/multicast_setup.html) about initializing an LCM object and what address to choose.
+Read [here](https://lcm-proj.github.io/multicast_setup.html) about initializing an LCM object and what address and TTL to choose.
 
 To communicate over a network, Shepherd uses LCM to send messages to a server, which relays those messages through a websocket.
 
