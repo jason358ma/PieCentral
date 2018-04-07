@@ -205,11 +205,25 @@ def main():
     print('relevant ports: ')
     print(relevant_ports)
 
-    #HARD CODED STUFF BELOW
-    goal_serial_one = serial.Serial(linebreak_ports[0])
-    goal_serial_two = serial.Serial(linebreak_ports[1])
-    bid_serial_blue = serial.Serial(bidding_port_blue)
-    bid_serial_gold = serial.Serial(bidding_port_gold)
+    # goal_serial_one = serial.Serial(linebreak_ports[0])
+    # goal_serial_two = serial.Serial(linebreak_ports[1])
+    # bid_serial_blue = serial.Serial(bidding_port_blue)
+    # bid_serial_gold = serial.Serial(bidding_port_gold)
+
+    goal_serial_one = None
+    goal_serial_two = None
+    bid_serial_blue = None
+    bid_serial_gold = None
+
+    for obj_type, alliance, port in relevant_ports:
+        if obj_type == 'lb' and alliance == 'b':
+            goal_serial_one = port
+        elif obj_type == 'lb' and alliance == 'g':
+            goal_serial_two = port
+        elif obj_type == 'bs' and alliance == 'b':
+            bid_serial_blue = port
+        elif obj_type == 'bs' and alliance == 'g':
+            bid_serial_gold = port
 
     goal_thread_one = threading.Thread(
         target=transfer_linebreak_data, name="transfer thread one", args=([goal_serial_one]))
