@@ -15,7 +15,7 @@ Read [here](https://lcm-proj.github.io/multicast_setup.html) about initializing 
 To communicate over a network, Shepherd uses LCM to send messages to a server, which relays those messages through a websocket.
 
 ## Methods
-This is a library of two methods for sending and receiving messages using the LCM communications protocol. 
+`LCM.py` is a library of two methods for sending and receiving messages using the LCM communications protocol. 
 
 + `lcm_start_read(receive_channel, queue, put_json=False):`
 
