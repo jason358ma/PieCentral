@@ -1,11 +1,14 @@
 # [LCM](https://lcm-proj.github.io/)
 
-[LCM Build Instructions](https://lcm-proj.github.io/build_instructions.html)
+[LCM Build Instructions](https://lcm-proj.github.io/build_instructions.html) (Linux or Mac OS recommended)
+Make sure to run setup.py (or the setup script for the language you are using).
 
-This is a library of two functions for sending and receiving messages using the LCM communications protocol. LCM uses UDP multicast 
+LCM uses UDP multicast to exchange messages, and can be used for to send byte representations of various objects and user-defined data types. There are [tutorials](https://lcm-proj.github.io/tutorial_general.html) for defining these data types in various languages.
 
 
 ## Functions
+This is a library of two functions for sending and receiving messages using the LCM communications protocol. 
+
 
 `lcm_start_read(receive_channel, queue, put_json=False):`
 
