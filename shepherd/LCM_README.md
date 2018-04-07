@@ -9,6 +9,7 @@ LCM uses UDP multicast to exchange messages, and can be used for to send byte re
 
 ## Functions
 This is a library of two functions for sending and receiving messages using the LCM communications protocol. 
+
 <br><br>
 `lcm_start_read(receive_channel, queue, put_json=False):`
 
@@ -18,6 +19,7 @@ Creates thread that receives any message to receiving channel and adds
 it to queue as tuple (header, dict).
 header: string
 dict: Python dictionary
+
 <br><br>
 `lcm_send(target_channel, header, dic={}):`
 
