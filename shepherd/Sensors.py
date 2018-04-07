@@ -1,7 +1,7 @@
 import sys
 import time
 import threading
-import queue
+from multiprocessing import Queue
 import serial
 from LCM import *
 from Utils import *
@@ -25,6 +25,79 @@ goal_mapping = {
     "bg": GOAL.BLUE,
     "gg": GOAL.GOLD
 }
+
+IDENTIFY_TIMEOUT = 1
+
+def get_working_serial_ports(excludes: set):
+    """Get a list of working serial ports, excluding some.
+    
+    Returns a list of `serial.Serial` object.
+    """
+    import glob
+    maybe_ports = set(glob.glob("/dev/ttyACM*"))
+    maybe_ports.difference_update(excludes)
+
+    working = []
+    for p in maybe_ports:
+        try:
+            working.append(serial.Serial(p))
+        except serial.SerialException:
+            pass
+
+    return working
+
+
+def identify_relevant_ports(working_ports):
+    """ Check which ports have linebreak sensors or bidding stations on them.
+    Returns a list of tuples containing the object type, alliance, 
+    and its corresponding serial port.
+    """
+    def maybe_identify_sensor(serial_port, timeout, msg_q):
+        """Check whether a serial port contains a sensor.
+        Parameters:
+            serial_port -- the port to check
+            timeout -- quit reading from the serial port after this
+            amount of time
+            msg_q -- a queue to set if a device is successfully identified
+        """
+        prev_timeout = serial_port.timeout
+        serial_port.timeout = timeout
+        try:
+            msg = serial_port.readline().decode("utf-8")
+            if is_linebreak_sensor(msg) or is_bidding_station(msg):
+                object_type = msg[0:2]
+                object_alliance = msg[2:3]
+                msg_q.put((object_type, object_alliance, serial_port))
+        except serial.SerialTimeoutException:
+            pass
+        serial_port.timeout = prev_timeout
+
+    msg_q = Queue()
+    threads = [threading.Thread(target=maybe_identify_sensor,
+                                args=(port,
+                                      IDENTIFY_TIMEOUT,
+                                      msg_q)) for port in working_ports]
+    for thread in threads:
+        thread.start()
+
+    time.sleep(IDENTIFY_TIMEOUT)
+    for thread in threads:
+        thread.join()
+    # parse through queue and make appropriate tuples
+    sensor_ports = []
+    while not msg_q.empty():
+        sensor_ports += [msg_q.get()]
+    return sensor_ports
+
+
+def is_linebreak_sensor(sensor_msg):
+    """Check whether a message is sent from a linebreak sensor."""
+    return sensor_msg[0:2] == "lb"
+
+def is_bidding_station(sensor_msg):
+    """Check whether a message is sent from a linebreak sensor."""
+    return sensor_msg[0:2] == "bs"
+
 
 def recv_from_bid(ser, alliance_enum):
     print("<3> Starting Bid Station Receive Thread", flush=True)
@@ -50,7 +123,7 @@ def recv_from_bid(ser, alliance_enum):
 
 def send_to_bid(ser, alliance_enum):
     print("<4> Starting Bid Station Send Thread", flush=True)
-    recv_q = queue.Queue()
+    recv_q = Queue()
     lcm_start_read(LCM_TARGETS.SENSORS, recv_q)
     while True:
         msg = recv_q.get()
@@ -125,8 +198,16 @@ def transfer_linebreak_data(ser):
         time.sleep(0.01)
 
 def main():
-    goal_serial_one = serial.Serial(linebreak_port_one)
-    goal_serial_two = serial.Serial(linebreak_port_two)
+    working_ports = get_working_serial_ports(set())
+    print("working ports: ")
+    print(working_ports)
+    relevant_ports = identify_relevant_ports(working_ports)
+    print('relevant ports: ')
+    print(relevant_ports)
+
+    #HARD CODED STUFF BELOW
+    goal_serial_one = serial.Serial(linebreak_ports[0])
+    goal_serial_two = serial.Serial(linebreak_ports[1])
     bid_serial_blue = serial.Serial(bidding_port_blue)
     bid_serial_gold = serial.Serial(bidding_port_gold)
 
