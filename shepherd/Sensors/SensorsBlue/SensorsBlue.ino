@@ -1,6 +1,7 @@
 int pins[] = {2, 3, 4, 5, 6, 10};
 char goals[] = {'A', 'B', 'C', 'D', 'E', 'G'};
 int states[] = {LOW, LOW, LOW, LOW, LOW, LOW};
+int count = 0;
 /*
 Pins for setting up the field.
 Pin 2: A
@@ -29,5 +30,9 @@ void loop() {
       states[i] = HIGH;
     }
   }
-  delay(200);
+  count = (count + 1) % 10;
+  if (count == 0) {
+    Serial.println("lbb;hb");
+  }
+  delay(100);
 }
