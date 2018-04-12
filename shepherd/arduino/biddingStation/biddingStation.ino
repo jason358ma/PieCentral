@@ -62,8 +62,8 @@ void setup() {
 
 void loop() {
   if (millis() >> 7 == 1){
-    Serial.println("bs-b"); //identifier for blue side
-    // Serial.println("bs-g"); //identifier for gold side
+    Serial.println("bsb:hb"); //identifier for blue side
+    // Serial.println("bsg:hb"); //identifier for gold side
   }
   switchVal = digitalRead(switchIn);
   if (switchVal != prevSwitchVal) {
@@ -295,6 +295,7 @@ void processCode() {
       submitStage++;
     } else if (submitStage == 1 && codeGoal != 0) {
       // Serial.println("Submit stage 1 to stage 0");
+      Serial.print("bsb:");
       Serial.print(myTeam);
       Serial.print("csub;");
       Serial.print(currentCode);
@@ -349,6 +350,7 @@ void processBidding() {
   // when button pressed
   if (!digitalRead(submitButton) && submitPressed && currentGoal != 0) {
     //send to python here
+    Serial.print("bsb:");
     Serial.print(myTeam);
     Serial.print("bg;");
     Serial.println(bidGoals[currentGoal-1]);
