@@ -26,7 +26,7 @@ goal_mapping = {
     "gg": GOAL.GOLD
 }
 
-IDENTIFY_TIMEOUT = 1
+IDENTIFY_TIMEOUT = 5
 
 def get_working_serial_ports(excludes: set):
     """Get a list of working serial ports, excluding some.
@@ -182,9 +182,10 @@ def transfer_linebreak_data(ser):
     print("<1> Starting Linebreak Process", flush=True)
     while True:
         sensor_msg = ser.readline().decode("utf-8")
-        if len(sensor_msg) != 7: #For Heartbeat
+        if len(sensor_msg) != 11: #For Heartbeat
             continue
-        print("<2> Message Received: ", sensor_msg)
+        print("<2> Message Received: ", sensor_msg, flush=True)
+        sensor_msg = sensor_msg[4:] #Remove identification tag
         alliance = sensor_msg[0:4].lower()
         alliance_enum = alliance_mapping[alliance]
         goal_letter = sensor_msg[4].lower()
@@ -199,16 +200,7 @@ def transfer_linebreak_data(ser):
 
 def main():
     working_ports = get_working_serial_ports(set())
-    print("working ports: ")
-    print(working_ports)
     relevant_ports = identify_relevant_ports(working_ports)
-    print('relevant ports: ')
-    print(relevant_ports)
-
-    # goal_serial_one = serial.Serial(linebreak_ports[0])
-    # goal_serial_two = serial.Serial(linebreak_ports[1])
-    # bid_serial_blue = serial.Serial(bidding_port_blue)
-    # bid_serial_gold = serial.Serial(bidding_port_gold)
 
     goal_serial_one = None
     goal_serial_two = None

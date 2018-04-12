@@ -23,6 +23,7 @@ void loop() {
   for (int i = 0; i < 6; i++) {
     int pinState = digitalRead(pins[i]);
     if (pinState == LOW && states[i] == HIGH) {
+      Serial.print("lbb;");
       Serial.print("blue");
       Serial.println(goals[i]);
       states[i] = LOW;
@@ -30,9 +31,9 @@ void loop() {
       states[i] = HIGH;
     }
   }
-  count = (count + 1) % 10;
+  count = (count + 1) % 20;
   if (count == 0) {
     Serial.println("lbb;hb");
   }
-  delay(100);
+  delay(50);
 }
