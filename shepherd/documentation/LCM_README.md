@@ -1,6 +1,6 @@
 # [LCM](https://lcm-proj.github.io/)
 
-[LCM Build Instructions](https://lcm-proj.github.io/build_instructions.html) (Linux or Mac OS recommended)
+[LCM Build Instructions](https://lcm-proj.github.io/build_instructions.html) (Linux or Mac OS strongly recommended)
 
 Make sure to run setup.py (or the setup script for the language you are using).
 
