@@ -46,6 +46,8 @@ int submitStage = 0;
 int codeGoal = 0;
 int cstatus = -1;
 
+int heartCount = 0;
+
 void setup() {
   Serial.begin(9600);
   disp.setDigitPins(numOfDigits, digitPins);
@@ -61,7 +63,8 @@ void setup() {
 }
 
 void loop() {
-  if (millis() >> 7 == 1){
+  heartCount += 1;
+  if (heartCount % 100 == 0){
     Serial.println("bsb:hb"); //identifier for blue side
     // Serial.println("bsg:hb"); //identifier for gold side
   }
