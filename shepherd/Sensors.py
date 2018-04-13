@@ -103,9 +103,11 @@ def recv_from_bid(ser, alliance_enum):
     print("<3> Starting Bid Station Receive Thread", flush=True)
     while True:
         sensor_msg = ser.readline().decode("utf-8")
-        print("<4> Message Received: ", sensor_msg, flush=True)
         sensor_msg.lower()
         payload_list = sensor_msg.split(";")
+        if len(payload_list) == 2 and payload_list[1] == "hb\r\n":
+            continue
+        print("<4> Message Received: ", payload_list, flush=True)
         payload_list = payload_list[1:]
         if payload_list[0] == "bg":
             goal_enum = goal_mapping[payload_list[1][0]]
