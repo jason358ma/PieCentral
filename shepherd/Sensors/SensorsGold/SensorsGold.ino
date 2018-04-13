@@ -13,7 +13,7 @@ Pin 10: G
 */
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   for (int pin: pins) {
     pinMode(pin, INPUT);
   }
@@ -31,9 +31,9 @@ void loop() {
       states[i] = HIGH;
     }
   }
-  count = (count + 1) % 10;
+  count = (count + 1) % 20;
   if (count == 0) {
     Serial.println("lbg;hb");
   }
-  delay(100);
+  delay(50);
 }

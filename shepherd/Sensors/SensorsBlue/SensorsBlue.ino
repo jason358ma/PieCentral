@@ -13,7 +13,7 @@ Pin 10: G
 */
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   for (int pin: pins) {
     pinMode(pin, INPUT);
   }

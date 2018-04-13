@@ -106,6 +106,7 @@ def recv_from_bid(ser, alliance_enum):
         print("<4> Message Received: ", sensor_msg, flush=True)
         sensor_msg.lower()
         payload_list = sensor_msg.split(";")
+        payload_list = payload_list[1:]
         if payload_list[0] == "bg":
             goal_enum = goal_mapping[payload_list[1][0]]
             send_dictionary = {"goal": goal_enum, "alliance": alliance_enum}
@@ -150,9 +151,6 @@ def send_to_bid(ser, alliance_enum):
             send_str = "go;"
             owners_list = payload_dict["owners"]
             bidders_list = payload_dict["bidders"]
-            if alliance_enum == ALLIANCE_COLOR.BLUE:
-                owners_list = owners_list[::-1]
-                bidders_list = bidders_list[::-1]
             for i in range(len(owners_list)):
                 owner = owners_list[i]
                 owner_color = ""
@@ -180,11 +178,13 @@ def send_to_bid(ser, alliance_enum):
 
 def transfer_linebreak_data(ser):
     print("<1> Starting Linebreak Process", flush=True)
+    count = 0
     while True:
         sensor_msg = ser.readline().decode("utf-8")
         if len(sensor_msg) != 11: #For Heartbeat
             continue
-        print("<2> Message Received: ", sensor_msg, flush=True)
+        print("<2> Message Received: ", sensor_msg, count, flush=True)
+        count += 1
         sensor_msg = sensor_msg[4:] #Remove identification tag
         alliance = sensor_msg[0:4].lower()
         alliance_enum = alliance_mapping[alliance]
@@ -201,6 +201,7 @@ def transfer_linebreak_data(ser):
 def main():
     working_ports = get_working_serial_ports(set())
     relevant_ports = identify_relevant_ports(working_ports)
+    print("relevant ports: ", relevant_ports)
 
     goal_serial_one = None
     goal_serial_two = None
