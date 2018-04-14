@@ -1,5 +1,6 @@
 import queue
 import random
+import time
 from Alliance import *
 from Goal import *
 from LCM import *
@@ -23,6 +24,7 @@ def start():
     lcm_start_read(LCM_TARGETS.SHEPHERD, events)
     while True:
         print("GAME STATE OUTSIDE: ", game_state)
+        time.sleep(0.1)
         payload = events.get(True)
         print(payload)
         if game_state == STATE.SETUP:
@@ -188,7 +190,7 @@ def reset(args=None):
             alliance.reset()
     for goal in goals.values():
         goal.reset()
-
+    disable_robots()
     print("RESET MATCH, MOVE TO SETUP")
 
 def get_match(args):
@@ -231,9 +233,12 @@ def flush_scores():
     '''
     Sends the most recent match score to the spreadsheet if connected to the internet
     '''
+    '''
     if alliances[ALLIANCE_COLOR.BLUE] is not None:
         Sheet.write_scores(match_number, alliances[ALLIANCE_COLOR.BLUE].score,
                            alliances[ALLIANCE_COLOR.GOLD].score)
+    '''
+    pass
 
 def enable_robots(autonomous):
     '''
