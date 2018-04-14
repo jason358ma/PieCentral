@@ -30,7 +30,6 @@ IDENTIFY_TIMEOUT = 5
 
 def get_working_serial_ports(excludes: set):
     """Get a list of working serial ports, excluding some.
-    
     Returns a list of `serial.Serial` object.
     """
     import glob
@@ -49,7 +48,7 @@ def get_working_serial_ports(excludes: set):
 
 def identify_relevant_ports(working_ports):
     """ Check which ports have linebreak sensors or bidding stations on them.
-    Returns a list of tuples containing the object type, alliance, 
+    Returns a list of tuples containing the object type, alliance,
     and its corresponding serial port.
     """
     def maybe_identify_sensor(serial_port, timeout, msg_q):
