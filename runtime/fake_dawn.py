@@ -7,6 +7,7 @@ import time
 import runtime_pb2
 import ansible_pb2
 import notification_pb2
+import unittest
 
 
 class FakeDawn:
@@ -38,7 +39,7 @@ class FakeDawn:
         TCP_THREAD.daemon = True
         TCP_THREAD.start()
         print("started threads")
-        add_timestamps(MSGQUEUE)
+        #add_timestamps(MSGQUEUE)
 
 
     @staticmethod
@@ -54,19 +55,19 @@ class FakeDawn:
 
     @staticmethod
     def create_enter_idle():
-        return dawn_packager(ansible_pb2.DawnData.IDLE)
+        return FakeDawn.dawn_packager(ansible_pb2.DawnData.IDLE)
 
     @staticmethod
     def create_enter_auto():
-        return dawn_packager(ansible_pb2.DawnData.AUTO)
+        return FakeDawn.dawn_packager(ansible_pb2.DawnData.AUTONOMOUS)
 
     @staticmethod
     def create_enter_teleop():
-        return dawn_packager(ansible_pb2.DawnData.TELEOP)
+        return FakeDawn.dawn_packager(ansible_pb2.DawnData.TELEOP)
 
     @staticmethod
     def create_enter_estop():
-        return dawn_packager(ansible_pb2.DawnData.ESTOP)
+        return FakeDawn.dawn_packager(ansible_pb2.DawnData.ESTOP)
 
     # pylint: disable=unused-argument
     def udp_sender(self):
@@ -76,7 +77,7 @@ class FakeDawn:
                 next_call = time.time()
                 msg = self.udp_send_queue.get()
                 sock.sendto(msg, (self.HOST, self.SEND_PORT))
-                next_call += 1.0 / DAWN_HZ
+                next_call += 1.0 / FakeDawn.DAWN_HZ
                 time.sleep(max(next_call - time.time(), 0))
 
     # pylint: disable=unused-argument
@@ -88,7 +89,7 @@ class FakeDawn:
             msg, _ = sock.recvfrom(2048)
             runtime_message = runtime_pb2.RuntimeData()
             runtime_message.ParseFromString(msg)
-            self.udp_recv_queue.add(msg)
+            self.udp_recv_queue.put(msg)
 
     def add_timestamps(msgqueue):
         """Add timestamp messages to ``msgqueue``."""
@@ -101,16 +102,16 @@ class FakeDawn:
         return msgqueue
 
     def udp_send_message(self, msg):
-        self.udp_send_queue.add(msg)
+        self.udp_send_queue.put(msg)
 
     def udp_receive_message(self):
         return self.udp_recv_queue.get()
 
     def tcp_send_message(self, msg):
-        self.udp_send_queue.add(msg)
+        self.tcp_send_queue.put(msg)
 
     def tcp_receive_message(self):
-        return self.udp_recv_queue.get()
+        return self.tcp_recv_queue.get()
 
     def upload(self, filename):
         import shutil
@@ -118,23 +119,25 @@ class FakeDawn:
 
     def tcp_relay(self):
         """Sends and receives messages on ``port``."""
+        print('tcp_relay')
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.HOST, self.TCP_PORT))
         sock.listen(1)
         conn, _ = sock.accept()
+        print('accepted')
         while True:
-            if not tcp_send_queue.empty():
-                conn.send(tcp_send_queue.get())
+            if not self.tcp_send_queue.empty():
+                conn.send(self.tcp_send_queue.get())
             next_call = time.time()
-            next_call += 1.0 / DAWN_HZ
+            next_call += 1.0 / FakeDawn.DAWN_HZ
             receive_msg, _ = conn.recvfrom(2048)
             if receive_msg is None:
                 continue
             else:
                 parser = notification_pb2.Notification()
                 parser.ParseFromString(receive_msg)
-                tcp_recv_queue.add(parser)
+                self.tcp_recv_queue.put(parser)
             time.sleep(max(next_call - time.time(), 0))
 
 class DawnTests(unittest.TestCase):
@@ -144,26 +147,30 @@ class DawnTests(unittest.TestCase):
         cls.FAKE_DAWN.start()
 
     def setUp(self):
-        self.FAKE_DAWN.tcp_send(FakeDawn.create_enter_idle())
+        self.FAKE_DAWN.udp_send_message(FakeDawn.create_enter_idle())
 
     def tearDown(self):
-        self.FAKE_DAWN.tcp_send(FakeDawn.create_enter_idle())
+        self.FAKE_DAWN.udp_send_message(FakeDawn.create_enter_idle())
 
     def test_estop(self):
         self.FAKE_DAWN.upload("e_stop.py")
-        self.FAKE_DAWN.tcp_send(FakeDawn.create_enter_auto())
+        self.FAKE_DAWN.udp_send_message(FakeDawn.create_enter_auto())
         while True:
             msg = self.FAKE_DAWN.tcp_receive_message()
-            if msg.header == ansible_pb2.Notification.CONSOLE_LOGGING:
+            if msg.header == notification_pb2.Notification.CONSOLE_LOGGING:
                 break
-        self.FAKE_DAWN.tcp_send(FakeDawn.create_enter_estop())
+        self.FAKE_DAWN.udp_send_message(FakeDawn.create_enter_estop())
+        time.sleep(3)
+        while True:
+            try:
+                self.FAKE_DAWN.tcp_recv_queue.get_nowait()
+            except queue.Empty:
+                break
         time.sleep(1)
-        self.FAKE_DAWN.tcp_recv_queue.clear()
-        time.sleep(1)
-        self.assertTrue(self.FAKE_DAWN.tcp_recv_queue.empty())
+        self.assertTrue(self.FAKE_DAWN.tcp_recv_queue.empty(), self.FAKE_DAWN.tcp_recv_queue.get())
 
 
 # Just Here for testing, should not be run regularly
-if __name__ == "__main__":
-    while True:
-        time.sleep(1)
+# if __name__ == "__main__":
+#     while True:
+#         time.sleep(1)
