@@ -46,10 +46,17 @@
         socket.emit('join', 'RFID_control');
       });
 
+      var RFID_cookie = getCookie("RFID_LIST");
+      if (RFID_cookie != "") {
+        RFID_list = decodeURIComponent(document.cookie).split()
+        showRFID()
+    }
+
       socket.on('server-to-ui-rfidlist', function(data) {
         console.log(data)
         console.log(JSON.parse(data))
         RFID_list = JSON.parse(data).RFID_list
+        document.cookie = "RFID_LIST=" + RFID_list.toString()
         showRFID();
       });
 
