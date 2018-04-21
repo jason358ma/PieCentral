@@ -1,7 +1,7 @@
 from LCM import *
 from Utils import *
 
-def get_goal(goal_input):
+def get_goal(goal_input, alliance):
     input_to_goal = {
         "a"     : GOAL.A,
         "b"     : GOAL.B,
@@ -14,7 +14,7 @@ def get_goal(goal_input):
         ALLIANCE_COLOR.GOLD : GOAL.GOLD,
         ALLIANCE_COLOR.BLUE : GOAL.BLUE,
     }
-    goal_name = input_to_goal.get(event[4])
+    goal_name = input_to_goal.get(goal_input)
     if goal_name == "base":
         goal_name = alliance_to_base_goal.get(alliance)
     return goal_name
@@ -30,7 +30,7 @@ def main():
     while True:
         event = input("Command: [gold|blue][a|b|c|d|e|g]")
         alliance = get_alliance(event[0:4])
-        goal_name = get_goal(event[4])
+        goal_name = get_goal(event[4], alliance)
         if alliance is None or goal_name is None:
             print("Invalid Input")
             continue
