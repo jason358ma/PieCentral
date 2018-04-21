@@ -34,7 +34,8 @@ def main():
         if alliance is None or goal_name is None:
             print("Invalid Input")
             continue
-        lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GOAL_SCORE, {"alliance" : alliance, "goal" : goal_name})
+        lcm_send(LCM_TARGETS.SHEPHERD, SHEPHERD_HEADER.GOAL_SCORE,
+                 {"alliance" : alliance, "goal" : goal_name})
 
 if __name__ == "__main__":
     main()
