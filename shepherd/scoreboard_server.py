@@ -53,7 +53,7 @@ def receiver():
             elif event[0] == SCOREBOARD_HEADER.RESET_TIMERS:
                 socketio.emit(SCOREBOARD_HEADER.RESET_TIMERS,
                               json.dumps(event[1], ensure_ascii=False))
-                
+
             elif event[0] == SCOREBOARD_HEADER.STAGE_TIMER_START:
                 socketio.emit(SCOREBOARD_HEADER.STAGE_TIMER_START,
                               json.dumps(event[1], ensure_ascii=False))
