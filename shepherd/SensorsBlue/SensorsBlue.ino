@@ -4,7 +4,7 @@ int states[] = {LOW, LOW, LOW, LOW, LOW, LOW};
 //map out which pins correspond to which goal ids
   // 6 input pins for each Arduino board
   //2 Arduino Boards (ARDUINO NAME): GOLD and BLUE
-  // GOAL ID: A, B, C, etc.
+  // GOAL ID: A, B, C, etc
 void setup() {
   Serial.begin(9600);
   for (int pin: pins) {
